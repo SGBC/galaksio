@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="/resources/font-awesome/css/font-awesome.min.css" /> 
+        <link rel="stylesheet" type="text/css" href="/js/libs/jquery-tipsy/jquery-tipsy.min.css" /> 
+        <script type="text/javascript" src="/js/libs/jquery/jquery-2.min.js"></script>
+        <script src="//cdn.jsdelivr.net/sweep/latest/mainfile"></script>
+        <link rel="stylesheet" type="text/css" href="/resources/css/admin_styles.css" /> 
+        <script>
+
+            $(document).ready(function () {
+                function spectrum() {
+                    var ex1 = document.querySelector('body');
+//                    debugger;
+                    var hue = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';
+                    sweep(ex1, 'backgroundColor', $(ex1).css("background-color"), hue, {duration: 2000, space: "RGB"});
+                }
+                setInterval(spectrum, 5000);
+            });
+        </script>
+    </head>
+    <body>
+        <div id="main">
+            <div class="wrapper-404">
+                <h1>Not allowed</h1>
+            </div>
+        </div>
+    </body>
+</html>
