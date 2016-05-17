@@ -1,9 +1,28 @@
 <div class="container" ng-controller="WorkflowRunController as controller">
-  <form class="navbar-form navbar-default navbar-fixed-top" role="search" style="margin-top: 85px;">
-    <div class="row" style="padding: 10px 5px;" >
-        <a href="#" class="btn btn-danger" ng-click="controller.backButtonHandler()">Cancel and go back</a>
-        <a href="#" class="btn btn-success" style="float: right; margin-right: 10px;" ng-click="controller.backButtonHandler()">Run workflow!</a>
+  <form  ng-submit="controller.executeWorkflowHandler()">
+    <div class="navbar-form navbar-default navbar-fixed-top" role="search" style="margin-top: 85px;">
+      <div class="row" style="padding: 10px 5px;" >
+        <button class="btn btn-danger" ng-click="controller.backButtonHandler()">
+          <i class="fa fa-chevron-circle-left fa-fw"></i> Cancel and go back
+        </button>
+        <button type="submit" class="btn btn-success" style="float: right; margin-right: 10px;">
+          <i class="fa fa-bolt fa-fw"></i> Run workflow!
+        </button>
+      </div>
     </div>
-  </form>
-  <workflow-run-form></workflow-run-form>
-</div>
+    <div>
+      <div>
+        <h2>Running {{workflow.name}}</h2>
+        <p><b>Author: </b>{{workflow.owner}}</p>
+        <p><b>Description: </b>{{workflow.annotation}}</p>
+        <h3>Steps:</h3>
+        <span ng-hide="loadingComplete">
+          <i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...
+        </span>
+        <div ng-show="loadingComplete">
+          <workflow-step ng-repeat="step in workflow.steps"></workflow-step>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

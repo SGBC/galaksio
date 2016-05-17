@@ -1,0 +1,14 @@
+<!-- NOT USED BECAUSE OF ANGULAR BUG -->
+<!-- see https://github.com/angular/angular.js/issues/7183  -->
+<div class="panel panel-default stepBox" ng-controller="WorkflowRunStepController as controller">
+  <div class="panel-heading">
+    <b>Step {{step.id}} :</b> {{step.name}}
+    <a class="collapseStepTool" ng-click="controller.toogleCollapseHandler($event)"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
+  </div>
+  <div class="panel-body" ng-hide="collapsed">
+    <span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Loading...</span>
+    <div ng-if="loadingComplete">
+      <step-input ng-repeat="input in step.default.inputs"></step-input>
+    </div>
+  </div>
+</div>

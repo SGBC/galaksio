@@ -41,6 +41,7 @@ header .navbar-default .navbar-nav>li>a {
 /******************************************************************************************/
 /* STYLES FOR WORKFLOW PANELS                                                             */
 /******************************************************************************************/
+
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW LIST                              */
 /*------------------------------------------------------*/
@@ -130,4 +131,24 @@ i.workflow-card-tag {
 .workflow-card a.runWorkflowButton {
     width: 100%;
     border-radius: 0px 0px 4px 4px;
+}
+/*------------------------------------------------------*/
+/*STYLES FOR WORKFLOW RUN FORM                          */
+/*------------------------------------------------------*/
+step-input {
+    display: block;
+    margin-top: 5px;
+}
+step-input input, step-input input[type=checkbox], step-input i {
+    margin-left: 10px;
+}
+step-input i {
+  display: block;
+}
+
+step-input .inputRepeatItem {
+    font-size: 12px;
+    margin: 5px 0px;
+    border-left: 3px solid #CEA81D;
+    padding-left: 10px;
 }

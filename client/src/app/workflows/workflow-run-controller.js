@@ -29,7 +29,7 @@
   ]);
 
   /***************************************************************************/
-  /*CONTROLLERS **************************************************************/
+  /*WORKFLOW CONTROLLER*******************************************************/
   /***************************************************************************/
   app.controller('WorkflowRunController', [
     '$scope',
@@ -37,8 +37,6 @@
     '$stateParams',
     'WorkflowList',
     function($scope, $http, $stateParams, WorkflowList){
-      debugger;
-
       //--------------------------------------------------------------------
       // VARIABLE DEFINITION
       //--------------------------------------------------------------------
@@ -80,60 +78,96 @@
         //--------------------------------------------------------------------
         this.backButtonHandler = function(){
           history.back();
-          me.$apply();
         }
-      }]);
+      }
+    ]);
 
+    /***************************************************************************/
+    /*WORKFLOW STEP CONTROLLER *************************************************/
+    /***************************************************************************/
+    app.controller('WorkflowRunStepController', [
+      '$scope',
+      '$http',
+      '$stateParams',
+      'WorkflowList',
+      function($scope, $http, $stateParams, WorkflowList){
+        //--------------------------------------------------------------------
+        // VARIABLE DEFINITION
+        //--------------------------------------------------------------------
+        var me = $scope;
+        //The corresponding view will be watching to this variavble
+        //and update its content after the http response
+        me.loadingComplete = false;
+        me.collapsed = true;
+        // me.step = null;
 
+        //--------------------------------------------------------------------
+        // EVENT HANDLERS
+        //--------------------------------------------------------------------
 
-      app.controller('WorkflowRunStepController', [
-        '$scope',
-        '$http',
-        '$stateParams',
-        'WorkflowList',
-        function($scope, $http, $stateParams, WorkflowList){
-          debugger;
-
-          //--------------------------------------------------------------------
-          // VARIABLE DEFINITION
-          //--------------------------------------------------------------------
-          var me = $scope;
-          //The corresponding view will be watching to this variavble
-          //and update its content after the http response
-          me.loadingComplete = false;
-          me.collapsed = true;
-          //me.step = null;
-
-          //--------------------------------------------------------------------
-          // EVENT HANDLERS
-          //--------------------------------------------------------------------
-          
-          this.toogleCollapseHandler = function(event){
-            //Toggle collapsed (view will automatically change due to ng-hide directive)
-            me.collapsed = !me.collapsed;
-            //If the remaining data for the step was not loaded yet, send the request
-            if(!me.loadingComplete){
-              if(me.step.tool_id !== "input-data"){
-                //If the tool is not an input data tool, request the info from server
-                //and store the extra info for the tool at the "default" field
+        /**
+        * toogleCollapseHandler - this function handles the event fired when the
+        * user press the button for hide or show the body of a step panel.
+        * If it's the first time that the panel is shown, then we need to create
+        * the body of the panel, which includes a HTTP request to Galaxy API in
+        * order to retrieve the extra information for the step.
+        *
+        * @param  {type} event the click event
+        * @return {type}       description
+        */
+        this.toogleCollapseHandler = function(event){
+          //Toggle collapsed (view will automatically change due to ng-hide directive)
+          //TODO: CHANGE THE ICON TO +/-
+          me.collapsed = !me.collapsed;
+          //If the remaining data for the step was not loaded yet, send the request
+          if(!me.loadingComplete){
+            if(me.step.type !== "data_input"){
+              //If the tool is not an input data tool, request the info from server
+              //and store the extra info for the tool at the "extra" field
+              $http({
+                method: 'GET',
+                url: GALAXY_API_TOOLS + me.step.tool_id + "/build"
+              }).then(
+                function successCallback(response){
+                  me.step["extra"] = response.data;
+                  //UPDATE VIEW
+                  me.loadingComplete = true;
+                },
+                function errorCallback(response){
+                  //TODO: SHOW ERROR MESSAGE
+                });
+              }else{
+                //However, if the tool is an input data field, we need to retrieve the
+                //available datasets for current history and display as a selector
+                //TODO: GET THE CURRENT history IDENTIFIER
+                //TODO: GET THE FILES ONLY IF NOT LOADED PREVIOUSLY (AUTO REMOVE AFTER N MINUTES)
                 $http({
                   method: 'GET',
-                  url: GALAXY_API_TOOLS + me.step.tool_id + "/build"
+                  url: GALAXY_API_HISTORIES + "7b668ee810f6cf46/contents"
                 }).then(
                   function successCallback(response){
-                    me.step["default"] = response.data;
+                    var files = [];
+
+                    for(var i in response.data){
+                      if(response.data[i].history_content_type === "dataset"){
+                        files.push(response.data[i]);
+                      }
+                    }
+
+                    me.step.files = files;
                     //UPDATE VIEW
                     me.loadingComplete = true;
                   },
                   function errorCallback(response){
                     //TODO: SHOW ERROR MESSAGE
                   });
-                }else{
-                  //However, if the tool is an input data field, we need to retrieve the
-                  //available datasets for current history and display as a selector
-                  //TODO:
                 }
               }
             };
-          }]);
-        })();
+          }
+        ]);
+
+        this.executeWorkflowHandler = function(a){
+          debugger;
+        }
+      })();

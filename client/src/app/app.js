@@ -1,9 +1,10 @@
 (function() {
 
   SERVER_URL = "/";
-  GALAXY_SERVER_URL = "/galaxydev/api/";
-  GALAXY_API_WORKFLOWS = GALAXY_SERVER_URL + "workflows/";
-  GALAXY_API_TOOLS = GALAXY_SERVER_URL + "tools/"
+  GALAXY_SERVER_URL        = "/galaxydev/api/";
+  GALAXY_API_WORKFLOWS     = GALAXY_SERVER_URL + "workflows/";
+  GALAXY_API_TOOLS         = GALAXY_SERVER_URL + "tools/"
+  GALAXY_API_HISTORIES     = GALAXY_SERVER_URL + "histories/"
   GALAXY_GET_ALL_WORKFLOWS = GALAXY_API_WORKFLOWS + "?show_published=TRUE";
 
   var app = angular.module('b3galaxyApp', [

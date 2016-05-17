@@ -23,52 +23,27 @@
  *
  */
 (function(){
-    var app = angular.module('workflows.services.workflow-list', []);
+    var app = angular.module('workflows.services.workflow-run', []);
 
-    app.factory("WorkflowList", function() {
-      var workflows = [];
-      var tags = [];
+    app.factory("FileList", function() {
+      var files = [];
       var filters = [];
 
       return {
-        getWorkflows: function() {
-          return workflows;
+        getFiles: function() {
+          return files;
         },
-        setWorkflows: function(_workflows) {
-          workflows = _workflows;
+        setFiles: function(_files) {
+          files = _files;
           return this;
         },
-        getWorkflow: function(workflow_id) {
-          for(var i in workflows){
-            if(workflows[i].id === workflow_id){
-              return workflows[i];
+        getFile: function(file_id) {
+          for(var i in files){
+            if(files[i].id === file_id){
+              return files[i];
             }
           }
           return null;
-        },
-        getTags: function() {
-          return tags;
-        },
-        setTags: function(_tags) {
-          tags = _tags;
-          return this;
-        },
-        updateTags: function() {
-          var tagsAux = {}, _tags;
-
-          for(var i in workflows){
-            _tags = workflows[i].tags;
-            for(var j in _tags){
-              tagsAux[_tags[j]] = {
-                name: _tags[j],
-                times: ((tagsAux[_tags[j]] === undefined)?1:tagsAux[_tags[j]].times + 1)
-              }
-            }
-          }
-          tags = Object.keys(tagsAux).map(function(k) { return tagsAux[k] });
-          tags.push({name: "All", times: workflows.length})
-
-          return this;
         },
         getFilters: function() {
             return filters;

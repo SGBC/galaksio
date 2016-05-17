@@ -29,44 +29,60 @@
   /***************************************************************************/
   /*DIRECTIVES ***************************************************************/
   /***************************************************************************/
-  app.directive("workflowRunForm", function($compile) {
+  app.directive("workflowRunForm", function() {
     return {
       restrict: 'E',
-      template: function(){
-        //TODO: MOVE TO A HTML TPL FILE
-        var template =  '<div>' +
-        '  <h2>Running {{workflow.name}}</h2>' +
-        '  <p><b>Author: </b>{{workflow.owner}}</p>' +
-        '  <p><b>Description: </b>{{workflow.annotation}}</p>' +
-        '  <h3>Steps:</h3>' +
-        '  <span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...</span>'+
-        '  <div ng-if="loadingComplete">'+
-        '    <workflow-step ng-repeat="step in workflow.steps"></workflow-step>'+
-        '  </div>' +
-        '</div>';
-        return template;
-      }
+      templateURL: 'app/workflows/workflow-run.tpl.html'
     };
   });
 
-  app.directive("workflowStep", function($compile) {
+  app.directive("workflowStep", function($timeout) {
     return {
       restrict: 'E',
-      template: function(){
-        //TODO: MOVE TO A HTML TPL FILE
-        var template =  '<div class="panel panel-default stepBox" ng-controller="WorkflowRunStepController as controller">' +
-        '  <div class="panel-heading">'+
-        '    <b>Step {{step.id}} :</b> {{step.name}} ' +
-        '    <a class="collapseStepTool" ng-click="controller.toogleCollapseHandler($event)"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>' +
-        '  </div>' +
-        '  <div class="panel-body" ng-hide="collapsed">'+
-        '    <span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Loading...</span>'+
-        '    <div ng-if="loadingComplete">'+
-        '      <step-input ng-repeat="input in step.default.inputs"></step-input>'+
-        '    </div>' +
-        '  </div>' +
-        '</div>';
-        return template;
+      //templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG
+      template:
+      '<div class="panel panel-default stepBox" ng-controller="WorkflowRunStepController as controller">' +
+      '  <div class="panel-heading">'+
+      '    <a class="collapseStepTool" ng-click="controller.toogleCollapseHandler($event)"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>' +
+      '    <b>Step {{step.id + 1}} :</b> {{step.name}} ' +
+      '  </div>' +
+      '  <div class="panel-body" ng-hide="collapsed">'+
+      '    <span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Loading...</span>'+
+      '    <div ng-if="loadingComplete && step.type == \'data_input\'">'+
+      '      <step-data-input></step-data-input>'+
+      '    </div>' +
+      '    <div ng-if="loadingComplete && step.type != \'data_input\'">'+
+      '      <step-input ng-repeat="input in step.extra.inputs"></step-input>'+
+      '    </div>' +
+      '  </div>' +
+      '</div>',
+      link: function(scope, elm, attrs) {
+        $timeout(function () {
+          //DOM has finished rendering
+          if(scope.step.type === "data_input"){
+            angular.element($(elm).find(".collapseStepTool")).triggerHandler('click');
+          }
+        });
+      },
+    };
+  });
+
+  app.directive("stepDataInput", function($compile) {
+    return {
+      restrict: 'E',
+      link: function(scope, element){
+        var model = scope.step;
+
+        model.label = JSON.parse(model.tool_state).name;
+
+        var template =
+        "<label>{{step.label}}</label>" +
+        '<select class="form-control" name="input_{{step.id}}" required>'+
+        '<option disabled selected> -- Choose a file </option>' +
+        '<option ng-repeat="file in step.files" value="{{file.id}}">{{file.name}}</option>' +
+        "</select>";
+        var content = $compile(template)(scope);
+        element.append(content);
       }
     };
   });
@@ -75,11 +91,58 @@
     return {
       restrict: 'E',
       link: function(scope, element){
-        debugger
-        var template = '<p>hello</p>';
+        //TODO HACER EN ANGULAR
+        var model = scope.input;
+        var inputValue = JSON.parse(scope.step.tool_state)[model.name].replace(/(^\"|\"$)/g,"");
+        var template = "<label>{{input.label || input.title}}</label>";
 
-        var linkFn = $compile(template);
-        var content = linkFn(scope);
+        try{
+          if(model.type === "text"){
+            template+= '<input type="text" name="{{input.name}}" value="' + inputValue +'" required >';
+          }else if(model.type === "select"){
+            template+= '<select class="form-control" name="{{input.name}}" required>';
+            for(var i in model.options){
+              template+=' <option value="' + model.options[i][1] + '" ' +
+              ((model.options[i][2] || inputValue === model.options[i][1])?"selected":"") + ' >' +
+              model.options[i][0] + '</option>' ;
+            }
+            template+= "</select>";
+          }else if(model.type === "boolean"){
+            template+= '<input type="checkbox" name="{{input.name}}" value="__CHECKED__" ' + (inputValue === "true"?"checked": "") +' required >';
+          }else if(model.type === "data"){
+            if(inputValue.indexOf("RuntimeValue") > -1){
+              template+= '<i name="{{input.name}}" >Output dataset from step {{step.input_connections[input.name].id + 1}}</i>';
+            }else{
+              throw "Unknown value for data type: " + JSON.stringify(model);
+            }
+          }else if(model.type === "repeat"){
+            inputValue = JSON.parse(inputValue);
+            template = "<label>" + model.title + (inputValue.length > 1?"s":"") + "</label>";
+
+            var _key; //queries_0|input2, queries_1|input2, ...
+            for(var i in inputValue){ //array of objects
+              for(var j in inputValue[i]){ //{"input2" : Object, "__index__": 0}
+                _key = model.name + "_" + inputValue[i]["__index__"] + "|" + j;
+                if(scope.step.input_connections[_key] !== undefined){
+                  template+=
+                  '<div class="inputRepeatItem">'+
+                  '  <label>{{input.title}}' + (i+1) + "</label>" +
+                  '  <i name="{{input.name}}" >Output dataset from step ' + (scope.step.input_connections[_key].id + 1) + '</i>' +
+                  '</div>'
+                  ;
+                }
+              }
+            }
+          }else{
+            throw "Unknown input type: " + JSON.stringify(model);
+          }
+        }catch(err) {
+            debugger
+            console.error(err);
+            template = '<b style="color:red;">Unknown input</b>';
+        }
+
+        var content = $compile(template)(scope);
         element.append(content);
       }
     };
