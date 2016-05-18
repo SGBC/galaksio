@@ -24,6 +24,7 @@
 */
 (function(){
   var app = angular.module('workflows.directives.workflow-run', [
+    'common.dialogs'
   ]);
 
   /***************************************************************************/
@@ -36,7 +37,7 @@
     };
   });
 
-  app.directive("workflowStep", function($timeout) {
+  app.directive("workflowStep", ['$timeout', 'dialogs', function($timeout, dialogs) {
     return {
       restrict: 'E',
       //templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG
@@ -65,7 +66,7 @@
         });
       },
     };
-  });
+  }]);
 
   app.directive("stepDataInput", function($compile) {
     return {
@@ -77,9 +78,11 @@
 
         var template =
         "<label>{{step.label}}</label>" +
-        '<select class="form-control" name="input_{{step.id}}" required>'+
-        '<option disabled selected> -- Choose a file </option>' +
-        '<option ng-repeat="file in step.files" value="{{file.id}}">{{file.name}}</option>' +
+        '<select class="form-control" name="input_{{step.id}}"' +
+        '        ng-model="step.inputs[0].value"' +
+        '        ng-options="file.id as file.name for file in step.files"' +
+        '        required>'+
+        '  <option disabled value=""> -- Choose a file </option>' +
         "</select>";
         var content = $compile(template)(scope);
         element.append(content);
@@ -87,31 +90,42 @@
     };
   });
 
-  app.directive("stepInput", function($compile) {
+  app.directive("stepInput", ['$compile', 'dialogs', function($compile, dialogs) {
     return {
       restrict: 'E',
       link: function(scope, element){
         //TODO HACER EN ANGULAR
         var model = scope.input;
         var inputValue = JSON.parse(scope.step.tool_state)[model.name].replace(/(^\"|\"$)/g,"");
-        var template = "<label>{{input.label || input.title}}</label>";
+        var template = "";
 
         try{
           if(model.type === "text"){
-            template+= '<input type="text" name="{{input.name}}" value="' + inputValue +'" required >';
+            model.value = inputValue;
+            template+=
+            '<label>{{input.label || input.title}}</label>' +
+            '<input type="text" name="{{input.name}}" ' +
+            '       ng-model="input.value"' +
+            '       required >';
           }else if(model.type === "select"){
-            template+= '<select class="form-control" name="{{input.name}}" required>';
-            for(var i in model.options){
-              template+=' <option value="' + model.options[i][1] + '" ' +
-              ((model.options[i][2] || inputValue === model.options[i][1])?"selected":"") + ' >' +
-              model.options[i][0] + '</option>' ;
-            }
-            template+= "</select>";
+            model.value = inputValue;
+            template =
+            '<label>{{input.label || input.title}}</label>' +
+            '<select class="form-control" name="{{input.name}}"' +
+            '        ng-model="input.value"' +
+            '        ng-options="option[1] as option[0] for option in input.options"' +
+            '        required>'+
+            "</select>";
           }else if(model.type === "boolean"){
-            template+= '<input type="checkbox" name="{{input.name}}" value="__CHECKED__" ' + (inputValue === "true"?"checked": "") +' required >';
+            model.value = (inputValue === "true");
+            template+=
+            '<input type="checkbox" name="{{input.name}}" ng-model="input.value">' +
+            '<label>{{input.label || input.title}}</label>';
           }else if(model.type === "data"){
-            if(inputValue.indexOf("RuntimeValue") > -1){
-              template+= '<i name="{{input.name}}" >Output dataset from step {{step.input_connections[input.name].id + 1}}</i>';
+            if(inputValue.indexOf("RuntimeValue") > -1 || inputValue.indexOf("null") > -1 ){
+              template+=
+              '<label>{{input.label || input.title}}</label>' +
+              '<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[input.name].id + 1}}</b></i>';
             }else{
               throw "Unknown value for data type: " + JSON.stringify(model);
             }
@@ -122,29 +136,34 @@
             var _key; //queries_0|input2, queries_1|input2, ...
             for(var i in inputValue){ //array of objects
               for(var j in inputValue[i]){ //{"input2" : Object, "__index__": 0}
-                _key = model.name + "_" + inputValue[i]["__index__"] + "|" + j;
-                if(scope.step.input_connections[_key] !== undefined){
-                  template+=
-                  '<div class="inputRepeatItem">'+
-                  '  <label>{{input.title}}' + (i+1) + "</label>" +
-                  '  <i name="{{input.name}}" >Output dataset from step ' + (scope.step.input_connections[_key].id + 1) + '</i>' +
-                  '</div>'
-                  ;
-                }
+              _key = model.name + "_" + inputValue[i]["__index__"] + "|" + j;
+              if(scope.step.input_connections[_key] !== undefined){
+                template+=
+                '<div class="inputRepeatItem">'+
+                '  <label>{{input.title}}' + (i+1) + "</label>" +
+                '  <i name="{{input.name}}" >Output dataset from step ' + (scope.step.input_connections[_key].id + 1) + '</i>' +
+                '</div>'
+                ;
               }
             }
-          }else{
-            throw "Unknown input type: " + JSON.stringify(model);
           }
-        }catch(err) {
-            debugger
-            console.error(err);
-            template = '<b style="color:red;">Unknown input</b>';
+        }else{
+          throw "Unknown input type: " + JSON.stringify(model);
         }
+      }catch(err) {
+        dialogs.showErrorDialog("asd");
 
-        var content = $compile(template)(scope);
-        element.append(content);
+        // Show error message
+        // Collapse the tool
+        scope.loadingComplete = false;
+        scope.collapsed = true;
+        // Remove extra information from step
+        delete scope.step.extra;
       }
-    };
-  });
+
+      var content = $compile(template)(scope);
+      element.append(content);
+    }
+  };
+}]);
 })();

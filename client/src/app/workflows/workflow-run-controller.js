@@ -79,6 +79,47 @@
         this.backButtonHandler = function(){
           history.back();
         }
+
+
+        this.executeWorkflowHandler = function(event){
+          debugger;
+          var requestData = {
+            "workflow_id": me.workflow.id,
+            "history": "hist_id=7b668ee810f6cf46", //TODO
+            "ds_map": {},
+            "parameters": {}
+          };
+
+          var steps = me.workflow.steps;
+          for(var i in steps){
+            if(steps[i].type === "data_input"){
+              requestData.ds_map[steps[i].id] = {"src" : "hda", "id" : steps[i].inputs[0].value};
+            }else if(steps[i].extra !== undefined){ //the step was uncollapsed
+              var params = requestData.parameters[steps[i].id] = {};
+              var inputs = steps[i].extra.inputs
+              for(var j in inputs){
+                params[inputs[j].name] = inputs[j].value;
+              }
+            }
+          }
+
+          $http({
+            method: 'POST',
+            url: GALAXY_API_WORKFLOWS + me.workflow.id + "/invocations",
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+            },
+            data: requestData
+          }).then(
+            function successCallback(response){
+              debugger;
+            },
+            function errorCallback(response){
+              //TODO: SHOW ERROR MESSAGE
+              debugger;
+            }
+          );
+        };
       }
     ]);
 
@@ -149,7 +190,7 @@
                     var files = [];
 
                     for(var i in response.data){
-                      if(response.data[i].history_content_type === "dataset"){
+                      if(response.data[i].history_content_type === "dataset" && !response.data[i].deleted){
                         files.push(response.data[i]);
                       }
                     }
@@ -166,8 +207,4 @@
             };
           }
         ]);
-
-        this.executeWorkflowHandler = function(a){
-          debugger;
-        }
       })();

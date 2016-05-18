@@ -1,6 +1,8 @@
 // loginModal.js
 (function(){
-    var app = angular.module('user-directives', ['ui.bootstrap',]);
+    var app = angular.module('user-directives', [
+      'ui.bootstrap'
+    ]);
 
     app.service('loginModal', function ($uibModal, $rootScope) {
 

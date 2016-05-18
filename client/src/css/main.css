@@ -139,8 +139,11 @@ step-input {
     display: block;
     margin-top: 5px;
 }
-step-input input, step-input input[type=checkbox], step-input i {
+step-input input, step-input i {
     margin-left: 10px;
+}
+step-input input[type=checkbox] {
+    margin-right: 10px;
 }
 step-input i {
   display: block;
