@@ -36,7 +36,7 @@
     </div>
   </form>
 
-  <div class="container workflow-card-container" id="workflowContainer">
+  <div class="row workflow-card-container" id="workflowContainer">
     <workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy"></workflow-card>
   </div>
 </div>

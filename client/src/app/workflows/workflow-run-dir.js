@@ -37,7 +37,7 @@
     };
   });
 
-  app.directive("workflowStep", ['$timeout', 'dialogs', function($timeout, dialogs) {
+  app.directive("workflowStep", ['$timeout', '$dialogs', function($timeout, dialogs) {
     return {
       restrict: 'E',
       //templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG
@@ -90,7 +90,7 @@
     };
   });
 
-  app.directive("stepInput", ['$compile', 'dialogs', function($compile, dialogs) {
+  app.directive("stepInput", ['$compile', '$dialogs', function($compile, $dialogs) {
     return {
       restrict: 'E',
       link: function(scope, element){
@@ -127,7 +127,7 @@
               '<label>{{input.label || input.title}}</label>' +
               '<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[input.name].id + 1}}</b></i>';
             }else{
-              throw "Unknown value for data type: " + JSON.stringify(model);
+              throw 'Unknown value for data type "' + inputValue + '" : ' + JSON.stringify(model);
             }
           }else if(model.type === "repeat"){
             inputValue = JSON.parse(inputValue);
@@ -148,22 +148,32 @@
             }
           }
         }else{
-          throw "Unknown input type: " + JSON.stringify(model);
+          throw 'Unknown input type ' + model.type + ' : ' + JSON.stringify(model);
         }
       }catch(err) {
-        dialogs.showErrorDialog("asd");
+        debugger;
+        template = '<b color="red">Unknown input</b>';
+        $dialogs.showErrorDialog(
+          "Error while creating the form: "  + err.split(":")[0],
+          {
+            title        : "Error while creating the form",
+            reportButton : true,
+            logMessage   : err,
+            callback     : function(reason){
+              // Show error message
+              debugger;
+              // Collapse the tool
+              scope.loadingComplete = false;
+              scope.collapsed = true;
+              // Remove extra information from step
+              delete scope.step.extra;
+            }
+          });
+        }
 
-        // Show error message
-        // Collapse the tool
-        scope.loadingComplete = false;
-        scope.collapsed = true;
-        // Remove extra information from step
-        delete scope.step.extra;
+        var content = $compile(template)(scope);
+        element.append(content);
       }
-
-      var content = $compile(template)(scope);
-      element.append(content);
-    }
-  };
-}]);
+    };
+  }]);
 })();

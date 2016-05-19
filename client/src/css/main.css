@@ -9,35 +9,113 @@ body{
 }
 
 .btn {
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 header {
-    margin-top: 15px;
-    margin-bottom: 10px;
-    background-color: #2B3143;
-    height: 90px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  background-color: #2B3143;
+  height: 90px;
 }
 header .navbar-default{
-    background: #2B3143;
+  background: #2B3143;
 }
 
 
 header .navbar-default .navbar-nav>li>a {
-    line-height: 70px;
-    font-size: 35px;
-    color: #AFAFAF;
+  line-height: 70px;
+  font-size: 35px;
+  color: #AFAFAF;
 }
 
 
 #wrapper {
-    padding-left: 0;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+  padding-left: 0;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+div#page-content-wrapper {
+  max-width: 1024px;
+  margin: auto;
+  display: block;
 }
 
+/******************************************************************************************/
+/* STYLES FOR DIAGLOS                                                             */
+/******************************************************************************************/
+.modal-error .modal-header {
+  background: #D2322D;
+  color: #FFFFFF;
+}
+.modal-error .modal-body {
+  color: #A9211E;
+}
+.modal-info .modal-header {
+  background: #428BCA;
+  color: #FFFFFF;
+}
+.modal-success .modal-header {
+  background: #5CB85C;
+  color: #FFFFFF;
+}
+.modal-warning .modal-header {
+  background: #F0AD4E;
+  color: #FFFFFF;
+}
+.modal-confirmation .modal-header {
+  background: #286090;
+  color: #FFFFFF;
+}
+
+/******************************************************************************************/
+/* STYLES FOR progress INDICATOR                                                          */
+/******************************************************************************************/
+.progressIndicator {
+  text-align: center;
+  max-width: 700px;
+  margin: auto;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.progressIndicator .background-bar {
+  position: absolute;
+  width: 100%;
+  background: #D4D4D4;
+  height: 5px;
+  max-width: 700px;
+  margin-top: 33px;
+}
+.progressIndicator .progressStep {
+  color: #D4D4D4;
+  font-weight: bold;
+  font-size: 15px;
+}
+.progressIndicator .progressStep.currentStep {
+  color: #009CDE;
+}
+.progressIndicator .stepNumber {
+  font-size: 40px;
+  border: 3px solid #D4D4D4;
+  background-color: #ffffff;
+  padding: 2px 20px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+.progressIndicator .currentStep .stepNumber {
+  border: 3px solid #009CDE;
+}
+.progressStepContainer {
+    margin-bottom: 75px;
+}
+.progressNavigator{
+  padding: 10px 0px;
+}
+.progressNavigator > div.container{
+  max-width: 900px;
+}
 /******************************************************************************************/
 /* STYLES FOR WORKFLOW PANELS                                                             */
 /******************************************************************************************/
@@ -46,31 +124,31 @@ header .navbar-default .navbar-nav>li>a {
 /*STYLES FOR WORKFLOW LIST                              */
 /*------------------------------------------------------*/
 .workflow-toolbar{
-    margin: 60px 0px 0px 0px;
-    background-color: #FAFAFA;
-    max-width: none;
-    height: 100px;
+  margin: 60px 0px 0px 0px;
+  background-color: #FAFAFA;
+  max-width: none;
+  height: 100px;
 }
 i.tooltip-tag-cat {
-    font-style: normal;
-    font-size: 12px;
-    margin: 3px 2px;
-    display: inline-block;
-    text-align: center;
+  font-style: normal;
+  font-size: 12px;
+  margin: 3px 2px;
+  display: inline-block;
+  text-align: center;
 }
 span.tooltip-tag-cat-times {
-    display: inline-block;
-    border: 1px solid #333;
-    padding: 0px 6px;
-    margin-top: 10px;
-    border-radius: 5px;
+  display: inline-block;
+  border: 1px solid #333;
+  padding: 0px 6px;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 span.tooltip-tag-cat-name {
-    padding: 0px 4px;
+  padding: 0px 4px;
 }
 .currentSearchTagContainer span.tooltip-tag-cat-name {
-    border: 1px solid #333;
-    border-radius: 4px;
+  border: 1px solid #333;
+  border-radius: 4px;
 }
 .workflow-card-container {
   background: #D9DBDA;
@@ -83,25 +161,25 @@ span.tooltip-tag-cat-name {
   margin: 5px;
 }
 .workflow-card-body {
-    padding: 10px 5px;
-    background: #ffffff;
-    border: 1px solid #BFBFBF;
-    border-radius: 4px 4px 0px 0px;
-    min-height: 175px;
-    max-height: 175px;
-    overflow: hidden;
+  padding: 10px 5px;
+  background: #ffffff;
+  border: 1px solid #BFBFBF;
+  border-radius: 4px 4px 0px 0px;
+  min-height: 175px;
+  max-height: 175px;
+  overflow: hidden;
 }
 .workflow-card h2.workflow-card-name {
-    font-size: 18px;
-    color: #333;
-    max-height: 60px;
-    overflow: hidden;
+  font-size: 18px;
+  color: #333;
+  max-height: 60px;
+  overflow: hidden;
 }
 .workflow-card div.workflow-card-description {
-    font-size: 12px;
-    color: #d3d3d3;
-    max-height: 80px;
-    overflow: hidden;
+  font-size: 12px;
+  color: #d3d3d3;
+  max-height: 80px;
+  overflow: hidden;
 }
 .workflow-card-author {
   background: #F7F7F7;
@@ -111,47 +189,47 @@ span.tooltip-tag-cat-name {
   padding: 10px;
 }
 .workflow-card-description {
-    font-style: italic;
-    color: #8A8A8A;
+  font-style: italic;
+  color: #8A8A8A;
 }
 .workflow-card-tags-list {
-    padding: 10px 0px;
-    max-height: 35px;
-    overflow: hidden;
+  padding: 10px 0px;
+  max-height: 35px;
+  overflow: hidden;
 }
 i.workflow-card-tag {
-    font-style: normal;
-    display: inline-block;
-    padding: 3px;
-    border: 1px solid #333;
-    border-radius: 5px;
-    font-size: 10px;
-    margin: 0px 2px
+  font-style: normal;
+  display: inline-block;
+  padding: 3px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  font-size: 10px;
+  margin: 0px 2px
 }
 .workflow-card a.runWorkflowButton {
-    width: 100%;
-    border-radius: 0px 0px 4px 4px;
+  width: 100%;
+  border-radius: 0px 0px 4px 4px;
 }
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/
 step-input {
-    display: block;
-    margin-top: 5px;
+  display: block;
+  margin-top: 5px;
 }
 step-input input, step-input i {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 step-input input[type=checkbox] {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 step-input i {
   display: block;
 }
 
 step-input .inputRepeatItem {
-    font-size: 12px;
-    margin: 5px 0px;
-    border-left: 3px solid #CEA81D;
-    padding-left: 10px;
+  font-size: 12px;
+  margin: 5px 0px;
+  border-left: 3px solid #CEA81D;
+  padding-left: 10px;
 }

@@ -28,6 +28,8 @@
     'workflows.directives.workflow-run',
   ]);
 
+
+
   /***************************************************************************/
   /*WORKFLOW CONTROLLER*******************************************************/
   /***************************************************************************/
@@ -61,9 +63,12 @@
           url: GALAXY_API_WORKFLOWS + $stateParams.id + "/download"
         }).then(
           function successCallback(response){
+            debugger;
+
             for (var attrname in response.data) {
               me.workflow[attrname] = response.data[attrname];
             }
+            me.workflow.steps = Object.values(me.workflow.steps);
 
             //UPDATE VIEW
             me.loadingComplete = true;
@@ -76,10 +81,20 @@
         //--------------------------------------------------------------------
         // EVENT HANDLERS
         //--------------------------------------------------------------------
+
+        this.nextStepButtonHandler = function(){
+          debugger;
+          me.workflowRunForm.$setSubmitted();
+          var valid = me.workflowRunForm.$valid;
+          console.log(valid);
+          if(valid){
+            // me.currentStep = me.currentStep + 1;
+          }
+        };
+
         this.backButtonHandler = function(){
           history.back();
-        }
-
+        };
 
         this.executeWorkflowHandler = function(event){
           debugger;

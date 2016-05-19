@@ -1,28 +1,58 @@
-<div class="container" ng-controller="WorkflowRunController as controller">
-  <form name="executeWorkflowForm" ng-submit="controller.executeWorkflowHandler()">
-    <div class="navbar-form navbar-default navbar-fixed-top" role="search" style="margin-top: 85px;">
-      <div class="row" style="padding: 10px 5px;" >
-        <a class="btn btn-danger" ng-click="controller.backButtonHandler()">
-          <i class="fa fa-chevron-circle-left fa-fw"></i> Cancel and go back
-        </a>
+<div class="" ng-init="currentStep = 1"  ng-controller="WorkflowRunController as controller">
+  <div>
+    <h2>{{workflow.name}}</h2>
+    <p><b>Author: </b>{{workflow.owner}}</p>
+    <p><b>Description: </b>{{workflow.annotation}}</p>
+  </div>
+  <div class="progressIndicator row">
+    <div class="background-bar"></div>
+    <div class="progressStep col-md-3" ng-class="(currentStep == 1)?'currentStep':''">
+      <span class="stepNumber">1</span>
+      <p>Input selection</p>
+    </div>
+    <div class="progressStep col-md-3" ng-class="(currentStep == 2)?'currentStep':''">
+      <span class="stepNumber">2</span>
+      <p>Custom parameters</p>
+    </div>
+    <div class="progressStep col-md-3" ng-class="(currentStep == 3)?'currentStep':''">
+      <span class="stepNumber">3</span>
+      <p>Run workflow</p>
+    </div>
+    <div class="progressStep col-md-3" ng-class="(currentStep == 4)?'currentStep':''">
+      <span class="stepNumber">4</span>
+      <p>Results</p>
+    </div>
+  </div>
+  <form name='workflowRunForm' >
+    <h3>Steps:</h3>
+    <div class="progressStepContainer">
+      <div class="progressStep" ng-show="currentStep == 1" ng-form='step1form'>
+        <span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...</span>
+        <div ng-show="loadingComplete">
+          <workflow-step ng-repeat="step in workflow.steps | filter:{type:'data_input'}"></workflow-step>
+        </div>
+      </div>
+      <div class="progressStep" ng-show="currentStep == 2">
+        <div ng-show="loadingComplete" ng-form='step2form'>
+          <workflow-step ng-repeat="step in workflow.steps | filter:{type:'!data_input'}"></workflow-step>
+          <p class="help-block" ng-show="step2form.$invalid">Valid Email Address Required</p>
+        </div>
+      </div>
+      <div class="progressStep" ng-show="currentStep == 3">
         <button type="submit" class="btn btn-success" style="float: right; margin-right: 10px;" >
-          <i class="fa fa-bolt fa-fw"></i> Run workflow!
+          <i class="fa fa-bolt fa-fw"  ng-click="controller.executeWorkflowHandler()"></i> Run workflow!
         </button>
       </div>
     </div>
-    <div>
-      <div>
-        <h2>Running {{workflow.name}}</h2>
-        <p><b>Author: </b>{{workflow.owner}}</p>
-        <p><b>Description: </b>{{workflow.annotation}}</p>
-        <h3>Steps:</h3>
-        <span ng-hide="loadingComplete">
-          <i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...
-        </span>
-        <div ng-show="loadingComplete">
-          <workflow-step ng-repeat="step in workflow.steps"></workflow-step>
-        </div>
+    <nav class="navbar navbar-default navbar-fixed-bottom progressNavigator" >
+      <div class="container">
+        <a class="btn btn-default btn-lg navbar-left" ng-click="currentStep = currentStep-1;" ng-show="currentStep > 1">
+          <i class="fa fa-right"></i> Previous step
+        </a>
+        <a class="btn btn-info btn-lg navbar-right" ng-disabled="(!workflowRunForm.$valid)" ng-click="controller.nextStepButtonHandler()" ng-show="currentStep < 3">
+          <i class="fa fa-right"></i> Next step
+        </a>
       </div>
-    </div>
-  </div>
-</form>
+    </nav>
+  </form>
+</div>

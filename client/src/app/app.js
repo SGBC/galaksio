@@ -8,11 +8,12 @@
   GALAXY_GET_ALL_WORKFLOWS = GALAXY_API_WORKFLOWS + "?show_published=TRUE";
 
   var app = angular.module('b3galaxyApp', [
+    'common.dialogs',
     'ui.router',
     'angular-toArrayFilter',
     'user-directives',
     'workflows.controllers.workflow-list',
-    'workflows.controllers.workflow-run'
+    'workflows.controllers.workflow-run',
   ]);
 
   app.config([
@@ -45,7 +46,8 @@
       $stateProvider.state(workflowDetail);
   }]);
 
-  app.run(function ($rootScope, $state, loginModal) {
+  app.run(function ($rootScope, $state, loginModal, $dialogs) {
+    caca = $dialogs;
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
       var requireLogin = toState.data.requireLogin;
 
