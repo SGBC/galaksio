@@ -36,23 +36,23 @@
       '$http',
       'WorkflowList',
       function($scope, $http, WorkflowList){
-        var me = $scope;
+        var me = this;
 
         //This controller uses the WorkflowList, which defines a Singleton instance of
         //a list of workflows + list of tags + list of filters. Hence, the application will not
         //request the data everytime that the workflow list panel is displayed (data persistance).
-        me.workflows = WorkflowList.getWorkflows();
-        me.tags =  WorkflowList.getTags();
-        me.filters =  WorkflowList.getFilters();
+        $scope.workflows = WorkflowList.getWorkflows();
+        $scope.tags =  WorkflowList.getTags();
+        $scope.filters =  WorkflowList.getFilters();
 
-        if(me.workflows.length === 0){
+        if($scope.workflows.length === 0){
           $http({
             method: 'GET',
             url: GALAXY_GET_ALL_WORKFLOWS
           }).then(
             function successCallback(response){
-              me.workflows = WorkflowList.setWorkflows(response.data).getWorkflows();
-              me.tags =  WorkflowList.updateTags().getTags();
+              $scope.workflows = WorkflowList.setWorkflows(response.data).getWorkflows();
+              $scope.tags =  WorkflowList.updateTags().getTags();
             },
             function errorCallback(response){
               //TODO: SHOW ERROR MESSAGE
@@ -66,9 +66,9 @@
         *
         * @returns {String} error message in case of invalid form.
         */
-        me.applySearch = function() {
-            var filters = arrayUnique(me.filters.concat($scope.searchFor.split(" ")));
-            me.filters = WorkflowList.setFilters(filters).getFilters();
+        $scope.applySearch = function() {
+            var filters = arrayUnique($scope.filters.concat($scope.searchFor.split(" ")));
+            $scope.filters = WorkflowList.setFilters(filters).getFilters();
         };
         /**
         * This function defines the behaviour for the "filterWorkflows" function.
@@ -78,11 +78,11 @@
         *
         * @returns {Boolean} true if the model passes all the filters.
         */
-        me.filterWorkflows = function() {
+        $scope.filterWorkflows = function() {
           return function( item ) {
             var filterAux, item_tags;
-            for(var i in me.filters){
-              filterAux = me.filters[i].toLowerCase();
+            for(var i in $scope.filters){
+              filterAux = $scope.filters[i].toLowerCase();
               item_tags = item.tags.join("");
               if(!(
                 (item.name.toLowerCase().indexOf(filterAux)) !== -1 ||

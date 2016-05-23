@@ -37,16 +37,20 @@
     '$scope',
     '$http',
     '$stateParams',
+    '$timeout',
+    '$interval',
     'WorkflowList',
-    function($scope, $http, $stateParams, WorkflowList){
+    function($scope, $http, $stateParams, $timeout, $interval, WorkflowList){
       //--------------------------------------------------------------------
       // VARIABLE DEFINITION
       //--------------------------------------------------------------------
-      var me = $scope;
+      var me = this;
       //The corresponding view will be watching to this variavble
       //and update its content after the http response
-      me.loadingComplete = false;
-      me.workflow = null;
+      $scope.loadingComplete = false;
+      $scope.workflow = null;
+
+      me.checkWorkflowStatusInterval = null;
 
       //--------------------------------------------------------------------
       // DATA INITIALIZATION
@@ -56,22 +60,20 @@
       * TODO: SEPARATE IN GROUPS (10 WORKFLOWS ETC.)
       */
       if($stateParams.id !== undefined){
-        me.workflow = WorkflowList.getWorkflow($stateParams.id);
+        $scope.workflow = WorkflowList.getWorkflow($stateParams.id);
 
         $http({
           method: 'GET',
           url: GALAXY_API_WORKFLOWS + $stateParams.id + "/download"
         }).then(
           function successCallback(response){
-            debugger;
-
             for (var attrname in response.data) {
-              me.workflow[attrname] = response.data[attrname];
+              $scope.workflow[attrname] = response.data[attrname];
             }
-            me.workflow.steps = Object.values(me.workflow.steps);
+            $scope.workflow.steps = Object.values($scope.workflow.steps);
 
             //UPDATE VIEW
-            me.loadingComplete = true;
+            $scope.loadingComplete = true;
           },
           function errorCallback(response){
             //TODO: SHOW ERROR MESSAGE
@@ -82,30 +84,51 @@
         // EVENT HANDLERS
         //--------------------------------------------------------------------
 
-        this.nextStepButtonHandler = function(){
-          debugger;
-          me.workflowRunForm.$setSubmitted();
-          var valid = me.workflowRunForm.$valid;
-          console.log(valid);
-          if(valid){
-            // me.currentStep = me.currentStep + 1;
-          }
-        };
+        $scope.$on('$destroy', function () {
+          console.log("Removing interval");
+          $interval.cancel(me.checkWorkflowStatusInterval);
+        });
 
         this.backButtonHandler = function(){
           history.back();
         };
 
+        this.nextStepButtonHandler = function(){
+          $scope.currentStep++;
+
+          if($scope.currentStep === 3){
+            $scope.workflow.status = "ready";
+            $scope.workflow.status_text = "Ready for launch!";
+
+            //TODO: Generate the summary
+            // var steps = $scope.workflow.steps;
+            // for(var i in steps){
+            //   if(steps[i].type === "data_input"){
+            //     requestData.ds_map[steps[i].id] = {"src" : "hda", "id" : steps[i].inputs[0].value};
+            //   }else if(steps[i].extra !== undefined){ //the step was uncollapsed
+            //     var params = requestData.parameters[steps[i].id] = {};
+            //     var inputs = steps[i].extra.inputs
+            //     for(var j in inputs){
+            //       params[inputs[j].name] = inputs[j].value;
+            //     }
+            //   }
+            // }
+          }
+        }
+
         this.executeWorkflowHandler = function(event){
-          debugger;
+          $scope.currentStep++;
+          $scope.workflow.status = "sending";
+          $scope.workflow.status_text = "Sending to Galaxy...";
+
           var requestData = {
-            "workflow_id": me.workflow.id,
+            "workflow_id": $scope.workflow.id,
             "history": "hist_id=7b668ee810f6cf46", //TODO
             "ds_map": {},
             "parameters": {}
           };
 
-          var steps = me.workflow.steps;
+          var steps = $scope.workflow.steps;
           for(var i in steps){
             if(steps[i].type === "data_input"){
               requestData.ds_map[steps[i].id] = {"src" : "hda", "id" : steps[i].inputs[0].value};
@@ -118,22 +141,37 @@
             }
           }
 
-          $http({
-            method: 'POST',
-            url: GALAXY_API_WORKFLOWS + me.workflow.id + "/invocations",
-            headers: {
-              'Content-Type': 'application/json; charset=utf-8',
-            },
-            data: requestData
-          }).then(
-            function successCallback(response){
-              debugger;
-            },
-            function errorCallback(response){
-              //TODO: SHOW ERROR MESSAGE
-              debugger;
-            }
-          );
+          $timeout( function(){
+            $http({
+              method: 'POST',
+              url: GALAXY_API_WORKFLOWS + $scope.workflow.id + "/invocations",
+              headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+              },
+              data: requestData
+            }).then(
+              function successCallback(response){
+                $scope.workflow.status = "success";
+                $scope.workflow.status_text = "Success!";
+
+                $timeout( function(){
+                  $scope.workflow.status = "working";
+                  $scope.workflow.status_text = "Working...";
+
+                  me.checkWorkflowStatusInterval = $interval( function(){
+                    //TODO: CHECK WORKFLOW STATUS WHILE THIS VIEW IS SHOWN
+                    debugger;
+                  }, 1000);
+                },
+                2000);
+              },
+              function errorCallback(response){
+                $scope.workflow.status = "error";
+                $scope.workflow.status_text = "Failed.";
+              }
+            );
+          },
+          2000);
         };
       }
     ]);
@@ -150,12 +188,12 @@
         //--------------------------------------------------------------------
         // VARIABLE DEFINITION
         //--------------------------------------------------------------------
-        var me = $scope;
+        var $scope = $scope;
         //The corresponding view will be watching to this variavble
         //and update its content after the http response
-        me.loadingComplete = false;
-        me.collapsed = true;
-        // me.step = null;
+        $scope.loadingComplete = false;
+        $scope.collapsed = true;
+        // $scope.step = null;
 
         //--------------------------------------------------------------------
         // EVENT HANDLERS
@@ -174,20 +212,20 @@
         this.toogleCollapseHandler = function(event){
           //Toggle collapsed (view will automatically change due to ng-hide directive)
           //TODO: CHANGE THE ICON TO +/-
-          me.collapsed = !me.collapsed;
+          $scope.collapsed = !$scope.collapsed;
           //If the remaining data for the step was not loaded yet, send the request
-          if(!me.loadingComplete){
-            if(me.step.type !== "data_input"){
+          if(!$scope.loadingComplete){
+            if($scope.step.type !== "data_input"){
               //If the tool is not an input data tool, request the info from server
               //and store the extra info for the tool at the "extra" field
               $http({
                 method: 'GET',
-                url: GALAXY_API_TOOLS + me.step.tool_id + "/build"
+                url: GALAXY_API_TOOLS + $scope.step.tool_id + "/build"
               }).then(
                 function successCallback(response){
-                  me.step["extra"] = response.data;
+                  $scope.step["extra"] = response.data;
                   //UPDATE VIEW
-                  me.loadingComplete = true;
+                  $scope.loadingComplete = true;
                 },
                 function errorCallback(response){
                   //TODO: SHOW ERROR MESSAGE
@@ -210,9 +248,9 @@
                       }
                     }
 
-                    me.step.files = files;
+                    $scope.step.files = files;
                     //UPDATE VIEW
-                    me.loadingComplete = true;
+                    $scope.loadingComplete = true;
                   },
                   function errorCallback(response){
                     //TODO: SHOW ERROR MESSAGE

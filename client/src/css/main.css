@@ -1,7 +1,7 @@
-@font-face {
-  font-family: 'Open Sans'; /*a name to be used later*/
-  src: url('fonts/OpenSans-Light.ttf'); /*URL to font*/
-}
+/*@font-face {
+font-family: 'Open Sans';
+src: url('fonts/OpenSans-Light.ttf');
+}*/
 
 body{
   font-family: 'Open Sans', sans-serif;
@@ -83,7 +83,7 @@ div#page-content-wrapper {
   position: absolute;
   width: 100%;
   background: #D4D4D4;
-  height: 5px;
+  height: 2px;
   max-width: 700px;
   margin-top: 33px;
 }
@@ -95,26 +95,45 @@ div#page-content-wrapper {
 .progressIndicator .progressStep.currentStep {
   color: #009CDE;
 }
-.progressIndicator .stepNumber {
-  font-size: 40px;
-  border: 3px solid #D4D4D4;
-  background-color: #ffffff;
-  padding: 2px 20px;
+.progressIndicator .progressStep.doneStep {
+  color: #54BF78;
+}
+.progressIndicator .stepNumber, .progressIndicator .stepDone {
+  font-size: 35px;
+  border: 3px solid #ffffff;
+  background-color: #D4D4D4;
+  padding: 2px 17px;
   display: inline-block;
   border-radius: 50%;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  color: #ffffff;
+}
+.progressIndicator .stepDone {
+  display: none;
+  padding: 2px 10px;
+}
+.progressIndicator .doneStep .stepNumber {
+  display: none;
+}
+.progressIndicator .doneStep .stepDone {
+  display: inline-block;
+  background: #54BF78;
+  color: white;
 }
 .progressIndicator .currentStep .stepNumber {
-  border: 3px solid #009CDE;
+  background: #009CDE;
 }
 .progressStepContainer {
-    margin-bottom: 75px;
+  margin-bottom: 75px;
 }
 .progressNavigator{
   padding: 10px 0px;
 }
 .progressNavigator > div.container{
   max-width: 900px;
+}
+.progressStep .description {
+  margin-bottom: 15px;
 }
 /******************************************************************************************/
 /* STYLES FOR WORKFLOW PANELS                                                             */
@@ -213,6 +232,15 @@ i.workflow-card-tag {
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/
+select.ng-invalid-required, input.ng-invalid-required {
+  border: 1px solid #E88080;
+}
+select.ng-valid-required, input.ng-valid-required {
+  border: 1px solid #54BF78;
+}
+.invalidFormMessage{
+  color: #E88080;
+}
 step-input {
   display: block;
   margin-top: 5px;
@@ -232,4 +260,55 @@ step-input .inputRepeatItem {
   margin: 5px 0px;
   border-left: 3px solid #CEA81D;
   padding-left: 10px;
+}
+
+h1.workflow-status-title {
+  text-align: center;
+  font-size: 70px;
+  color: #5796B1;
+  text-shadow: 1px 3px 2px #D4D4D4;
+}
+
+.flip-container {
+  perspective: 1000px;
+}
+/* flip the pane when hovered */
+.flip-container.flipped .flipper {
+  transform: rotateY(180deg);
+}
+
+.flip-container, .front, .back {
+  width: 320px;
+  height: 480px;
+  margin: auto;
+  text-align: center;
+}
+
+/* flip speed goes here */
+.flipper {
+  transition: 0.5s;
+  transform-style: preserve-3d;
+
+  position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+  backface-visibility: hidden;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* front pane, placed above back */
+.front {
+  z-index: 2;
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.back {
+  transform: rotateY(180deg);
 }

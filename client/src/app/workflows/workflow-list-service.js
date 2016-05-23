@@ -25,11 +25,13 @@
 (function(){
     var app = angular.module('workflows.services.workflow-list', []);
 
-    app.factory("WorkflowList", function() {
+    app.factory("WorkflowList", ['$rootScope', function($rootScope) {
       var workflows = [];
       var tags = [];
       var filters = [];
 
+      //http://stackoverflow.com/questions/18247130/how-to-store-the-data-to-local-storage
+      
       return {
         getWorkflows: function() {
           return workflows;
@@ -78,5 +80,5 @@
           return this;
         }
       };
-    });
+    }]);
   })();

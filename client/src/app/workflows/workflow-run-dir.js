@@ -71,21 +71,23 @@
   app.directive("stepDataInput", function($compile) {
     return {
       restrict: 'E',
+      replace: true,
       link: function(scope, element){
         var model = scope.step;
 
         model.label = JSON.parse(model.tool_state).name;
 
         var template =
-        "<label>{{step.label}}</label>" +
+        '<label>{{step.label}}</label>' +
         '<select class="form-control" name="input_{{step.id}}"' +
         '        ng-model="step.inputs[0].value"' +
         '        ng-options="file.id as file.name for file in step.files"' +
         '        required>'+
         '  <option disabled value=""> -- Choose a file </option>' +
         "</select>";
-        var content = $compile(template)(scope);
-        element.append(content);
+        //Form Validation and fields added with $compile
+        //Based on http://stackoverflow.com/questions/19882506/form-validation-and-fields-added-with-compile
+        $compile($(template).appendTo(element))(scope);
       }
     };
   });
@@ -171,8 +173,7 @@
           });
         }
 
-        var content = $compile(template)(scope);
-        element.append(content);
+        $compile($(template).appendTo(element))(scope);
       }
     };
   }]);
