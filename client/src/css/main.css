@@ -2,7 +2,7 @@
 font-family: 'Open Sans';
 src: url('fonts/OpenSans-Light.ttf');
 }*/
-
+html{background-color: #F5F5F5;}
 body{
   font-family: 'Open Sans', sans-serif;
   font-weight: lighter;
@@ -13,20 +13,20 @@ body{
 }
 
 header {
-  margin-top: 15px;
   margin-bottom: 10px;
   background-color: #2B3143;
-  height: 90px;
+  height: 55px;
 }
 header .navbar-default{
   background: #2B3143;
 }
-
-
 header .navbar-default .navbar-nav>li>a {
-  line-height: 70px;
-  font-size: 35px;
+  line-height: 40px;
+  font-size: 25px;
   color: #AFAFAF;
+}
+header .navbar-default .navbar-nav>li>a:hover {
+  color: #FFFFFF;
 }
 
 
@@ -37,14 +37,166 @@ header .navbar-default .navbar-nav>li>a {
   -o-transition: all 0.5s ease;
   transition: all 0.5s ease;
 }
-div#page-content-wrapper {
-  max-width: 1024px;
-  margin: auto;
+
+#wrapper.toggled {
+  padding-left: 220px;
+}
+
+#sidebar-wrapper {
+  z-index: 1000;
+  position: fixed;
+  left: 220px;
+  width: 0;
+  height: 100%;
+  margin-left: -220px;
+  overflow-y: auto;
+  background: #344258;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  width: 220px;
+}
+
+#page-content-wrapper {
+  width: 100%;
+  position: absolute;
+  padding: 15px;
+  background-color: #F5F5F5;
+}
+
+#wrapper.toggled #page-content-wrapper {
+  position: absolute;
+  margin-right: -220px;
+}
+
+.sidebar-nav {
+  position: absolute;
+  top: 0;
+  width: 220px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-top: 50px;
+}
+
+.sidebar-nav li {
+  text-indent: 10px;
+  line-height: 40px;
+  border: 1px solid #2B3143;
+}
+
+.sidebar-nav li a {
   display: block;
+  text-decoration: none;
+  color: #FFFFFF;
+  font-weight: normal;
+  border-left: 2px solid #2B3143;
+}
+.sidebar-nav li a i.fa {margin-right: 10px;}
+
+.sidebar-nav li a:hover {
+  text-decoration: none;
+  background: #2B3143;
+  cursor: pointer;
+  border-left: 2px solid #609E6E;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+  text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+  height: 65px;
+  font-size: 18px;
+  line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+  color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+  color: #fff;
+  background: none;
+}
+
+@media(min-width:768px) {
+  #wrapper {
+    padding-left: 220px;
+  }
+
+  #wrapper.toggled {
+    padding-left: 0;
+  }
+
+  #sidebar-wrapper {
+    width: 220px;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    width: 0;
+  }
+
+  #page-content-wrapper {
+    padding: 20px;
+    position: relative;
+  }
+
+  #wrapper.toggled #page-content-wrapper {
+    position: relative;
+    margin-right: 0;
+  }
+}
+
+.topbar-nav {
+  z-index: 2000;
+  background: #FFF;
+  min-height: 45px;
+  height: 30px
+}
+.topbar-nav div.notification-area{
+  float: left;
+}
+.topbar-nav div.notification-area a{
+  display: inline-block;
+  text-align: center;
+  font-size: 20px;
+  padding: 0px 5px;
+}
+.topbar-nav div.notification-area a.brand-logo{width: 220px; background-color: #2B3143;}
+.topbar-nav div.notification-area a.brand-logo img {
+  height: 45px;
+}
+
+#page-content-wrapper .title-bar {
+  margin: 20px -35px 0 -35px;
+  padding: 0px 10px;
+  background: #E5E9EC;
+  position: relative;
+}
+#page-content-wrapper .title-bar h1 {
+  color: rgb(51, 51, 51);
+}
+
+#page-content-wrapper .top-toolbar {
+  margin: 0 -35px;
+  padding: 10px 15px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+#page-content-wrapper .panel-container {
+  padding: 20px;
+  background-color: #FFF;
+  box-shadow: 3px 3px 9px #D2D2D2;
 }
 
 /******************************************************************************************/
-/* STYLES FOR DIAGLOS                                                             */
+/* STYLES FOR DIALOGS                                                                     */
 /******************************************************************************************/
 .modal-error .modal-header {
   background: #D2322D;
@@ -135,6 +287,69 @@ div#page-content-wrapper {
 .progressStep .description {
   margin-bottom: 15px;
 }
+
+/******************************************************************************************/
+/* STYLES FOR HOME AND LOGIN FORM                                                         */
+/******************************************************************************************/
+
+/*------------------------------------------------------*/
+/*STYLES FOR sessionToolbar                             */
+/*------------------------------------------------------*/
+div.sessionToolbar {
+  float: right;
+  margin: 10px 40px;
+}
+div.sessionToolbar button, div.sessionToolbar li{
+  font-size: 10px;
+}
+
+
+/*------------------------------------------------------*/
+/*STYLES FOR LOGIN                                      */
+/*------------------------------------------------------*/
+.form-signin {
+  max-width: 420px;
+  padding: 30px 38px 66px;
+  margin: 0 auto;
+  background-color: #eee;
+  border: 3px dotted rgba(0,0,0,0.1);
+}
+
+.form-signin-heading {
+  text-align:center;
+  margin-bottom: 30px;
+}
+
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+}
+
+.form-signin input[type="text"] {
+  margin-bottom: 0px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 20px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.colorgraph {
+  height: 7px;
+  border-top: 0;
+  background: #c4e17f;
+  border-radius: 5px;
+  background-image: -webkit-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+  background-image: -moz-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+  background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+  background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+}
+
 /******************************************************************************************/
 /* STYLES FOR WORKFLOW PANELS                                                             */
 /******************************************************************************************/
@@ -169,21 +384,24 @@ span.tooltip-tag-cat-name {
   border: 1px solid #333;
   border-radius: 4px;
 }
-.workflow-card-container {
-  background: #D9DBDA;
-  max-width: none;
+.workflow-card-container, .histories-container {
+  max-width: 1400px;
   padding: 10px 30px;
+  margin: auto;
   margin-top: 40px;
 }
 .workflow-card {
   min-height: 180px;
-  margin: 5px;
+  margin: 12px;
+  max-width: 380px;
+  display: inline-block;
+  min-width: 380px;
+  box-shadow: 0 5px 12px rgb(202, 202, 202),0 5px 10px rgb(253, 253, 253);
 }
 .workflow-card-body {
   padding: 10px 5px;
   background: #ffffff;
   border: 1px solid #BFBFBF;
-  border-radius: 4px 4px 0px 0px;
   min-height: 175px;
   max-height: 175px;
   overflow: hidden;
@@ -227,7 +445,7 @@ i.workflow-card-tag {
 }
 .workflow-card a.runWorkflowButton {
   width: 100%;
-  border-radius: 0px 0px 4px 4px;
+  border-radius: 0px;
 }
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
@@ -311,4 +529,17 @@ h1.workflow-status-title {
 /* back, initially hidden pane */
 .back {
   transform: rotateY(180deg);
+}
+
+/*------------------------------------------------------*/
+/*STYLES FOR HISTORIES LIST                             */
+/*------------------------------------------------------*/
+table.historyListTable > tbody > tr > td{line-height: 40px !important;}
+table.historyListTable > tbody > tr > td:first-child{text-align: right;}
+table.historyListTable > tbody > tr.current{font-weight: bold;color: #337ab7;}
+table.historyListTable > thead > tr > th, .table.historyListTable > tbody > tr > td {text-align: center;}
+table.historyListTable tr:hover {
+  background: #F2FCFF;
+  color: #668B9C;
+  cursor: pointer;
 }

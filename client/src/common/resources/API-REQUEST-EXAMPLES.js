@@ -15,13 +15,13 @@ data = JSON.stringify({
 
 $.ajax({
   type: "POST", contentType: 'application/json; charset=utf-8',
-  url : "http://192.168.0.99/galaxydev/api/workflows/b472e2eb553fa0d1/invocations",
+  url : "http://192.168.0.99/galaxy/api/workflows/b472e2eb553fa0d1/invocations",
   data:data
 });
 
 //GET HISTORY CONTENT
-http://192.168.0.99/galaxydev/api/histories/7b668ee810f6cf46/contents
+http://192.168.0.99/galaxy/api/histories/7b668ee810f6cf46/contents
 
 //GET WORKFLOW COTENTS
-http://192.168.0.99/galaxydev/api/workflows/b472e2eb553fa0d1/download
-http://192.168.0.99/galaxydev/api/workflows/b472e2eb553fa0d1/invocations
+http://192.168.0.99/galaxy/api/workflows/b472e2eb553fa0d1/download
+http://192.168.0.99/galaxy/api/workflows/b472e2eb553fa0d1/invocations

@@ -1,0 +1,67 @@
+<div ng-controller="HistoryListController as controller">
+  <nav class="navbar navbar-default navbar-top title-bar">
+    <h1>Histories <small>Selection</small></h1>
+  </nav>
+  <div class="histories-container">
+    <div class="col-sm-6">
+      <div class="panel panel-container">
+        <div><i class="fa fa-info"></i> Click on one history name to get more details.</div>
+        <table class="table historyListTable">
+          <thead>
+            <tr style="text-align:center;">
+              <th>History name</th>
+              <th>Creation date</th>
+              <th>Last updated</th>
+              <th>Current</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="history in histories" ng-click="controller.setDisplayedHistory(history)" ng-class="(history === currentHistory)?'current':''">
+              <td>{{history.name}}</td>
+              <td>
+                <i class="fa fa-spinner fa-pulse fa-fw" ng-if="history.create_time === undefined"></i>
+                <span ng-if="history.create_time !== undefined">{{history.create_time | date:'dd/MM/yyyy HH:mm'}}</span>
+              </td>
+              <td>
+                <i class="fa fa-spinner fa-pulse fa-fw" ng-if="history.update_time === undefined"></i>
+                <span ng-if="history.update_time !== undefined">{{history.update_time | date:'dd/MM/yyyy HH:mm'}}</span>
+              </td>
+              <td>
+                <span class="fa-stack fa-lg" ng-if="history === currentHistory">
+                  <i class="fa fa-square-o fa-stack-2x"></i>
+                  <i class="fa fa-check fa-stack-1x"></i>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-sm-6" ng-show="displayedHistory !== undefined">
+      <div class="panel panel-container">
+        <p><b>History name: </b>{{displayedHistory.name}}</p>
+        <button class="btn btn-success btn-sm navbar-right" ng-hide="displayedHistory === currentHistory" ng-click="controller.setCurrentHistory(displayedHistory)">
+          <i class="fa fa-bolt fa-fw" ></i> Switch to this history
+        </button>
+        <table class="table">
+          <thead>
+            <tr style="text-align:center;">
+              <th>File name</th>
+              <th>Extension</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-if="displayedHistory.content === undefined">
+              <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
+              <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
+            </tr>
+            <tr ng-repeat="content in displayedHistory.content">
+              <td>{{content.name}}</td>
+              <td>{{content.extension}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

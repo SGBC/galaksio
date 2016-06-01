@@ -1,53 +1,63 @@
 <!DOCTYPE html>
 <html ng-app="b3galaxyApp">
-  <head>
-    <title>B3Galaxy v0.1</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
-    <link href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="css/font-awesome.min.css"> -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/bootstrap-dialogs.min.css">
+<head>
+  <title>B3Galaxy v0.1</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
+  <link href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css" rel="stylesheet">
+  <!-- <link rel="stylesheet" href="css/font-awesome.min.css"> -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/bootstrap-dialogs.min.css">
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-    <!-- <script type="text/javascript" src="lib/angular.min.js"></script> -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.min.js"></script>
-    <!-- <script type="text/javascript" src="lib/angular-ui-router.min.js"></script> -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-    <script type="text/javascript" src="lib/ui-bootstrap-tpls-1.3.2.min.js"></script>
-  </head>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <!-- <script type="text/javascript" src="lib/angular.min.js"></script> -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.min.js"></script>
+  <!-- <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-cookies.js"></script> -->
+  <script type="text/javascript" src="lib/js.cookie.js"></script>
+  <!-- <script type="text/javascript" src="lib/angular-ui-router.min.js"></script> -->
+  <script type="text/javascript" src="lib/ui-bootstrap-tpls-1.3.2.min.js"></script>
+</head>
 
-  <body>
-    <div id="wrapper">
-      <header>
-        <nav class="navbar navbar-default navbar-fixed-top" ng-controller="MainController as controller">
-          <div class="container-fluid">
-            <ul class="nav navbar-nav">
-                <li><a href="#"><img src="css/galaxy_logo.png" width="250" style="float: left;"></a></li>
-                <li ng-repeat="page in content"> <a ng-click="setPage(page)">{{page}}</a></li>
-            </ul>
-          </div>
-        </nav>
-      </header>
-        <div id="page-content-wrapper"> <!-- /#page-content-wrapper -->
-            <div class="container-fluid">
-              <div ui-view></div>
-            </div>
-        </div>
-    </div><!-- /#wrapper -->
-  </body>
-
-  <script type="text/javascript" src="app/app.js"></script>
-  <script type="text/javascript" src="app/users/users.js"></script>
-  <script type="text/javascript" src="app/workflows/workflow-list-service.js"></script>
-  <script type="text/javascript" src="app/workflows/workflow-list-controller.js"></script>
-  <script type="text/javascript" src="app/workflows/workflow-list-dir.js"></script>
-  <script type="text/javascript" src="app/workflows/workflow-card-dir.js"></script>
-  <script type="text/javascript" src="app/workflows/workflow-run-service.js"></script>
-  <script type="text/javascript" src="app/workflows/workflow-run-controller.js"></script>
-  <script type="text/javascript" src="app/workflows/workflow-run-dir.js"></script>
-  <script type="text/javascript" src="common/services/toArrayFilter.js"></script>
-  <script type="text/javascript" src="common/resources/common.js"></script>
-  <script type="text/javascript" src="common/resources/dialogs.js"></script>
+<body ng-controller="MainController as controller">
+  <div id="wrapper">
+    <nav class="navbar navbar-default navbar-fixed-top topbar-nav">
+      <div class="notification-area">
+        <a href="#" class="brand-logo"><img src="css/galaxy_logo.png"></a>
+        <a href="javascript:void(0);" ng-click="controller.toogleMenuCollapseHandler()"><i class="fa fa-bars" aria-hidden="true"></i></a>
+      </div>
+      <session-toolbar></session-toolbar>
+    </nav>
+    <div id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <li ng-repeat="page in controller.pages">
+          <a ng-click="controller.setPage(page.name)"><i class="fa" ng-class="'fa-' + page.icon" aria-hidden="true"></i>{{page.title}}</a>
+        </li>
+      </ul>
+    </div>
+    <div id="page-content-wrapper" >
+      <div class="container-fluid">
+        <div ui-view></div>
+      </div>
+    </div>
+  </div><!-- /#wrapper -->
+</body>
+<script type="text/javascript" src="app/app.js"></script>
+<script type="text/javascript" src="app/users/user-session-controller.js"></script>
+<script type="text/javascript" src="app/users/user-session-dir.js"></script>
+<script type="text/javascript" src="app/workflows/workflow-list-service.js"></script>
+<script type="text/javascript" src="app/workflows/workflow-list-controller.js"></script>
+<script type="text/javascript" src="app/workflows/workflow-list-dir.js"></script>
+<script type="text/javascript" src="app/workflows/workflow-card-dir.js"></script>
+<script type="text/javascript" src="app/workflows/workflow-run-service.js"></script>
+<script type="text/javascript" src="app/workflows/workflow-run-controller.js"></script>
+<script type="text/javascript" src="app/workflows/workflow-run-dir.js"></script>
+<script type="text/javascript" src="app/histories/history-list-service.js"></script>
+<script type="text/javascript" src="app/histories/history-list-controller.js"></script>
+<script type="text/javascript" src="app/histories/history-list-dir.js"></script>
+<script type="text/javascript" src="common/services/toArrayFilter.js"></script>
+<script type="text/javascript" src="common/resources/common.js"></script>
+<script type="text/javascript" src="common/resources/dialogs.js"></script>
 </html>

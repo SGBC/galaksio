@@ -1,21 +1,54 @@
 (function() {
 
-  SERVER_URL = "/";
-  GALAXY_SERVER_URL        = "/galaxydev/api/";
-  GALAXY_API_WORKFLOWS     = GALAXY_SERVER_URL + "workflows/";
-  GALAXY_API_TOOLS         = GALAXY_SERVER_URL + "tools/"
-  GALAXY_API_HISTORIES     = GALAXY_SERVER_URL + "histories/"
-  GALAXY_GET_ALL_WORKFLOWS = GALAXY_API_WORKFLOWS + "?show_published=TRUE";
+  GALAXY_SERVER_URL= "/galaxy/api/";
+  getRequestPath = function(service, extra){
+    extra = (extra || "");
+    switch (service) {
+      case "user-sign-in":
+      return GALAXY_SERVER_URL + "authenticate/baseauth";
+      case "workflow-list":
+      return GALAXY_SERVER_URL + "workflows/";
+      case "workflow-info":
+      return GALAXY_SERVER_URL + "workflows/"+ extra + "/download";
+      case "workflow-run":
+      return GALAXY_SERVER_URL + "workflows/"+ extra + "/invocations";
+      case "tools-info":
+      return GALAXY_SERVER_URL + "tools/" + extra + "/build";
+      case "datasets-list":
+      return GALAXY_SERVER_URL + "histories/" + extra + "/contents";
+      case "history-list":
+      return GALAXY_SERVER_URL + "histories/" + extra;
+      default:
+      return "";
+    }
+  };
+
+  getHttpRequestConfig = function(method, service, options){
+    options = (options || {});
+    options.params = (options.params || {});
+    if(Cookies.get("galaxysession")){
+      options.params = angular.merge(options.params, {"key" : window.atob(Cookies.get("galaxysession"))});
+    }
+    return {
+      method: method,
+      url: getRequestPath(service, options.extra),
+      params: options.params,
+      headers: options.headers,
+      data: options.data
+    };
+  }
 
   var app = angular.module('b3galaxyApp', [
     'common.dialogs',
     'ui.router',
     'angular-toArrayFilter',
-    'user-directives',
+    'users.directives.user-session',
     'workflows.controllers.workflow-list',
     'workflows.controllers.workflow-run',
+    'histories.controllers.history-list'
   ]);
 
+  //DEFINE THE ENTRIES FOR THE WEB APP
   app.config([
     '$stateProvider',
     '$urlRouterProvider',
@@ -23,54 +56,80 @@
       // For any unmatched url, redirect to /login
       $urlRouterProvider.otherwise("/");
 
-      var home = {
-          name: 'home',
-          url: '/',
-          templateUrl: "app/home/home.tpl.html",
-          data: {requireLogin: false}
+      var signin = {
+        name: 'signin',
+        url: '/signin',
+        templateUrl: "app/users/user-sign-in.tpl.html",
+        data: {requireLogin: false}
+      },
+      home = {
+        name: 'home',
+        url: '/',
+        templateUrl: "app/home/home.tpl.html",
+        data: {requireLogin: true}
       },
       workflows = {
-          name: 'workflows',
-          url: '/workflows',
-          templateUrl: "app/workflows/workflow-list.tpl.html",
-          data: {requireLogin: false}
+        name: 'workflows',
+        url: '/workflows',
+        templateUrl: "app/workflows/workflow-list.tpl.html",
+        data: {requireLogin: true}
       },
       workflowDetail = {
-          name: 'workflowDetail',
-          url: '/workflows/:id',
-          templateUrl: "app/workflows/workflow-run.tpl.html",
-          data: {requireLogin: false}
+        name: 'workflowDetail',
+        url: '/workflows/:id',
+        templateUrl: "app/workflows/workflow-run.tpl.html",
+        data: {requireLogin: true}
+      },
+      histories = {
+        name: 'histories',
+        url: '/histories',
+        templateUrl: "app/histories/history-list.tpl.html",
+        data: {requireLogin: true}
       };
+      $stateProvider.state(signin);
       $stateProvider.state(home);
       $stateProvider.state(workflows);
       $stateProvider.state(workflowDetail);
-  }]);
+      $stateProvider.state(histories);
+    }]);
 
-  app.run(function ($rootScope, $state, loginModal, $dialogs) {
-    caca = $dialogs;
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-      var requireLogin = toState.data.requireLogin;
+    app.controller('MainController', function ($rootScope, $scope, $state) {
+      var me = this;
 
-      if (requireLogin && typeof $rootScope.currentUser === 'undefined') {
-        event.preventDefault();
+      this.pages = [
+        {name: 'home', title: 'Home', icon : 'home'},
+        {name: 'workflows', title: 'Workflows', icon : 'share-alt'},
+        {name: 'histories', title: 'Histories', icon : 'history'},
+      ];
 
-        loginModal()
-          .then(function () {
-            return $state.go(toState.name, toParams);
-          })
-          .catch(function () {
-            return $state.go('home');
-          });
+      $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+        var requireLogin = toState.data.requireLogin;
+
+        var galaxyuser = Cookies.get("galaxyuser");
+        var galaxysession = Cookies.get("galaxysession");
+
+        //Check if the user is logged in, redirect to signin panel
+        if (requireLogin && (galaxyuser === undefined || galaxysession === undefined)) {
+          event.preventDefault();
+          Cookies.remove("galaxysession");
+          $state.go('signin');
+        }
+      });
+
+      this.setPage = function (page) {
+        $state.transitionTo(page);
+      };
+
+      this.getPageTitle  = function(page){
+        return
+      };
+
+      this.setCurrentPageTitle = function(page){
+        $scope.currentPageTitle = page;
+      };
+
+      this.toogleMenuCollapseHandler = function(){
+        $("#wrapper").toggleClass("toggled")
       }
     });
-
-  });
-
-  app.controller('MainController', function ($scope, $state) {
-    $scope.content = ['workflows'];
-    $scope.setPage = function (page) {
-        $state.transitionTo(page);
-    };
-  });
-
-})();
+  })();

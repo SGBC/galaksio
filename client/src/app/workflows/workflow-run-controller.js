@@ -28,8 +28,6 @@
     'workflows.directives.workflow-run',
   ]);
 
-
-
   /***************************************************************************/
   /*WORKFLOW CONTROLLER*******************************************************/
   /***************************************************************************/
@@ -62,10 +60,7 @@
       if($stateParams.id !== undefined){
         $scope.workflow = WorkflowList.getWorkflow($stateParams.id);
 
-        $http({
-          method: 'GET',
-          url: GALAXY_API_WORKFLOWS + $stateParams.id + "/download"
-        }).then(
+        $http(getHttpRequestConfig("GET","workflow-info", {extra: $stateParams.id})).then(
           function successCallback(response){
             for (var attrname in response.data) {
               $scope.workflow[attrname] = response.data[attrname];
@@ -100,19 +95,27 @@
             $scope.workflow.status = "ready";
             $scope.workflow.status_text = "Ready for launch!";
 
-            //TODO: Generate the summary
-            // var steps = $scope.workflow.steps;
-            // for(var i in steps){
-            //   if(steps[i].type === "data_input"){
-            //     requestData.ds_map[steps[i].id] = {"src" : "hda", "id" : steps[i].inputs[0].value};
-            //   }else if(steps[i].extra !== undefined){ //the step was uncollapsed
-            //     var params = requestData.parameters[steps[i].id] = {};
-            //     var inputs = steps[i].extra.inputs
-            //     for(var j in inputs){
-            //       params[inputs[j].name] = inputs[j].value;
-            //     }
-            //   }
-            // }
+            //Generate the summary
+            var html = "";
+            var steps = $scope.workflow.steps;
+            for(var i in steps){
+              debugger;
+              if(steps[i].type === "data_input"){
+                html +=
+                ' <b>' + steps[i].name + (steps[i].id+1) + ':</b>' +
+                '<ul>'+
+                ' <li>' + steps[i].name + '</li>'+
+                ' <li>' + steps[i].inputs[0].name + '<li>'+
+                '</ul>'
+              }else if(steps[i].extra !== undefined){ //the step was uncollapsed
+                var params = requestData.parameters[steps[i].id] = {};
+                var inputs = steps[i].extra.inputs
+                for(var j in inputs){
+                  debugger;
+                }
+              }
+            }
+            $('#workflow-summary').html(html);
           }
         }
 
@@ -123,7 +126,7 @@
 
           var requestData = {
             "workflow_id": $scope.workflow.id,
-            "history": "hist_id=7b668ee810f6cf46", //TODO
+            "history": "hist_id=" + Cookies.get("current-history"),
             "ds_map": {},
             "parameters": {}
           };
@@ -142,14 +145,11 @@
           }
 
           $timeout( function(){
-            $http({
-              method: 'POST',
-              url: GALAXY_API_WORKFLOWS + $scope.workflow.id + "/invocations",
-              headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-              },
+            $http(getHttpRequestConfig("POST", "workflow-run", {
+              extra: $scope.workflow.id,
+              headers: {'Content-Type': 'application/json; charset=utf-8'},
               data: requestData
-            }).then(
+            })).then(
               function successCallback(response){
                 $scope.workflow.status = "success";
                 $scope.workflow.status_text = "Success!";
@@ -218,10 +218,7 @@
             if($scope.step.type !== "data_input"){
               //If the tool is not an input data tool, request the info from server
               //and store the extra info for the tool at the "extra" field
-              $http({
-                method: 'GET',
-                url: GALAXY_API_TOOLS + $scope.step.tool_id + "/build"
-              }).then(
+              $http(getHttpRequestConfig("GET", "tools-info", {extra: $scope.step.tool_id})).then(
                 function successCallback(response){
                   $scope.step["extra"] = response.data;
                   //UPDATE VIEW
@@ -235,10 +232,7 @@
                 //available datasets for current history and display as a selector
                 //TODO: GET THE CURRENT history IDENTIFIER
                 //TODO: GET THE FILES ONLY IF NOT LOADED PREVIOUSLY (AUTO REMOVE AFTER N MINUTES)
-                $http({
-                  method: 'GET',
-                  url: GALAXY_API_HISTORIES + "7b668ee810f6cf46/contents"
-                }).then(
+                $http(getHttpRequestConfig("GET", "datasets-list", {extra: Cookies.get("current-history")})).then(
                   function successCallback(response){
                     var files = [];
 

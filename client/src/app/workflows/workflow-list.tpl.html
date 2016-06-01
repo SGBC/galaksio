@@ -1,5 +1,8 @@
 <div ng-controller="WorkflowListController as controller">
-    <form class="navbar-form navbar-default  navbar-fixed-top" role="search" style="margin-top: 85px; padding: 10px 5px;">
+  <nav class="navbar navbar-default navbar-top title-bar">
+    <h1>Workflows <small>Selection</small></h1>
+  </nav>
+  <div class="navbar-form navbar-default top-toolbar" role="search">
     <div class="row">
       <div class="col-sm-2">
         <ul class="nav navbar-nav navbar-left">
@@ -34,7 +37,7 @@
         </i>
       </div>
     </div>
-  </form>
+  </div>
 
   <div class="row workflow-card-container" id="workflowContainer">
     <workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy"></workflow-card>

@@ -31,7 +31,7 @@
       var filters = [];
 
       //http://stackoverflow.com/questions/18247130/how-to-store-the-data-to-local-storage
-      
+
       return {
         getWorkflows: function() {
           return workflows;

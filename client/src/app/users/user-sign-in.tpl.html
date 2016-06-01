@@ -1,0 +1,13 @@
+<div ng-controller="UserSessionController as controller">
+  <form name="signInForm" class="form-signin" novalidate ng-submit="controller.signInButtonHandler()">
+    <h3 class="form-signin-heading">Welcome Back! Please Sign In</h3>
+    <hr class="colorgraph"><br>
+
+    <input type="text" class="form-control" ng-model="username"  placeholder="Username" required="" autofocus="" />
+    <input type="password" class="form-control" ng-model="password" placeholder="Password" required=""/>
+
+    <button type="submit" class="btn btn-success btn-lg navbar-right" ng-disabled="signInForm.$invalid">
+      <i class="fa fa-bolt fa-fw" ></i> Sign in
+    </button>
+  </form>
+</div>
