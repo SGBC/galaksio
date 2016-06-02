@@ -1,7 +1,8 @@
 <div class="workflow-card">
   <div class="workflow-card-body">
     <h2 class="workflow-card-name">{{workflow.name}}</h2>
-    <div class="workflow-card-description">{{workflow.annotation || "No description provided"}}</div>
+    <i class="fa fa-spinner fa-pulse fa-fw" ng-if="workflow.annotation === undefined"></i>
+    <div class="workflow-card-description" ng-if="workflow.annotation !== undefined">{{workflow.annotation || "No description provided"}}</div>
     <div class="workflow-card-tags-list">
       <i class="workflow-card-tag" ng-repeat="tag in workflow.tags | orderBy">{{tag}}</i>
     </div>

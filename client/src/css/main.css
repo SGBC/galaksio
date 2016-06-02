@@ -43,7 +43,7 @@ header .navbar-default .navbar-nav>li>a:hover {
 }
 
 #sidebar-wrapper {
-  z-index: 1000;
+  z-index: 1500;
   position: fixed;
   left: 220px;
   width: 0;
@@ -380,17 +380,23 @@ span.tooltip-tag-cat-times {
 span.tooltip-tag-cat-name {
   padding: 0px 4px;
 }
+span.tooltip-tag-cat-name > i{margin-right:5px; color: #C5C5C5;}
+span.tooltip-tag-cat-name > i:hover{color: #E89090; cursor: pointer;}
+
 .currentSearchTagContainer span.tooltip-tag-cat-name {
   border: 1px solid #333;
   border-radius: 4px;
 }
-.workflow-card-container, .histories-container {
+.workflow-card-container, .workflow-run-container, .histories-container {
   max-width: 1400px;
   padding: 10px 30px;
   margin: auto;
   margin-top: 40px;
 }
+.workflow-card-container{text-align: center;}
+
 .workflow-card {
+  text-align: left;
   min-height: 180px;
   margin: 12px;
   max-width: 380px;
@@ -480,7 +486,7 @@ step-input .inputRepeatItem {
   padding-left: 10px;
 }
 
-h1.workflow-status-title {
+h1.workflow-state-title {
   text-align: center;
   font-size: 70px;
   color: #5796B1;

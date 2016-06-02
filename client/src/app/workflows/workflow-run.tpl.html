@@ -1,8 +1,8 @@
-<div ng-init="currentStep = 1"  ng-controller="WorkflowRunController as controller">
+<div ng-controller="WorkflowRunController as controller">
   <nav class="navbar navbar-default navbar-top title-bar">
     <h1>Workflows <small>Run workflow</small></h1>
   </nav>
-  <div class="histories-container">
+  <div class="workflow-run-container">
     <div class="panel panel-container">
       <h2>{{workflow.name}}</h2>
       <p><b>Author: </b>{{workflow.owner}}</p>
@@ -13,14 +13,14 @@
         <div class="background-bar"></div>
         <div class="progressStep col-md-3"
         ng-repeat="(key, value) in {1 : 'Input selection', 2 : 'Custom parameters', 3: 'Run workflow', 4: 'Results'}"
-        ng-class="(currentStep == key)?'currentStep':((currentStep > key)?'doneStep':'')">
+        ng-class="(invocation.current_step == key)?'currentStep':((invocation.current_step > key)?'doneStep':'')">
         <span class="stepNumber">{{key}}</span>
         <span class="stepDone"><i class="fa fa-check" aria-hidden="true"></i></span>
         <p>{{value}}</p>
       </div>
     </div>
     <div class="progressStepContainer">
-      <div class="progressStep" ng-show="currentStep == 1" ng-form="step1form">
+      <div class="progressStep" ng-show="invocation.current_step == 1" ng-form="step1form">
         <h3>Input data:</h3>
         <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
         <p class="invalidFormMessage" ng-show="step1form.$invalid">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
@@ -29,7 +29,7 @@
           <workflow-step ng-repeat="step in workflow.steps | filter:{type:'data_input'}"></workflow-step>
         </div>
       </div>
-      <div class="progressStep" ng-show="currentStep == 2" ng-form="step2form">
+      <div class="progressStep" ng-show="invocation.current_step == 2" ng-form="step2form">
         <h3>Other steps:</h3>
         <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
         <p class="invalidFormMessage" ng-show="step2form.$invalid">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
@@ -37,8 +37,8 @@
           <workflow-step ng-repeat="step in workflow.steps | filter:{type:'!data_input'}"></workflow-step>
         </div>
       </div>
-      <div class="progressStep" ng-show="currentStep == 3">
-        <h1 class="workflow-status-title">{{workflow.status_text}}</h1>
+      <div class="progressStep" ng-show="invocation.current_step == 3">
+        <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
         <h1 style=" text-align: center; font-size: 70px; color: #009CDE; "></h1>
         <div class="description" style="text-align: center;"><h4>This is a summary of the input data and the custom values that you chose for this workflow.</h4>
           <p>
@@ -51,17 +51,17 @@
           <div id="workflow-summary"></div>
         </div>
       </div>
-      <div class="progressStep" ng-show="currentStep == 4">
-        <h1 class="workflow-status-title">{{workflow.status_text}}</h1>
-        <div class="flip-container" ng-class="((workflow.status == 'sending')||(workflow.status == 'working'))?'':'flipped'">
+      <div class="progressStep" ng-show="invocation.current_step == 4">
+        <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
+        <div class="flip-container" ng-class="((invocation.state == 'sending')||(invocation.state == 'working'))?'':'flipped'">
           <div class="flipper">
             <div class="front">
-              <img src="css/startup.png" ng-show="workflow.status == 'sending'">
-              <img src="css/working.png" ng-show="workflow.status == 'working'">
+              <img src="css/startup.png" ng-show="invocation.state == 'sending'">
+              <img src="css/working.png" ng-show="invocation.state == 'working'">
             </div>
             <div class="back">
-              <img src="css/success.png" ng-show="workflow.status != 'error'">
-              <img src="css/error.png" ng-show="workflow.status == 'error'">
+              <img src="css/success.png" ng-show="invocation.state == 'success'">
+              <img src="css/error.png" ng-show="invocation.state == 'error'">
             </div>
           </div>
         </div>
@@ -69,20 +69,20 @@
     </div>
     <nav class="navbar navbar-default navbar-fixed-bottom progressNavigator" >
       <div class="container">
-        <button type="button" class="btn btn-danger btn-lg navbar-left" ng-click="controller.backButtonHandler();;" ng-show="currentStep == 1">
+        <button type="button" class="btn btn-danger btn-lg navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
           <i class="fa fa-chevron-left"></i> Cancel and go back
         </button>
-        <button type="button" class="btn btn-default btn-lg navbar-left" ng-click="currentStep = currentStep-1;" ng-show="currentStep > 1">
+        <button type="button" class="btn btn-default btn-lg navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
           <i class="fa fa-chevron-left"></i> Previous step
         </button>
-        <a class="btn btn-lg" ng-click="controller.backButtonHandler();;" ng-show="currentStep > 1" style="color: #E88080;">or Cancel</a>
+        <a class="btn btn-lg" ng-click="controller.backButtonHandler();;" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
         <button type="button" class="btn btn-info btn-lg navbar-right"
-        ng-disabled="(currentStep == 1 && step1form.$invalid) || (currentStep == 2 && step2form.$invalid)"
+        ng-disabled="(invocation.current_step == 1 && step1form.$invalid) || (invocation.current_step == 2 && step2form.$invalid)"
         ng-click="controller.nextStepButtonHandler()"
-        ng-show="currentStep < 3">
+        ng-show="invocation.current_step < 3">
         <i class="fa fa-chevron-right"></i> Next step
       </button>
-      <button type="submit" class="btn btn-success btn-lg navbar-right" ng-show="currentStep == 3">
+      <button type="submit" class="btn btn-success btn-lg navbar-right" ng-show="invocation.current_step == 3">
         <i class="fa fa-bolt fa-fw" ></i> Run workflow!
       </button>
     </div>

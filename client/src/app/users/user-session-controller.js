@@ -28,8 +28,13 @@
   ]);
 
   app.controller('UserSessionController', function ($state, $scope, $http) {
+    //--------------------------------------------------------------------
+    // CONTROLLER FUNCTIONS
+    //--------------------------------------------------------------------
 
-    $scope.username = Cookies.get("galaxyuser");
+    //--------------------------------------------------------------------
+    // EVENT HANDLERS
+    //--------------------------------------------------------------------
 
     this.signInButtonHandler = function () {
       if ( $scope.username !== '' && $scope.password !== '' && $scope.username !== undefined && $scope.password !== undefined) {
@@ -52,12 +57,18 @@
         );
       };
     };
+
     this.signOutButtonHandler = function () {
       Cookies.remove("galaxyuser", {path: window.location.pathname});
       Cookies.remove("galaxysession", {path: window.location.pathname});
       delete $scope.username;
       $state.go('signin');
     };
+
+    //--------------------------------------------------------------------
+    // INITIALIZATION
+    //--------------------------------------------------------------------
+    $scope.username = Cookies.get("galaxyuser");
   }
 );
 })();

@@ -59,7 +59,7 @@
       '            <li class="dropdown-header">Signed in as <b>{{username}}</b></li>' +
       '            <li><a ng-click="controller.signOutButtonHandler()">Sign out</a></li>' +
       '            <li role="separator" class="divider"></li>' +
-      '            <li><a href="#">Go to Galaxy site</a></li>' +
+      '            <li><a href="' + GALAXY_SERVER_URL + '" target="_blank">Go to Galaxy site</a></li>' +
       '          </ul>' +
       '        </div>' +
       '      </div>'

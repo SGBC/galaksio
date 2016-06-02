@@ -1,23 +1,25 @@
 (function() {
 
-  GALAXY_SERVER_URL= "/galaxy/api/";
+  GALAXY_SERVER_URL= "/galaxy/";
   getRequestPath = function(service, extra){
     extra = (extra || "");
     switch (service) {
       case "user-sign-in":
-      return GALAXY_SERVER_URL + "authenticate/baseauth";
+      return GALAXY_SERVER_URL + "api/authenticate/baseauth";
       case "workflow-list":
-      return GALAXY_SERVER_URL + "workflows/";
+      return GALAXY_SERVER_URL + "api/workflows/";
       case "workflow-info":
-      return GALAXY_SERVER_URL + "workflows/"+ extra + "/download";
+      return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/download";
       case "workflow-run":
-      return GALAXY_SERVER_URL + "workflows/"+ extra + "/invocations";
+      return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/invocations";
+      case "invocation-state":
+      return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];      
       case "tools-info":
-      return GALAXY_SERVER_URL + "tools/" + extra + "/build";
+      return GALAXY_SERVER_URL + "api/tools/" + extra + "/build";
       case "datasets-list":
-      return GALAXY_SERVER_URL + "histories/" + extra + "/contents";
+      return GALAXY_SERVER_URL + "api/histories/" + extra + "/contents";
       case "history-list":
-      return GALAXY_SERVER_URL + "histories/" + extra;
+      return GALAXY_SERVER_URL + "api/histories/" + extra;
       default:
       return "";
     }

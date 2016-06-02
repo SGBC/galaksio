@@ -78,6 +78,13 @@
         setFilters: function(_filters) {
           filters = _filters;
           return this;
+        },
+        removeFilter: function(_filter){
+          var pos = filters.indexOf(_filter);
+          if(pos !== -1){
+            filters.splice(pos,1);
+          }
+          return this;
         }
       };
     }]);

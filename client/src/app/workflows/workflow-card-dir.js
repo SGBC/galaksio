@@ -25,14 +25,18 @@
 (function(){
   var app = angular.module('workflows.directives.workflow-card', [
   ]);
-  
+
   /***************************************************************************/
   /*DIRECTIVES ***************************************************************/
   /***************************************************************************/
-  app.directive("workflowCard", function() {
+  app.directive("workflowCard", function($timeout) {
     return {
       restrict: 'E',
-      templateUrl: "app/workflows/workflow-card.tpl.html"
+      templateUrl: "app/workflows/workflow-card.tpl.html",
+      link: function (scope, element, attrs) {
+        //Execute the afterRender function (linked to a controller function)
+        $timeout(scope.$eval(attrs.afterRender), 0);
+      }
     };
   });
 })();

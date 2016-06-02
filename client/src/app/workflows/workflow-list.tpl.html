@@ -17,16 +17,18 @@
       </div>
       <div class="col-sm-6">
         <div class="input-group" style="width: 100%;margin-bottom: 4px;">
-          <input type="text" class="form-control" placeholder="Search for..." ng-model="searchFor">
+          <input type="text" class="form-control" placeholder="Search for..." ng-model="searchFor" ng-enter="controller.applySearchHandler()">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button" ng-click="applySearch()">
+            <button class="btn btn-default" type="button" ng-click="controller.applySearchHandler()">
               <span class="glyphicon glyphicon-search"></span>
             </button>
           </span>
         </div><!-- /input-group -->
         <div class="currentSearchTagContainer">
           <i class="tooltip-tag-cat" ng-repeat="item in filters">
-            <span class="tooltip-tag-cat-name"> {{item}} </span>
+            <span class="tooltip-tag-cat-name">
+              <i class="fa fa-times" ng-click="controller.removeFilterHandler(item);"></i>{{item}}
+            </span>
           </i>
         </div>
       </div>
@@ -38,8 +40,15 @@
       </div>
     </div>
   </div>
-
+  <h5 class="ng-binding" style="text-align: left;">Found {{filteredWorkflows}} workflows</h5>
   <div class="row workflow-card-container" id="workflowContainer">
-    <workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy"></workflow-card>
+    <workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy | limitTo : visibleWorkflows" after-render="controller.retrieveWorkflowDetails(workflow);"></workflow-card>
+    <div class="row" style="text-align: center;">
+      <button class="btn btn-lg btn-success" type="button" ng-click="controller.showMoreWorkflowsHandler()" ng-show="(filteredWorkflows-visibleWorkflows)>0">
+      Show {{filteredWorkflows-visibleWorkflows}} more workflows
+    </button>
   </div>
+</div>
+
+
 </div>
