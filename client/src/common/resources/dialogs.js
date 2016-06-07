@@ -18,7 +18,6 @@
         return this.modalData;
       }
 
-
       this.showInfoDialog = function(message, config) {
         config = ((config === undefined) ? {} : config);
         config.messageType = "info";

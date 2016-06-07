@@ -43,7 +43,7 @@ header .navbar-default .navbar-nav>li>a:hover {
 }
 
 #sidebar-wrapper {
-  z-index: 1500;
+  z-index: 1000;
   position: fixed;
   left: 220px;
   width: 0;
@@ -154,7 +154,7 @@ header .navbar-default .navbar-nav>li>a:hover {
 }
 
 .topbar-nav {
-  z-index: 2000;
+  z-index: 1010;
   background: #FFF;
   min-height: 45px;
   height: 30px
@@ -408,21 +408,23 @@ span.tooltip-tag-cat-name > i:hover{color: #E89090; cursor: pointer;}
   padding: 10px 5px;
   background: #ffffff;
   border: 1px solid #BFBFBF;
-  min-height: 175px;
-  max-height: 175px;
+  min-height: 190px;
+  max-height: 190px;
   overflow: hidden;
 }
 .workflow-card h2.workflow-card-name {
   font-size: 18px;
   color: #333;
-  max-height: 60px;
+  max-height: 40px;
   overflow: hidden;
+  height: 40px;
 }
 .workflow-card div.workflow-card-description {
   font-size: 12px;
   color: #d3d3d3;
-  max-height: 80px;
+  max-height: 70px;
   overflow: hidden;
+  height: 70px;
 }
 .workflow-card-author {
   background: #F7F7F7;

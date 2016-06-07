@@ -50,13 +50,13 @@
       replace:true,
       template:
       '      <div class="sessionToolbar" ng-controller="UserSessionController as controller">' +
-      '        <div class="dropdown" ng-show="username !== undefined">' +
+      '        <div class="dropdown" ng-show="email !== undefined">' +
       '          <button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
-      '            <i class="fa fa-user" aria-hidden="true"></i> {{username}}' +
+      '            <i class="fa fa-user" aria-hidden="true"></i> {{email}}' +
       '            <span class="caret"></span>' +
       '          </button>' +
       '          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">' +
-      '            <li class="dropdown-header">Signed in as <b>{{username}}</b></li>' +
+      '            <li class="dropdown-header">Signed in as <b>{{email}}</b></li>' +
       '            <li><a ng-click="controller.signOutButtonHandler()">Sign out</a></li>' +
       '            <li role="separator" class="divider"></li>' +
       '            <li><a href="' + GALAXY_SERVER_URL + '" target="_blank">Go to Galaxy site</a></li>' +

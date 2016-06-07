@@ -37,7 +37,7 @@
     };
   });
 
-  app.directive("workflowStep", ['$timeout', '$dialogs', function($timeout, dialogs) {
+  app.directive("workflowStep", ['$timeout', '$dialogs', function($timeout, $dialogs) {
     return {
       restrict: 'E',
       //templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG

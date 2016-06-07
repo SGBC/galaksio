@@ -6,6 +6,8 @@
     switch (service) {
       case "user-sign-in":
       return GALAXY_SERVER_URL + "api/authenticate/baseauth";
+      case "user-sign-up":
+      return GALAXY_SERVER_URL + "user/create?cntrller=user";
       case "workflow-list":
       return GALAXY_SERVER_URL + "api/workflows/";
       case "workflow-info":
@@ -13,7 +15,7 @@
       case "workflow-run":
       return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/invocations";
       case "invocation-state":
-      return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];      
+      return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
       case "tools-info":
       return GALAXY_SERVER_URL + "api/tools/" + extra + "/build";
       case "datasets-list":
@@ -31,11 +33,21 @@
     if(Cookies.get("galaxysession")){
       options.params = angular.merge(options.params, {"key" : window.atob(Cookies.get("galaxysession"))});
     }
+    if(options.urlEncodedRequest === true){
+      //CONVERT TO URL ENCODE DATA
+      options.transformRequest =  function(obj) {
+        var str = [];
+        for(var p in obj)
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        return str.join("&");
+      };
+    }
     return {
       method: method,
-      url: getRequestPath(service, options.extra),
-      params: options.params,
       headers: options.headers,
+      url: getRequestPath(service, options.extra),
+      transformRequest : options.transformRequest,
+      params: options.params,
       data: options.data
     };
   }
@@ -95,8 +107,20 @@
       $stateProvider.state(histories);
     }]);
 
+    //Define the events that are fired when an user login, log out etc.
+    app.constant('AUTH_EVENTS', {
+      loginSuccess: 'auth-login-success',
+      loginFailed: 'auth-login-failed',
+      logoutSuccess: 'auth-logout-success',
+      sessionTimeout: 'auth-session-timeout',
+      notAuthenticated: 'auth-not-authenticated',
+      notAuthorized: 'auth-not-authorized'
+    });
+
     app.controller('MainController', function ($rootScope, $scope, $state) {
       var me = this;
+
+
 
       this.pages = [
         {name: 'home', title: 'Home', icon : 'home'},
