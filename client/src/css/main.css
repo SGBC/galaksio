@@ -540,6 +540,28 @@ h1.workflow-state-title {
 }
 
 /*------------------------------------------------------*/
+/*STYLES FOR WORKFLOW STATE INDICATOR                   */
+/*------------------------------------------------------*/
+.invocationListToolbar{display: inline-block;}
+.invocationListToolbar .panel{
+  padding: 10px 5px;
+  background: #ffffff;
+  border: 1px solid #BFBFBF;
+  float: left;
+  width: 300px;
+}
+
+.invocationListToolbar .cat {
+  font-style: normal;
+  font-size: 12px;
+  margin: 3px 2px;
+  display: inline-block;
+  text-align: center;
+}
+
+
+
+/*------------------------------------------------------*/
 /*STYLES FOR HISTORIES LIST                             */
 /*------------------------------------------------------*/
 table.historyListTable > tbody > tr > td{line-height: 40px !important;}

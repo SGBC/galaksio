@@ -37,6 +37,7 @@
     // EVENT HANDLERS
     //--------------------------------------------------------------------
     $scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+      debugger
       $scope.email = Cookies.get("galaxyuser");
     });
 

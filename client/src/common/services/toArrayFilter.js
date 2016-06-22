@@ -2,7 +2,6 @@
   angular.module('angular-toArrayFilter', [])
   .filter('toArray', function () {
     return function (obj, addKey) {
-      debugger;
       if (!angular.isObject(obj)) return obj;
       if ( addKey === false ) {
         return Object.keys(obj).map(function(key) {

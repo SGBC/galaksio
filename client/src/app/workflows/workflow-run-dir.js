@@ -177,4 +177,35 @@
       }
     };
   }]);
+
+
+    app.directive("workflowInvocationToolbar", ['$timeout', '$dialogs', function($timeout, $dialogs) {
+      return {
+        restrict: 'E',
+        //templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG
+        template:
+        '<div ng-controller="WorkflowInvocationListController as controller" class="invocationListToolbar">' +
+        '  <div ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false">'+
+        '    <span class="cat">{{running}} Running</span>' +
+        '    <span class="cat">{{done}} Done</span>' +
+        '    <span class="cat">{{erroneous}} Erroneous</span>' +
+        '  </div>' +
+        '  <div class="panel" ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-show="showPanel === true">'+
+        '    <table style="width:100%">' +
+        '       <tr><th>Workflow name</th><th>State</th></tr>' +
+        '       <tr ng-show="invocations.length === 0"><td colspan="2">No data</td></tr>' +
+        '       <tr ng-repeat="invocation in invocations"><td>{{invocation.id}}</td><td>{{invocation.state}}</td></tr>' +
+        '    </table>'+
+        '  </div>' +
+        '</div>',
+        link: function(scope, elm, attrs) {
+          // $timeout(function () {
+          //   //DOM has finished rendering
+          //   if(scope.step.type === "data_input"){
+          //     angular.element($(elm).find(".collapseStepTool")).triggerHandler('click');
+          //   }
+          // });
+        },
+      };
+    }]);
 })();

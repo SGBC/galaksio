@@ -39,10 +39,9 @@
     '$http',
     '$stateParams',
     '$timeout',
-    '$interval',
     'WorkflowList',
     'WorkflowInvocationList',
-    function($state, $scope, $http, $stateParams, $timeout, $interval, WorkflowList, WorkflowInvocationList){
+    function($state, $scope, $http, $stateParams, $timeout, WorkflowList, WorkflowInvocationList){
       //--------------------------------------------------------------------
       // CONTROLLER FUNCTIONS
       //--------------------------------------------------------------------
@@ -77,13 +76,6 @@
       //--------------------------------------------------------------------
       // EVENT HANDLERS
       //--------------------------------------------------------------------
-
-      $scope.$on('$destroy', function () {
-        //TODO: ASK IF WANT TO LOSE THE DATA
-        console.log("Removing interval");
-        $interval.cancel(me.checkInvocationInterval);
-      });
-
       this.cancelButtonHandler = function(){
         history.back();
       };
@@ -158,20 +150,13 @@
               //SUCCESSFULLY SENT TO SERVER
               $scope.invocation.state = "success";
               $scope.invocation.state_text = "Success!";
-              //SHOW STATE MESSAGE FEW SECONDS
-              // $timeout( function(){
-                //Update the values for the invocation
-                delete response.data.state
-                for (var attrname in response.data) {
-                  $scope.invocation[attrname] = response.data[attrname];
-                }
-                //TODO: SAVE THE INVOCATION IN APP DATA
-                WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
-
-                //Start the interval that checks the state of the invocation
-                me.checkInvocationInterval = $interval(me.checkInvocationState, 2000);
-              // },
-              // 2000);
+              //Update the values for the invocation
+              delete response.data.state
+              for (var attrname in response.data) {
+                $scope.invocation[attrname] = response.data[attrname];
+              }
+              //TODO: SAVE THE INVOCATION IN APP DATA
+              WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
             },
             function errorCallback(response){
               $scope.invocation.state = "error";
@@ -182,62 +167,16 @@
         2000);
       };
 
-      this.checkInvocationState = function(){
-        $http(getHttpRequestConfig("GET", "invocation-state", {
-          extra: [$scope.workflow.id, $scope.invocation.id]
-        })).then(
-          function successCallback(response){
-            var erroneousSteps = 0;
-            var waitingSteps = 0;
-            var runningSteps = 0;
-            var doneSteps = 0;
-            var invocation = $scope.invocation;
-
-            delete response.data.state
-            for (var attrname in response.data) {
-              invocation[attrname] = response.data[attrname];
-            }
-
-            for(var i in invocation.steps){
-              if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
-                doneSteps++;
-              }else if(invocation.steps[i].state === 'new'){
-                waitingSteps++;
-              }else if(invocation.steps[i].state === 'running'){
-                runningSteps++;
-              }else if(invocation.steps[i].state === 'error'){
-                erroneousSteps++;
-              }
-            }
-
-            if(runningSteps > 0 || waitingSteps > 0){
-              invocation.state = "working";
-            }else if(erroneousSteps > 0){
-              invocation.state = "error";
-              //TODO: show summary of results
-            }else{
-              invocation.state = "success";
-              //TODO: show summary of results
-            }
-          },
-          function errorCallback(response){
-            $scope.invocation.state = "error";
-            $scope.invocation.state_text = "Failed.";
-          }
-        );
-      };
-
       //--------------------------------------------------------------------
       // INITIALIZATION
       //--------------------------------------------------------------------
       var me = this;
 
-      //The corresponding view will be watching to this variavble
+      //The corresponding view will be watching to this variable
       //and update its content after the http response
       $scope.loadingComplete = false;
       $scope.workflow = null;
       $scope.invocation = WorkflowInvocationList.getNewInvocation();
-      this.checkInvocationInterval = null;
 
       this.retrieveWorkflowDetails($stateParams.id);
     }
@@ -277,7 +216,8 @@
             //If the tool is not an input data tool, request the info from server
             //and store the extra info for the tool at the "extra" field
             $http(getHttpRequestConfig("GET", "tools-info", {
-              extra: $scope.step.tool_id})
+              extra: $scope.step.tool_id,
+              params: {history_id : Cookies.get("current-history")}})
             ).then(
               function successCallback(response){
                 $scope.step["extra"] = response.data;
@@ -293,6 +233,7 @@
             //available datasets for current history and display as a selector
             //TODO: GET THE FILES ONLY IF NOT LOADED PREVIOUSLY (AUTO REMOVE AFTER N MINUTES)
             $http(getHttpRequestConfig("GET", "datasets-list", {
+              //Only needed if there is no a previous login on Galaxy
               extra: Cookies.get("current-history")})
             ).then(
               function successCallback(response){
@@ -322,6 +263,112 @@
       //and update its content after the http response
       $scope.loadingComplete = false;
       $scope.collapsed = true;
+    }
+  ]);
+
+  /***************************************************************************/
+  /*WORKFLOW STEP CONTROLLER *************************************************/
+  /***************************************************************************/
+  app.controller('WorkflowInvocationListController', [
+    '$scope',
+    '$http',
+    '$interval',
+    '$stateParams',
+    'WorkflowInvocationList',
+    function($scope, $http, $interval, $stateParams, WorkflowInvocationList){
+      this.checkInvocationsState = function(){
+        var invocations = WorkflowInvocationList.getInvocations();
+        var running = 0, erroneous = 0, done = 0;
+        for(var i in invocations){
+          if(invocations[i].state == "working"){
+            running++;
+          }else if(invocations[i].state == "success"){
+            done++;
+          }else if(invocations[i].state == "error"){
+            erroneous++;
+          }
+        }
+
+        $scope.invocations = WorkflowInvocationList.getInvocations();
+        $scope.running = running;
+        $scope.done = done;
+        $scope.erroneous = erroneous;
+
+        for(var i in invocations){
+          me.checkInvocationState(invocations[i]);
+        }
+      };
+
+      this.checkInvocationState = function(invocation){
+        console.log("Checking invocation " + invocation.id);
+
+        $http(getHttpRequestConfig("GET", "invocation-state", {
+          extra: [invocation.workflow_id, invocation.id]
+        })).then(
+          function successCallback(response){
+            var erroneousSteps = 0;
+            var waitingSteps = 0;
+            var runningSteps = 0;
+            var doneSteps = 0;
+
+            delete response.data.state
+            for (var attrname in response.data) {
+              invocation[attrname] = response.data[attrname];
+            }
+
+            for(var i in invocation.steps){
+              if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
+                doneSteps++;
+              }else if(invocation.steps[i].state === 'new'){
+                waitingSteps++;
+              }else if(invocation.steps[i].state === 'running'){
+                runningSteps++;
+              }else if(invocation.steps[i].state === 'error'){
+                erroneousSteps++;
+              }
+            }
+
+            if(runningSteps > 0 || waitingSteps > 0){
+              invocation.state = "working";
+            }else if(erroneousSteps > 0){
+              invocation.state = "error";
+              //TODO: show summary of results
+            }else{
+              invocation.state = "success";
+              //TODO: show summary of results
+            }
+          },
+          function errorCallback(response){
+            invocation.state = "error";
+            invocation.state_text = "Failed.";
+          }
+        );
+      };
+
+      //--------------------------------------------------------------------
+      // EVENT HANDLERS
+      //--------------------------------------------------------------------
+      $scope.$on('$destroy', function () {
+        //TODO: ASK IF WANT TO LOSE THE DATA
+        console.log("Removing interval");
+        $interval.cancel(me.checkInvocationInterval);
+      });
+
+      //--------------------------------------------------------------------
+      // INITIALIZATION
+      //--------------------------------------------------------------------
+      var me = this;
+
+      //The corresponding view will be watching to this variable
+      //and update its content after the http response
+      $scope.invocations = WorkflowInvocationList.getInvocations();
+      $scope.running = 0;
+      $scope.done = 0;
+      $scope.erroneous = 0;
+
+      this.checkInvocationInterval = null;
+      //Start the interval that checks the state of the invocation
+      me.checkInvocationInterval = $interval(me.checkInvocationsState, 5000);
     }
   ]);
 })();

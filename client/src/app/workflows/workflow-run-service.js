@@ -38,11 +38,21 @@
       },
       saveInvocations: function() {
         //TODO
-        console.error("Not implemented");
+        console.error("WorkflowInvocationList:saveInvocations Not implemented");
         return this;
       },
       addInvocation: function(_invocation) {
+        debugger
         invocations.push(_invocation);
+        return this;
+      },
+      updateInvocation: function(_invocation) {
+        for(var i in invocations){
+          if(invocations[i].id === _invocation.id){
+            invocations[i] = _invocation;
+            break;
+          }
+        }
         return this;
       },
       getInvocation: function(invocation_id) {

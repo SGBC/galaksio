@@ -31,11 +31,7 @@
   /***************************************************************************/
   /*CONTROLLERS **************************************************************/
   /***************************************************************************/
-  app.controller('HistoryListController', [
-    '$scope',
-    '$http',
-    'HistoryList',
-    function($scope, $http, HistoryList){
+  app.controller('HistoryListController', function($scope, $http, HistoryList, AUTH_EVENTS){
       var me = this;
 
       //This controller uses the HistoryList, which defines a Singleton instance of
@@ -43,7 +39,16 @@
       //request the data everytime that the history list panel is displayed (data persistance).
       $scope.histories = HistoryList.getHistories();
 
-      var currentHistoryId = Cookies.get("current-history");
+      $scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+        $http(getHttpRequestConfig("GET", "history-list", {extra: 'most_recently_used'})).then(
+          function successCallback(response){
+            Cookies.set("current-history", response.data.id, {expires : 1, path: window.location.pathname});
+          },
+          function errorCallback(response){
+            //TODO: SHOW ERROR MESSAGE
+          }
+        );
+      });
 
       this.setDisplayedHistory = function(history){
         $scope.displayedHistory = history;
@@ -55,61 +60,65 @@
             },
             function errorCallback(response){
               //TODO: SHOW ERROR MESSAGE
-            });
-          }
-        };
-        this.setCurrentHistory = function(history){
-          $scope.currentHistory = history;
-          Cookies.remove("current-history", {path: window.location.pathname});
-          //GET THE COOKIE
-          Cookies.set("current-history", history.id, {expires : 1, path: window.location.pathname});
-        };
-        this.retrieveHistoriesData = function(){
-          if($scope.histories.length === 0){
-            $http(getHttpRequestConfig("GET", "history-list")).then(
-              function successCallback(response){
-                $scope.histories = HistoryList.setHistories(response.data).getHistories();
-                //Set the current history based on the id (cookie)
-                $scope.currentHistory = HistoryList.getHistory(currentHistoryId);
-                me.setDisplayedHistory($scope.currentHistory);
-                //Now get the details for each history
-                for(var i in $scope.histories){
-                  //GET THE EXTRA INFORMATION FOR EACH HISTORY
-                  $http(getHttpRequestConfig("GET", "history-list", {extra: $scope.histories[i].id})).then(
-                    function successCallback(response){
-                      var history = null;
-                      //Find the history object
-                      for(var i in $scope.histories){
-                        if($scope.histories[i].id === response.data.id){
-                          history = $scope.histories[i];
-                          break;
-                        }
-                      }
-                      //Update the object content with the new data
-                      if(history !== null){
-                        for (var attrname in response.data) {
-                          history[attrname] = response.data[attrname];
-                        }
-                      }
-                    },
-                    function errorCallback(response){
-                      //TODO: SHOW ERROR MESSAGE
-                    });
-                  }
+            }
+          );
+        }
+      };
 
-                },
-                function errorCallback(response){
-                  //TODO: SHOW ERROR MESSAGE
-                });
-              }else{
-                $scope.currentHistory = HistoryList.getHistory(currentHistoryId);
-                me.setDisplayedHistory($scope.currentHistory);
-              }
-            };
+      this.setCurrentHistory = function(history){
+        $scope.currentHistory = history;
+        Cookies.remove("current-history", {path: window.location.pathname});
+        //GET THE COOKIE
+        Cookies.set("current-history", history.id, {expires : 1, path: window.location.pathname});
+      };
 
-            //INITIALIZE THE DATA
-            this.retrieveHistoriesData();
-          }
-        ]
-      );
-    })();
+      this.retrieveHistoriesData = function(force){
+        if($scope.histories.length === 0 || force === true){
+          $http(getHttpRequestConfig("GET", "history-list")).then(
+            function successCallback(response){
+              $scope.histories = HistoryList.setHistories(response.data).getHistories();
+
+              //Set the current history based on the id (cookie)
+              $scope.currentHistory = HistoryList.getHistory(Cookies.get("current-history"));
+              me.setDisplayedHistory($scope.currentHistory);
+
+              //Now get the details for each history
+              for(var i in $scope.histories){
+                //GET THE EXTRA INFORMATION FOR EACH HISTORY
+                $http(getHttpRequestConfig("GET", "history-list", {extra: $scope.histories[i].id})).then(
+                  function successCallback(response){
+                    var history = null;
+                    //Find the history object
+                    for(var i in $scope.histories){
+                      if($scope.histories[i].id === response.data.id){
+                        history = $scope.histories[i];
+                        break;
+                      }
+                    }
+                    //Update the object content with the new data
+                    if(history !== null){
+                      for (var attrname in response.data) {
+                        history[attrname] = response.data[attrname];
+                      }
+                    }
+                  },
+                  function errorCallback(response){
+                    //TODO: SHOW ERROR MESSAGE
+                  });
+                }
+
+              },
+              function errorCallback(response){
+                //TODO: SHOW ERROR MESSAGE
+              });
+            }else{
+              $scope.currentHistory = HistoryList.getHistory(Cookies.get("current-history"));
+              me.setDisplayedHistory($scope.currentHistory);
+            }
+          };
+
+          //INITIALIZE THE DATA
+          this.retrieveHistoriesData();
+        }
+    );
+  })();

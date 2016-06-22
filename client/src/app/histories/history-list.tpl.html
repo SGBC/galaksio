@@ -5,7 +5,12 @@
   <div class="histories-container">
     <div class="col-sm-6">
       <div class="panel panel-container">
-        <div><i class="fa fa-info"></i> Click on one history name to get more details.</div>
+        <div>
+          <p style=" float: left; line-height: 30px; "><i class="fa fa-info"></i> Click on one history name to get more details.</p>
+          <button class="btn btn-default btn-sm navbar-right" ng-click="controller.retrieveHistoriesData(true)">
+            <i class="fa fa-refresh fa-fw" ></i> Refresh
+          </button>
+        </div>
         <table class="table historyListTable">
           <thead>
             <tr style="text-align:center;">

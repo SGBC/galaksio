@@ -42,14 +42,18 @@
         return str.join("&");
       };
     }
-    return {
+    var requestData = {
       method: method,
       headers: options.headers,
       url: getRequestPath(service, options.extra),
-      transformRequest : options.transformRequest,
       params: options.params,
       data: options.data
     };
+    if(options.transformRequest !== undefined){
+      requestData.transformRequest = options.transformRequest;
+    }
+
+    return requestData;
   }
 
   var app = angular.module('b3galaxyApp', [
@@ -119,8 +123,6 @@
 
     app.controller('MainController', function ($rootScope, $scope, $state) {
       var me = this;
-
-
 
       this.pages = [
         {name: 'home', title: 'Home', icon : 'home'},
