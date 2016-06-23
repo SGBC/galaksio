@@ -10,7 +10,7 @@
   <div class="workflow-card-author">
     By <span style="color:#0F8CDA;">{{workflow.owner}}</span>
   </div>
-  <a class="btn btn-info runWorkflowButton" href="#/workflows/{{workflow.id}}">
+  <a class="btn btn-info runWorkflowButton" ui-sref="workflowDetail({id: workflow.id})">
     <i class="fa fa-play-o"></i>Run workflow
   </a>
 </div>

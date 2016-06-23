@@ -542,7 +542,7 @@ h1.workflow-state-title {
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW STATE INDICATOR                   */
 /*------------------------------------------------------*/
-.invocationListToolbar{display: inline-block;}
+.invocationListToolbar{display: inline-block; margin: 5px 20px;}
 .invocationListToolbar .panel{
   padding: 10px 5px;
   background: #ffffff;
@@ -551,7 +551,7 @@ h1.workflow-state-title {
   width: 300px;
 }
 
-.invocationListToolbar .cat {
+.invocationListToolbar .job-status-cat {
   font-style: normal;
   font-size: 12px;
   margin: 3px 2px;
@@ -559,6 +559,25 @@ h1.workflow-state-title {
   text-align: center;
 }
 
+.job-status-cat .job-number{
+  position: absolute;
+  margin-left: -11px;
+  margin-top: -3px;
+  background: #585858;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  font-family: sans-serif;
+}
+
+.job-status-cat .job-status-cat-title{
+  font-size: 9px;
+  margin-left: 3px;
+  padding-top: 20px;
+}
 
 
 /*------------------------------------------------------*/

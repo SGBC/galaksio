@@ -19,7 +19,9 @@
 *     and others.
 *
 * THIS FILE CONTAINS THE FOLLOWING MODULE DECLARATION
-* - workflow-run-form
+* - WorkflowRunController
+* - WorkflowRunStepController
+* - WorkflowInvocationListController
 *
 */
 (function(){
@@ -51,7 +53,6 @@
       */
       this.retrieveWorkflowDetails  = function(workflow_id){
         $scope.workflow = WorkflowList.getWorkflow(workflow_id);
-
         if($scope.workflow !== null){
           $http(getHttpRequestConfig("GET","workflow-info", {
             extra: workflow_id})
@@ -148,14 +149,19 @@
           })).then(
             function successCallback(response){
               //SUCCESSFULLY SENT TO SERVER
-              $scope.invocation.state = "success";
-              $scope.invocation.state_text = "Success!";
+
               //Update the values for the invocation
               delete response.data.state
+              delete response.data.workflow_id
               for (var attrname in response.data) {
                 $scope.invocation[attrname] = response.data[attrname];
               }
-              //TODO: SAVE THE INVOCATION IN APP DATA
+
+              $scope.invocation.state = "success";
+              $scope.invocation.state_text = "Success!";
+              $scope.invocation.workflow_title = $scope.workflow.name;
+              $scope.invocation.workflow_id = $scope.workflow.id;
+
               WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
             },
             function errorCallback(response){
@@ -171,12 +177,16 @@
       // INITIALIZATION
       //--------------------------------------------------------------------
       var me = this;
-
       //The corresponding view will be watching to this variable
       //and update its content after the http response
       $scope.loadingComplete = false;
       $scope.workflow = null;
-      $scope.invocation = WorkflowInvocationList.getNewInvocation();
+
+      if($stateParams.invocation_id !== null){
+        $scope.invocation = WorkflowInvocationList.getInvocation($stateParams.invocation_id);
+      }else{
+        $scope.invocation = WorkflowInvocationList.getNewInvocation();
+      }
 
       this.retrieveWorkflowDetails($stateParams.id);
     }
@@ -269,106 +279,117 @@
   /***************************************************************************/
   /*WORKFLOW STEP CONTROLLER *************************************************/
   /***************************************************************************/
-  app.controller('WorkflowInvocationListController', [
-    '$scope',
-    '$http',
-    '$interval',
-    '$stateParams',
-    'WorkflowInvocationList',
-    function($scope, $http, $interval, $stateParams, WorkflowInvocationList){
-      this.checkInvocationsState = function(){
-        var invocations = WorkflowInvocationList.getInvocations();
-        var running = 0, erroneous = 0, done = 0;
-        for(var i in invocations){
-          if(invocations[i].state == "working"){
-            running++;
-          }else if(invocations[i].state == "success"){
-            done++;
-          }else if(invocations[i].state == "error"){
-            erroneous++;
-          }
+  app.controller('WorkflowInvocationListController', function($state, $scope, $http, $interval, WorkflowInvocationList, AUTH_EVENTS){
+    //--------------------------------------------------------------------
+    // CONTROLLER FUNCTIONS
+    //--------------------------------------------------------------------
+    this.checkInvocationsState = function(){
+      var invocations = WorkflowInvocationList.getInvocations();
+      var running = 0, erroneous = 0, done = 0;
+      for(var i in invocations){
+        if(invocations[i].state == "working"){
+          running++;
+        }else if(invocations[i].state == "success"){
+          done++;
+        }else if(invocations[i].state == "error"){
+          erroneous++;
         }
+      }
 
-        $scope.invocations = WorkflowInvocationList.getInvocations();
-        $scope.running = running;
-        $scope.done = done;
-        $scope.erroneous = erroneous;
-
-        for(var i in invocations){
-          me.checkInvocationState(invocations[i]);
-        }
-      };
-
-      this.checkInvocationState = function(invocation){
-        console.log("Checking invocation " + invocation.id);
-
-        $http(getHttpRequestConfig("GET", "invocation-state", {
-          extra: [invocation.workflow_id, invocation.id]
-        })).then(
-          function successCallback(response){
-            var erroneousSteps = 0;
-            var waitingSteps = 0;
-            var runningSteps = 0;
-            var doneSteps = 0;
-
-            delete response.data.state
-            for (var attrname in response.data) {
-              invocation[attrname] = response.data[attrname];
-            }
-
-            for(var i in invocation.steps){
-              if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
-                doneSteps++;
-              }else if(invocation.steps[i].state === 'new'){
-                waitingSteps++;
-              }else if(invocation.steps[i].state === 'running'){
-                runningSteps++;
-              }else if(invocation.steps[i].state === 'error'){
-                erroneousSteps++;
-              }
-            }
-
-            if(runningSteps > 0 || waitingSteps > 0){
-              invocation.state = "working";
-            }else if(erroneousSteps > 0){
-              invocation.state = "error";
-              //TODO: show summary of results
-            }else{
-              invocation.state = "success";
-              //TODO: show summary of results
-            }
-          },
-          function errorCallback(response){
-            invocation.state = "error";
-            invocation.state_text = "Failed.";
-          }
-        );
-      };
-
-      //--------------------------------------------------------------------
-      // EVENT HANDLERS
-      //--------------------------------------------------------------------
-      $scope.$on('$destroy', function () {
-        //TODO: ASK IF WANT TO LOSE THE DATA
-        console.log("Removing interval");
-        $interval.cancel(me.checkInvocationInterval);
-      });
-
-      //--------------------------------------------------------------------
-      // INITIALIZATION
-      //--------------------------------------------------------------------
-      var me = this;
-
-      //The corresponding view will be watching to this variable
-      //and update its content after the http response
       $scope.invocations = WorkflowInvocationList.getInvocations();
-      $scope.running = 0;
-      $scope.done = 0;
-      $scope.erroneous = 0;
+      $scope.running = running;
+      $scope.done = done;
+      $scope.erroneous = erroneous;
 
-      this.checkInvocationInterval = null;
-      //Start the interval that checks the state of the invocation
-      me.checkInvocationInterval = $interval(me.checkInvocationsState, 5000);
+      for(var i in invocations){
+        me.checkInvocationState(invocations[i]);
+      }
+    };
+
+    this.checkInvocationState = function(invocation){
+      console.log("Checking invocation " + invocation.id);
+
+      $http(getHttpRequestConfig("GET", "invocation-state", {
+        extra: [invocation.workflow_id, invocation.id]
+      })).then(
+        function successCallback(response){
+          var erroneousSteps = 0;
+          var waitingSteps = 0;
+          var runningSteps = 0;
+          var doneSteps = 0;
+
+          delete response.data.state
+          delete response.data.workflow_id
+          for (var attrname in response.data) {
+            invocation[attrname] = response.data[attrname];
+          }
+
+          for(var i in invocation.steps){
+            if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
+              doneSteps++;
+            }else if(invocation.steps[i].state === 'new'){
+              waitingSteps++;
+            }else if(invocation.steps[i].state === 'running'){
+              runningSteps++;
+            }else if(invocation.steps[i].state === 'error'){
+              erroneousSteps++;
+            }
+          }
+
+          if(runningSteps > 0 || waitingSteps > 0){
+            invocation.state = "working";
+          }else if(erroneousSteps > 0){
+            invocation.state = "error";
+            //TODO: show summary of results
+          }else{
+            invocation.state = "success";
+            //TODO: show summary of results
+          }
+        },
+        function errorCallback(response){
+          invocation.state = "error";
+          invocation.state_text = "Failed.";
+        }
+      );
+    };
+
+    this.recoverWorkflowInvocation = function(invocation){
+      $state.go('workflowDetail', {
+        'id' : invocation.workflow_id,
+        'invocation_id': invocation.id
+      });
     }
-  ]);
+    //--------------------------------------------------------------------
+    // EVENT HANDLERS
+    //--------------------------------------------------------------------
+    $scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+      debugger
+      WorkflowInvocationList.recoverInvocations();
+    });
+
+    $scope.$on('$destroy', function () {
+      //TODO: ASK IF WANT TO LOSE THE DATA
+      console.log("Removing interval");
+      $interval.cancel(me.checkInvocationInterval);
+    });
+
+    //--------------------------------------------------------------------
+    // INITIALIZATION
+    //--------------------------------------------------------------------
+    var me = this;
+
+    //The corresponding view will be watching to this variable
+    //and update its content after the http response
+
+    $scope.invocations = WorkflowInvocationList.recoverInvocations().getInvocations();
+    $scope.running = 0;
+    $scope.done = 0;
+    $scope.erroneous = 0;
+
+    this.checkInvocationInterval = null;
+    //Start the interval that checks the state of the invocation
+    me.checkInvocationsState();
+    me.checkInvocationInterval = $interval(me.checkInvocationsState, 5000);
+  }
+);
 })();

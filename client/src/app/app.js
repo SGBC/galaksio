@@ -94,7 +94,11 @@
       },
       workflowDetail = {
         name: 'workflowDetail',
-        url: '/workflows/:id',
+        url: '/workflow-detail/',
+        params : {
+          id : null,
+          invocation_id : null
+        },
         templateUrl: "app/workflows/workflow-run.tpl.html",
         data: {requireLogin: true}
       },

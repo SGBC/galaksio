@@ -103,6 +103,7 @@
     this.signOutButtonHandler = function () {
       Cookies.remove("galaxyuser", {path: window.location.pathname});
       Cookies.remove("galaxysession", {path: window.location.pathname});
+      sessionStorage.removeItem("workflow_invocations");
       delete $scope.email;
       $state.go('signin');
     };

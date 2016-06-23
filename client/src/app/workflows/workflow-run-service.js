@@ -37,8 +37,16 @@
         return this;
       },
       saveInvocations: function() {
-        //TODO
-        console.error("WorkflowInvocationList:saveInvocations Not implemented");
+        sessionStorage.workflow_invocations = JSON.stringify(invocations);
+        return this;
+      },
+      recoverInvocations: function() {
+        try {
+          invocations = JSON.parse(sessionStorage.workflow_invocations);
+        } catch (e) {
+          invocations = [];
+        }
+
         return this;
       },
       addInvocation: function(_invocation) {
