@@ -4,7 +4,7 @@
     <i class="fa fa-spinner fa-pulse fa-fw" ng-if="workflow.annotation === undefined"></i>
     <div class="workflow-card-description" ng-if="workflow.annotation !== undefined">{{workflow.annotation || "No description provided"}}</div>
     <div class="workflow-card-tags-list">
-      <i class="workflow-card-tag" ng-repeat="tag in workflow.tags | orderBy">{{tag}}</i>
+      <i class="tag {{getTagColor(tag)}}" ng-repeat="tag in workflow.tags | orderBy">{{tag}}</i>
     </div>
   </div>
   <div class="workflow-card-author">

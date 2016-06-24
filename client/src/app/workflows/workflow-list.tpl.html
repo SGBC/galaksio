@@ -25,8 +25,8 @@
           </span>
         </div><!-- /input-group -->
         <div class="currentSearchTagContainer">
-          <i class="tooltip-tag-cat" ng-repeat="item in filters">
-            <span class="tooltip-tag-cat-name">
+          <i class="tag" ng-repeat="item in filters">
+            <span class="tag-name ">
               <i class="fa fa-times" ng-click="controller.removeFilterHandler(item);"></i>{{item}}
             </span>
           </i>
@@ -34,9 +34,9 @@
       </div>
       <div class="col-sm-4">
         Popular:
-        <i class="tooltip-tag-cat" ng-repeat="item in tags | orderBy:'-times' | limitTo: 4">
-          <span class="tooltip-tag-cat-times">{{item.times}}</span><span class="tooltip-tag-cat-name"> {{item.name}} </span>
-        </i>
+        <span ng-repeat="item in tags | orderBy:'-times' | limitTo: 4">
+          <i class="tag {{item.color}}">{{item.times}}</i><i> {{item.name}} </i>
+        </span>
       </div>
     </div>
   </div>

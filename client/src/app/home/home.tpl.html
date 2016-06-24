@@ -1,1 +1,101 @@
-<h1>HELLO</h1>
+<div >
+  <nav class="navbar navbar-default navbar-top title-bar">
+    <h1>Dashboard <small></small></h1>
+  </nav>
+  <div class="home-container">
+    <div class="col-sm-6" ng-controller="UserSessionController as controller">
+      <div class="panel panel-container" style="height: 170px;">
+        <h4>Your account</h4>
+        <p><b>Signed in as </b> <i>{{email}}</i></p>
+        <button class="btn btn-danger btn-sm" ng-click="controller.signOutButtonHandler()">
+          <i class="fa fa-sign-out fa-fw" ></i> Close session
+        </button>
+      </div>
+    </div>
+    <div class="col-sm-6" >
+      <div class="panel panel-container" style="height: 170px;">
+        <h4>Resources</h4>
+        <ul>
+          <li>
+            <a href="' + GALAXY_SERVER_URL + '" target="_blank">Go to local Galaxy site</a>
+            <img src="css/galaxy_logo.png" style=" height: 20px; display: inline-block; border-radius: 10px; margin: auto; ">
+          </li>
+          <li>
+            <a href="https://wiki.galaxyproject.org/Learn" target="_blank">Galaxy tutorials</a>
+            <i class="tag blue">Learn</i>
+          </li>
+          <li>
+            <a href="https://usegalaxy.org/" target="_blank">Go to official Galaxy site</a>
+            <i class="tag yellow">Official</i>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-6" ng-controller="WorkflowInvocationListController as controller">
+      <div class="panel panel-container">
+        <h4>Workflow queue</h4>
+        <table style="width:100%">
+          <tr><th>Workflow name</th><th>State</th><th style="width:75px;"></th></tr>
+          <tr ng-show="invocations.length === 0"><td colspan="2">No data</td></tr>
+          <tr ng-repeat="invocation in invocations track by $index" >
+            <td>{{invocation.workflow_title}}</td>
+            <td class="job-status-cat"  ng-if="invocation.state === 'success'">
+              <span class="fa-stack" style="font-size: 12px;">
+                <i class="fa fa-square fa-stack-2x" style="color:#00b353;"></i>
+                <i class="fa fa-check fa-fw fa-stack-1x fa-inverse"></i>
+              </span>
+              <span class="job-status-cat-title">Running</span>
+            </td>
+            <td class="job-status-cat" ng-if="invocation.state === 'working'">
+              <span class="fa-stack" style="font-size: 12px;">
+                <i class="fa fa-square fa-stack-2x" style="color:#b900ff;"></i>
+                <i class="fa fa-refresh fa-spin fa-fw fa-stack-1x fa-inverse"></i>
+              </span>
+              <span class="job-status-cat-title">Running</span>
+            </td>
+            <td  class="job-status-cat" ng-if="invocation.state === 'erroneous'">
+              <span class="fa-stack" style="font-size: 12px;">
+                <i class="fa fa-square fa-stack-2x" style="color:#de2b2b;"></i>
+                <i class="fa fa-times fa-fw fa-stack-1x fa-inverse"></i>
+              </span>
+              <span class="job-status-cat-title">Running</span>
+            </td>
+            <td>
+              <a style="font-size:12px; cursor:pointer" ng-click="controller.recoverWorkflowInvocation(invocation)">
+                <i class="fa fa-undo" aria-hidden="true"></i> Recover
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="col-sm-6" ng-controller="HistoryListController as controller">
+      <div class="panel panel-container">
+        <a class="btn btn-default btn-sm navbar-right" ui-sref="histories()">
+          <i class="fa fa-history fa-fw" ></i> Change history
+        </a>
+        <h4>Current history</h4>
+        <p><b>History name: </b>{{displayedHistory.name}}</p>
+
+        <table class="table">
+          <thead>
+            <tr style="text-align:center;">
+              <th>File name</th>
+              <th>Extension</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-if="displayedHistory.content === undefined">
+              <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
+              <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
+            </tr>
+            <tr ng-repeat="content in displayedHistory.content">
+              <td>{{content.name}}</td>
+              <td>{{content.extension}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

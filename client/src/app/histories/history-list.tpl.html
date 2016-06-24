@@ -32,10 +32,7 @@
                 <span ng-if="history.update_time !== undefined">{{history.update_time | date:'dd/MM/yyyy HH:mm'}}</span>
               </td>
               <td>
-                <span class="fa-stack fa-lg" ng-if="history === currentHistory">
-                  <i class="fa fa-square-o fa-stack-2x"></i>
-                  <i class="fa fa-check fa-stack-1x"></i>
-                </span>
+                <i class="fa fa-check-circle fa-2x" ng-if="history === currentHistory"></i>
               </td>
             </tr>
           </tbody>

@@ -125,6 +125,14 @@
         };
       };
 
+      $scope.getTagColor = function(_tag){
+        var tag = WorkflowList.getTag(_tag);
+        if(tag !== null){
+          return tag.color;
+        }
+        return "";
+      }
+
       //--------------------------------------------------------------------
       // EVENT HANDLERS
       //--------------------------------------------------------------------
@@ -137,7 +145,7 @@
       };
 
       /**
-      * This function remove a given filter when the user clicks at the "x" button 
+      * This function remove a given filter when the user clicks at the "x" button
       */
       this.removeFilterHandler = function(filter){
         $scope.filters = WorkflowList.removeFilter(filter).getFilters();

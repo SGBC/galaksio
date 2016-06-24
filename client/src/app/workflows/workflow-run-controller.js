@@ -120,6 +120,10 @@
         $scope.invocation.current_step++;
         $scope.invocation.state = "sending";
         $scope.invocation.state_text = "Sending to Galaxy...";
+        $scope.invocation.workflow_title = $scope.workflow.name;
+        $scope.invocation.workflow_id = $scope.workflow.id;
+        //TODO: notify change
+        WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
 
         //SET THE REQUEST DATA (history id, parameters,...)
         var requestData = {
@@ -157,12 +161,7 @@
                 $scope.invocation[attrname] = response.data[attrname];
               }
 
-              $scope.invocation.state = "success";
-              $scope.invocation.state_text = "Success!";
-              $scope.invocation.workflow_title = $scope.workflow.name;
-              $scope.invocation.workflow_id = $scope.workflow.id;
-
-              WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
+              WorkflowInvocationList.saveInvocations();
             },
             function errorCallback(response){
               $scope.invocation.state = "error";
@@ -288,6 +287,8 @@
       var running = 0, erroneous = 0, done = 0;
       for(var i in invocations){
         if(invocations[i].state == "working"){
+          running++;
+        }else if(invocations[i].state == "sending"){
           running++;
         }else if(invocations[i].state == "success"){
           done++;

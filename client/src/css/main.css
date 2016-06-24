@@ -363,31 +363,7 @@ div.sessionToolbar button, div.sessionToolbar li{
   max-width: none;
   height: 100px;
 }
-i.tooltip-tag-cat {
-  font-style: normal;
-  font-size: 12px;
-  margin: 3px 2px;
-  display: inline-block;
-  text-align: center;
-}
-span.tooltip-tag-cat-times {
-  display: inline-block;
-  border: 1px solid #333;
-  padding: 0px 6px;
-  margin-top: 10px;
-  border-radius: 5px;
-}
-span.tooltip-tag-cat-name {
-  padding: 0px 4px;
-}
-span.tooltip-tag-cat-name > i{margin-right:5px; color: #C5C5C5;}
-span.tooltip-tag-cat-name > i:hover{color: #E89090; cursor: pointer;}
-
-.currentSearchTagContainer span.tooltip-tag-cat-name {
-  border: 1px solid #333;
-  border-radius: 4px;
-}
-.workflow-card-container, .workflow-run-container, .histories-container {
+.workflow-card-container, .workflow-run-container, .histories-container, .home-container {
   max-width: 1400px;
   padding: 10px 30px;
   margin: auto;
@@ -442,15 +418,35 @@ span.tooltip-tag-cat-name > i:hover{color: #E89090; cursor: pointer;}
   max-height: 35px;
   overflow: hidden;
 }
-i.workflow-card-tag {
+i.tag {
   font-style: normal;
   display: inline-block;
-  padding: 3px;
-  border: 1px solid #333;
+  padding: 2px 5px;
   border-radius: 5px;
   font-size: 10px;
-  margin: 0px 2px
+  margin: 0px 2px;
+  font-family: sans-serif;
+  font-weight: 700;
+  background-color: #d8d8d8;
 }
+i.tag span.tag-name {padding: 0px 4px; color: #848484;}
+i.tag span.tag-name > i{margin-right:5px; color: #C5C5C5;}
+i.tag span.tag-name > i:hover{color: #E89090; cursor: pointer;}
+
+
+i.tag.yellow {background-color: #f1c40f; color: #fff;}
+i.tag.green {background-color: #2ECC71; color: #fff;}
+i.tag.red {background-color: #E74C3C; color: #fff;}
+i.tag.blue {background-color: #3498DB; color: #fff;}
+i.tag.purple {background-color: #bf73ce; color: #fff;}
+i.tag.pink {background-color: #e54477; color: #fff;}
+i.tag.yellow2 {background-color: #ccb63f; color: #fff;}
+i.tag.green2 {background-color: #1ABC9C; color: #fff;}
+i.tag.red2 {background-color: #aa0e00; color: #fff;}
+i.tag.blue2 {background-color: #34495E; color: #fff;}
+i.tag.purple2 {background-color: #8c5d81; color: #fff;}
+i.tag.pink2 {background-color: #db6070; color: #fff;}
+
 .workflow-card a.runWorkflowButton {
   width: 100%;
   border-radius: 0px;
@@ -583,6 +579,7 @@ h1.workflow-state-title {
 /*------------------------------------------------------*/
 /*STYLES FOR HISTORIES LIST                             */
 /*------------------------------------------------------*/
+table.historyListTable {font-size: 12px;}
 table.historyListTable > tbody > tr > td{line-height: 40px !important;}
 table.historyListTable > tbody > tr > td:first-child{text-align: right;}
 table.historyListTable > tbody > tr.current{font-weight: bold;color: #337ab7;}

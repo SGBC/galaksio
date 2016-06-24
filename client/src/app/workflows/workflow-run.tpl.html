@@ -52,18 +52,33 @@
         </div>
       </div>
       <div class="progressStep" ng-show="invocation.current_step == 4">
-        <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
-        <div class="flip-container" ng-class="((invocation.state == 'sending')||(invocation.state == 'working'))?'':'flipped'">
-          <div class="flipper">
-            <div class="front">
-              <img src="css/startup.png" ng-show="invocation.state == 'sending'">
-              <img src="css/working.png" ng-show="invocation.state == 'working'">
-            </div>
-            <div class="back">
-              <img src="css/success.png" ng-show="invocation.state == 'success'">
-              <img src="css/error.png" ng-show="invocation.state == 'error'">
-            </div>
-          </div>
+        <div ng-show="invocation.state === 'sending'">
+          <img src="css/startup.png">
+          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
+        </div>
+        <div ng-show="invocation.state === 'working'">
+          <img src="css/working.png">
+          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
+          <span ng-repeat="step in workflow.steps">
+            <b>{{step.name}}</b>
+            <b>{{step.state}}</b>
+          </span>
+        </div>
+        <div ng-show="invocation.state === 'success'">
+          <img src="css/success.png">
+          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
+          <span ng-repeat="step in workflow.steps">
+            <b>{{step.name}}</b>
+            <b>{{step.state}}</b>
+          </span>
+        </div>
+        <div ng-show="invocation.state === 'error'">
+          <img src="css/error.png">
+          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
+          <span ng-repeat="step in workflow.steps">
+            <b>{{step.name}}</b>
+            <b>{{step.state}}</b>
+          </span>
         </div>
       </div>
     </div>
