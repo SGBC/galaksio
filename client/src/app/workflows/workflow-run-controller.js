@@ -339,10 +339,13 @@
 
           if(runningSteps > 0 || waitingSteps > 0){
             invocation.state = "working";
+            invocation.state_text = "Running your workflow...";
           }else if(erroneousSteps > 0){
             invocation.state = "error";
+            invocation.state_text = "Failed...";
             //TODO: show summary of results
           }else{
+            invocation.state_text = "Done!!";
             invocation.state = "success";
             //TODO: show summary of results
           }
@@ -373,6 +376,8 @@
       console.log("Removing interval");
       $interval.cancel(me.checkInvocationInterval);
     });
+
+
 
     //--------------------------------------------------------------------
     // INITIALIZATION

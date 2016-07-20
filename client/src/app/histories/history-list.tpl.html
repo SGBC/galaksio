@@ -57,7 +57,7 @@
               <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
               <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
             </tr>
-            <tr ng-repeat="content in displayedHistory.content">
+            <tr ng-repeat="content in displayedHistory.content | filter:{deleted:false}">
               <td>{{content.name}}</td>
               <td>{{content.extension}}</td>
             </tr>

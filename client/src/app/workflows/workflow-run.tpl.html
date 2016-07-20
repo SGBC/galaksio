@@ -52,56 +52,72 @@
         </div>
       </div>
       <div class="progressStep" ng-show="invocation.current_step == 4">
-        <div ng-show="invocation.state === 'sending'">
-          <img src="css/startup.png">
-          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
+        <h1 class="workflow-state-title" ng-class="(invocation.state === 'sending')?'currentState':''" > <img src="css/startup.png" style="height: 70px;">{{invocation.state_text}}</h1>
+        <h1 class="workflow-state-title" ng-class="(invocation.state === 'working')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>
+        <h1 class="workflow-state-title" ng-class="(invocation.state === 'success')?'currentState':''" > <img src="css/success.png" style="height: 70px;">{{invocation.state_text}}</h1>
+        <h1 class="workflow-state-title" ng-class="(invocation.state === 'error')?'currentState':''" > <img src="css/error.png" style="height: 70px;">{{invocation.state_text}}</h1>
+        <div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocation.state === 'sending'">
+          <h3>We are sending your job to Galaxy. Please be patient...</h3>
+          <p>
+            <b>Tired of waiting? </b><b>Run your workflows in background!!</b><br>
+            You can run several workflows in background.<br>
+            Use the tools on the topbar to check the state of your workflows and recover them.<br>
+            You will be notified as soon as your workflows finish.
+          </p>
+          <button class="btn btn-info " ui-sref="workflows()">
+            <i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
+          </button>
         </div>
-        <div ng-show="invocation.state === 'working'">
-          <img src="css/working.png">
-          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
-          <span ng-repeat="step in workflow.steps">
-            <b>{{step.name}}</b>
-            <b>{{step.state}}</b>
-          </span>
+        <div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocation.state === 'working'">
+          <h3>Your workflow is now running on Galaxy. Please be patient...</h3>
+          <!-- <span ng-repeat="step in invocation.steps">
+          <b>{{step.name}}</b>
+          <b>{{step.state}}</b>
+        </span> -->
+          <p>
+            <b>Tired of waiting? </b><b>Run your workflows in background!!</b><br>
+            You can run several workflows in background.<br>
+            Use the tools on the topbar to check the state of your workflows and recover them.<br>
+            You will be notified as soon as your workflows finish.
+          </p>
+          <button class="btn btn-info " ui-sref="workflows()">
+            <i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
+          </button>
         </div>
-        <div ng-show="invocation.state === 'success'">
-          <img src="css/success.png">
-          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
-          <span ng-repeat="step in workflow.steps">
-            <b>{{step.name}}</b>
-            <b>{{step.state}}</b>
-          </span>
+        <div style="text-align: center; padding: 10px;" class="bg-success" ng-show="invocation.state === 'success'">
+          <h3>Your workflow has finished successfully!!</h3>
+          <button class="btn btn-success" ui-sref="workflows()">
+            <i class="fa fa-sign-out fa-fw"></i>Let's take a look to the results!
+          </button>
         </div>
-        <div ng-show="invocation.state === 'error'">
-          <img src="css/error.png">
-          <h1 class="workflow-state-title">{{invocation.state_text}}</h1>
-          <span ng-repeat="step in workflow.steps">
-            <b>{{step.name}}</b>
-            <b>{{step.state}}</b>
-          </span>
+        <div style="text-align: center; padding: 10px;" class="bg-danger" ng-show="invocation.state === 'error'">
+          <h3>Oops! Something went wrong during the execution of your workflow...</h3>
+          <button class="btn btn-danger" ui-sref="workflows()">
+            <i class="fa fa-sign-out fa-fw"></i>Let's take a look to the results!
+          </button>
         </div>
-      </div>
     </div>
-    <nav class="navbar navbar-default navbar-fixed-bottom progressNavigator" >
-      <div class="container">
-        <button type="button" class="btn btn-danger btn-lg navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
-          <i class="fa fa-chevron-left"></i> Cancel and go back
-        </button>
-        <button type="button" class="btn btn-default btn-lg navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
-          <i class="fa fa-chevron-left"></i> Previous step
-        </button>
-        <a class="btn btn-lg" ng-click="controller.backButtonHandler();;" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
-        <button type="button" class="btn btn-info btn-lg navbar-right"
-        ng-disabled="(invocation.current_step == 1 && step1form.$invalid) || (invocation.current_step == 2 && step2form.$invalid)"
-        ng-click="controller.nextStepButtonHandler()"
-        ng-show="invocation.current_step < 3">
-        <i class="fa fa-chevron-right"></i> Next step
+  </div>
+  <nav class="navbar navbar-default navbar-fixed-bottom progressNavigator" >
+    <div class="container">
+      <button type="button" class="btn btn-danger btn-lg navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
+        <i class="fa fa-chevron-left"></i> Cancel and go back
       </button>
-      <button type="submit" class="btn btn-success btn-lg navbar-right" ng-show="invocation.current_step == 3">
-        <i class="fa fa-bolt fa-fw" ></i> Run workflow!
+      <button type="button" class="btn btn-default btn-lg navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
+        <i class="fa fa-chevron-left"></i> Previous step
       </button>
-    </div>
-  </nav>
+      <a class="btn btn-lg" ng-click="controller.backButtonHandler();;" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
+      <button type="button" class="btn btn-info btn-lg navbar-right"
+      ng-disabled="(invocation.current_step == 1 && step1form.$invalid) || (invocation.current_step == 2 && step2form.$invalid)"
+      ng-click="controller.nextStepButtonHandler()"
+      ng-show="invocation.current_step < 3">
+      <i class="fa fa-chevron-right"></i> Next step
+    </button>
+    <button type="submit" class="btn btn-success btn-lg navbar-right" ng-show="invocation.current_step == 3">
+      <i class="fa fa-bolt fa-fw" ></i> Run workflow!
+    </button>
+  </div>
+</nav>
 </form>
 </div>
 </div>

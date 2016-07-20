@@ -49,6 +49,7 @@
           function successCallback(response){
             Cookies.remove("galaxyuser", {path: window.location.pathname});
             Cookies.remove("galaxysession", {path: window.location.pathname});
+            Cookies.remove("current-history", {path: window.location.pathname});
             //GET THE COOKIE
             Cookies.set("galaxyuser", $scope.email, {expires : 1, path: window.location.pathname});
             Cookies.set("galaxysession", btoa(response.data.api_key), {expires : 1, path: window.location.pathname});
@@ -103,6 +104,7 @@
     this.signOutButtonHandler = function () {
       Cookies.remove("galaxyuser", {path: window.location.pathname});
       Cookies.remove("galaxysession", {path: window.location.pathname});
+      Cookies.remove("current-history", {path: window.location.pathname});
       sessionStorage.removeItem("workflow_invocations");
       delete $scope.email;
       $state.go('signin');

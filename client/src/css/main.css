@@ -486,53 +486,22 @@ step-input .inputRepeatItem {
 
 h1.workflow-state-title {
   text-align: center;
-  font-size: 70px;
-  color: #5796B1;
+  font-size: 50px;
+  color: #8792a2;
   text-shadow: 1px 3px 2px #D4D4D4;
+  padding: 20px;
+  display: none;
 }
 
-.flip-container {
-  perspective: 1000px;
-}
-/* flip the pane when hovered */
-.flip-container.flipped .flipper {
-  transform: rotateY(180deg);
+h1.workflow-state-title.currentState {
+  display: block;
 }
 
-.flip-container, .front, .back {
-  width: 320px;
-  height: 480px;
-  margin: auto;
-  text-align: center;
-}
-
-/* flip speed goes here */
-.flipper {
-  transition: 0.5s;
-  transform-style: preserve-3d;
-
-  position: relative;
-}
-
-/* hide back of pane during swap */
-.front, .back {
-  backface-visibility: hidden;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* front pane, placed above back */
-.front {
-  z-index: 2;
-  /* for firefox 31 */
-  transform: rotateY(0deg);
-}
-
-/* back, initially hidden pane */
-.back {
-  transform: rotateY(180deg);
+h1.workflow-state-title > img {
+  height: 60px;
+  display: inline-block;
+  margin-top: -10px;
+  margin-right: 20px;
 }
 
 /*------------------------------------------------------*/

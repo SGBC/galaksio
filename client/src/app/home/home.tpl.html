@@ -3,6 +3,12 @@
     <h1>Dashboard <small></small></h1>
   </nav>
   <div class="home-container">
+    <div class="col-sm-12">
+      <div class="panel panel-container" style="height: 135px;background-image: url('css/home_back_science.png');">
+        <h1>Welcome to Galaxy slim</h1>
+        <h4 style=" color: #6194bf; ">A simple but effective way to use Galaxy.</h4>
+      </div>
+    </div>
     <div class="col-sm-6" ng-controller="UserSessionController as controller">
       <div class="panel panel-container" style="height: 170px;">
         <h4>Your account</h4>
@@ -34,9 +40,14 @@
     <div class="col-sm-6" ng-controller="WorkflowInvocationListController as controller">
       <div class="panel panel-container">
         <h4>Workflow queue</h4>
-        <table style="width:100%">
+        <div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocations.length === 0">
+          <h5><i>Whoops! Looks like there are no workflows in the queue.</i></h5>
+          <button class="btn btn-info " ui-sref="workflows()">
+            <i class="fa fa-sign-out fa-fw"></i>Let's run some workflows!
+          </button>
+        </div>
+        <table style="width:100%" ng-show="invocations.length > 0">
           <tr><th>Workflow name</th><th>State</th><th style="width:75px;"></th></tr>
-          <tr ng-show="invocations.length === 0"><td colspan="2">No data</td></tr>
           <tr ng-repeat="invocation in invocations track by $index" >
             <td>{{invocation.workflow_title}}</td>
             <td class="job-status-cat"  ng-if="invocation.state === 'success'">
@@ -89,9 +100,9 @@
               <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
               <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
             </tr>
-            <tr ng-repeat="content in displayedHistory.content">
-              <td>{{content.name}}</td>
-              <td>{{content.extension}}</td>
+            <tr ng-repeat="dataset in displayedHistory.content | filter:{deleted:false}">
+              <td>{{dataset.name}}</td>
+              <td>{{dataset.extension}}</td>
             </tr>
           </tbody>
         </table>
