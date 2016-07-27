@@ -45,11 +45,13 @@
         <button class="btn btn-success btn-sm navbar-right" ng-hide="displayedHistory === currentHistory" ng-click="controller.setCurrentHistory(displayedHistory)">
           <i class="fa fa-bolt fa-fw" ></i> Switch to this history
         </button>
-        <table class="table">
+        <table class="table datasetsTable">
           <thead>
             <tr style="text-align:center;">
+							<th></th>
               <th>File name</th>
               <th>Extension</th>
+							<th></th>
             </tr>
           </thead>
           <tbody>
@@ -57,9 +59,11 @@
               <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
               <td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
             </tr>
-            <tr ng-repeat="content in displayedHistory.content | filter:{deleted:false}">
+            <tr ng-repeat="content in displayedHistory.content | filter:{deleted:false} | orderBy:'-'">
+							<td style="text-align:center;">{{$index + 1}}</td>
               <td>{{content.name}}</td>
-              <td>{{content.extension}}</td>
+							<td style="text-align:center;">{{content.extension}}</td>
+							<td style="text-align:center;"><a href="{{content.url + '/display'}}" target="_blank" download="{{content.name + '.' + content.extension}}"><i class="fa fa-download"></i></a></td>
             </tr>
           </tbody>
         </table>

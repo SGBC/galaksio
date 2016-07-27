@@ -14,12 +14,16 @@
       return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/download";
       case "workflow-run":
       return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/invocations";
-      case "invocation-state":
+			case "invocation-state":
       return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
+			case "invocation-result":
+			return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1] + "/steps/" + extra[2];
       case "tools-info":
       return GALAXY_SERVER_URL + "api/tools/" + extra + "/build";
-      case "datasets-list":
+			case "datasets-list":
       return GALAXY_SERVER_URL + "api/histories/" + extra + "/contents";
+			case "dataset-details":
+      return GALAXY_SERVER_URL + "api/datasets/" + extra[0];
       case "history-list":
       return GALAXY_SERVER_URL + "api/histories/" + extra;
       default:

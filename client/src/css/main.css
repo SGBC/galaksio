@@ -4,288 +4,289 @@ src: url('fonts/OpenSans-Light.ttf');
 }*/
 html{background-color: #F5F5F5;}
 body{
-  font-family: 'Open Sans', sans-serif;
-  font-weight: lighter;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: lighter;
 }
 
 .btn {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 header {
-  margin-bottom: 10px;
-  background-color: #2B3143;
-  height: 55px;
+	margin-bottom: 10px;
+	background-color: #2B3143;
+	height: 55px;
 }
 header .navbar-default{
-  background: #2B3143;
+	background: #2B3143;
 }
 header .navbar-default .navbar-nav>li>a {
-  line-height: 40px;
-  font-size: 25px;
-  color: #AFAFAF;
+	line-height: 40px;
+	font-size: 25px;
+	color: #AFAFAF;
 }
 header .navbar-default .navbar-nav>li>a:hover {
-  color: #FFFFFF;
+	color: #FFFFFF;
 }
 
 
 #wrapper {
-  padding-left: 0;
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  transition: all 0.5s ease;
+	padding-left: 0;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
 }
 
 #wrapper.toggled {
-  padding-left: 220px;
+	padding-left: 220px;
 }
 
 #sidebar-wrapper {
-  z-index: 1000;
-  position: fixed;
-  left: 220px;
-  width: 0;
-  height: 100%;
-  margin-left: -220px;
-  overflow-y: auto;
-  background: #344258;
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  transition: all 0.5s ease;
+	z-index: 1000;
+	position: fixed;
+	left: 220px;
+	width: 0;
+	height: 100%;
+	margin-left: -220px;
+	overflow-y: auto;
+	background: #344258;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
 }
 
 #wrapper.toggled #sidebar-wrapper {
-  width: 220px;
+	width: 220px;
 }
 
 #page-content-wrapper {
-  width: 100%;
-  position: absolute;
-  padding: 15px;
-  background-color: #F5F5F5;
+	width: 100%;
+	position: absolute;
+	padding: 15px;
+	background-color: #F5F5F5;
 }
 
 #wrapper.toggled #page-content-wrapper {
-  position: absolute;
-  margin-right: -220px;
+	position: absolute;
+	margin-right: -220px;
 }
 
 .sidebar-nav {
-  position: absolute;
-  top: 0;
-  width: 220px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  margin-top: 50px;
+	position: absolute;
+	top: 0;
+	width: 220px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	margin-top: 50px;
 }
 
 .sidebar-nav li {
-  text-indent: 10px;
-  line-height: 40px;
-  border: 1px solid #2B3143;
+	text-indent: 10px;
+	line-height: 40px;
+	border: 1px solid #2B3143;
 }
 
 .sidebar-nav li a {
-  display: block;
-  text-decoration: none;
-  color: #FFFFFF;
-  font-weight: normal;
-  border-left: 2px solid #2B3143;
+	display: block;
+	text-decoration: none;
+	color: #FFFFFF;
+	font-weight: normal;
+	border-left: 2px solid #2B3143;
 }
 .sidebar-nav li a i.fa {margin-right: 10px;}
 
 .sidebar-nav li a:hover {
-  text-decoration: none;
-  background: #2B3143;
-  cursor: pointer;
-  border-left: 2px solid #609E6E;
+	text-decoration: none;
+	background: #2B3143;
+	cursor: pointer;
+	border-left: 2px solid #609E6E;
 }
 
 .sidebar-nav li a:active,
 .sidebar-nav li a:focus {
-  text-decoration: none;
+	text-decoration: none;
 }
 
 .sidebar-nav > .sidebar-brand {
-  height: 65px;
-  font-size: 18px;
-  line-height: 60px;
+	height: 65px;
+	font-size: 18px;
+	line-height: 60px;
 }
 
 .sidebar-nav > .sidebar-brand a {
-  color: #999999;
+	color: #999999;
 }
 
 .sidebar-nav > .sidebar-brand a:hover {
-  color: #fff;
-  background: none;
+	color: #fff;
+	background: none;
 }
 
 @media(min-width:768px) {
-  #wrapper {
-    padding-left: 220px;
-  }
+	#wrapper {
+		padding-left: 220px;
+	}
 
-  #wrapper.toggled {
-    padding-left: 0;
-  }
+	#wrapper.toggled {
+		padding-left: 0;
+	}
 
-  #sidebar-wrapper {
-    width: 220px;
-  }
+	#sidebar-wrapper {
+		width: 220px;
+	}
 
-  #wrapper.toggled #sidebar-wrapper {
-    width: 0;
-  }
+	#wrapper.toggled #sidebar-wrapper {
+		width: 0;
+	}
 
-  #page-content-wrapper {
-    padding: 20px;
-    position: relative;
-  }
+	#page-content-wrapper {
+		padding: 20px;
+		position: relative;
+	}
 
-  #wrapper.toggled #page-content-wrapper {
-    position: relative;
-    margin-right: 0;
-  }
+	#wrapper.toggled #page-content-wrapper {
+		position: relative;
+		margin-right: 0;
+	}
 }
 
 .topbar-nav {
-  z-index: 1010;
-  background: #FFF;
-  min-height: 45px;
-  height: 30px
+	z-index: 1010;
+	background: #FFF;
+	min-height: 45px;
+	height: 30px
 }
 .topbar-nav div.notification-area{
-  float: left;
+	float: left;
 }
 .topbar-nav div.notification-area a{
-  display: inline-block;
-  text-align: center;
-  font-size: 20px;
-  padding: 0px 5px;
+	display: inline-block;
+	text-align: center;
+	font-size: 20px;
+	padding: 0px 5px;
 }
 .topbar-nav div.notification-area a.brand-logo{width: 220px; background-color: #2B3143;}
 .topbar-nav div.notification-area a.brand-logo img {
-  height: 45px;
+	height: 45px;
 }
 
 #page-content-wrapper .title-bar {
-  margin: 20px -35px 0 -35px;
-  padding: 0px 10px;
-  background: #E5E9EC;
-  position: relative;
+	margin: 20px -35px 0 -35px;
+	padding: 0px 10px;
+	background: #E5E9EC;
+	position: relative;
 }
 #page-content-wrapper .title-bar h1 {
-  color: rgb(51, 51, 51);
+	color: rgb(51, 51, 51);
 }
 
 #page-content-wrapper .top-toolbar {
-  margin: 0 -35px;
-  padding: 10px 15px;
-  border-bottom: 1px solid #E0E0E0;
+	margin: 0 -35px;
+	padding: 10px 15px;
+	border-bottom: 1px solid #E0E0E0;
 }
 
 #page-content-wrapper .panel-container {
-  padding: 20px;
-  background-color: #FFF;
-  box-shadow: 3px 3px 9px #D2D2D2;
+	padding: 20px;
+	background-color: #FFF;
+	box-shadow: 3px 3px 9px #D2D2D2;
 }
 
 /******************************************************************************************/
 /* STYLES FOR DIALOGS                                                                     */
 /******************************************************************************************/
 .modal-error .modal-header {
-  background: #D2322D;
-  color: #FFFFFF;
+	background: #D2322D;
+	color: #FFFFFF;
 }
 .modal-error .modal-body {
-  color: #A9211E;
+	color: #A9211E;
 }
 .modal-info .modal-header {
-  background: #428BCA;
-  color: #FFFFFF;
+	background: #428BCA;
+	color: #FFFFFF;
 }
 .modal-success .modal-header {
-  background: #5CB85C;
-  color: #FFFFFF;
+	background: #5CB85C;
+	color: #FFFFFF;
 }
 .modal-warning .modal-header {
-  background: #F0AD4E;
-  color: #FFFFFF;
+	background: #F0AD4E;
+	color: #FFFFFF;
 }
 .modal-confirmation .modal-header {
-  background: #286090;
-  color: #FFFFFF;
+	background: #286090;
+	color: #FFFFFF;
 }
 
 /******************************************************************************************/
 /* STYLES FOR progress INDICATOR                                                          */
 /******************************************************************************************/
 .progressIndicator {
-  text-align: center;
-  max-width: 700px;
-  margin: auto;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	text-align: center;
+	max-width: 700px;
+	margin: auto;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 .progressIndicator .background-bar {
-  position: absolute;
-  width: 100%;
-  background: #D4D4D4;
-  height: 2px;
-  max-width: 700px;
-  margin-top: 33px;
+	position: absolute;
+	width: 100%;
+	background: #D4D4D4;
+	height: 2px;
+	max-width: 700px;
+	margin-top: 33px;
 }
 .progressIndicator .progressStep {
-  color: #D4D4D4;
-  font-weight: bold;
-  font-size: 15px;
+	color: #D4D4D4;
+	font-weight: bold;
+	font-size: 15px;
 }
 .progressIndicator .progressStep.currentStep {
-  color: #009CDE;
+	color: #3f82bb;
 }
 .progressIndicator .progressStep.doneStep {
-  color: #54BF78;
+	color: #54BF78;
 }
 .progressIndicator .stepNumber, .progressIndicator .stepDone {
-  font-size: 35px;
-  border: 3px solid #ffffff;
-  background-color: #D4D4D4;
-  padding: 2px 17px;
-  display: inline-block;
-  border-radius: 50%;
-  margin-bottom: 5px;
-  color: #ffffff;
+	font-size: 35px;
+	border: 3px solid #ffffff;
+	background-color: #D4D4D4;
+	padding: 2px 17px;
+	display: inline-block;
+	border-radius: 50%;
+	margin-bottom: 5px;
+	color: #ffffff;
 }
 .progressIndicator .stepDone {
-  display: none;
-  padding: 2px 10px;
+	display: none;
+	padding: 2px 10px;
 }
 .progressIndicator .doneStep .stepNumber {
-  display: none;
+	display: none;
 }
 .progressIndicator .doneStep .stepDone {
-  display: inline-block;
-  background: #54BF78;
-  color: white;
+	display: inline-block;
+	background: #54BF78;
+	color: white;
 }
 .progressIndicator .currentStep .stepNumber {
-  background: #009CDE;
+	background: #3f82bb;
 }
 .progressStepContainer {
-  margin-bottom: 75px;
+	margin-bottom: 75px;
 }
 .progressNavigator{
-  padding: 10px 0px;
+	padding: 10px 0px;
+	z-index: 999;
 }
 .progressNavigator > div.container{
-  max-width: 900px;
+	padding: 0px 50px 0 250px;
 }
 .progressStep .description {
-  margin-bottom: 15px;
+	margin-bottom: 15px;
 }
 
 /******************************************************************************************/
@@ -296,11 +297,11 @@ header .navbar-default .navbar-nav>li>a:hover {
 /*STYLES FOR sessionToolbar                             */
 /*------------------------------------------------------*/
 div.sessionToolbar {
-  float: right;
-  margin: 10px 40px;
+	float: right;
+	margin: 10px 40px;
 }
 div.sessionToolbar button, div.sessionToolbar li{
-  font-size: 10px;
+	font-size: 10px;
 }
 
 
@@ -308,46 +309,47 @@ div.sessionToolbar button, div.sessionToolbar li{
 /*STYLES FOR LOGIN                                      */
 /*------------------------------------------------------*/
 .form-signin {
-  max-width: 420px;
-  padding: 30px 38px 66px;
-  margin: 0 auto;
-  background-color: #eee;
-  border: 3px dotted rgba(0,0,0,0.1);
+	max-width: 420px;
+	padding: 30px 38px 66px;
+	margin: 0 auto;
+	margin-top: 90px;
+	background-color: #eee;
+	border: 3px dotted rgba(0,0,0,0.1);
 }
 
 .form-signin-heading {
-  text-align:center;
-  margin-bottom: 30px;
+	text-align:center;
+	margin-bottom: 30px;
 }
 
 .form-signin .form-control {
-  position: relative;
-  font-size: 16px;
-  height: auto;
-  padding: 10px;
+	position: relative;
+	font-size: 16px;
+	height: auto;
+	padding: 10px;
 }
 
 .form-signin input[type="text"] {
-  margin-bottom: 0px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+	margin-bottom: 0px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 }
 
 .form-signin input[type="password"] {
-  margin-bottom: 20px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+	margin-bottom: 20px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
 }
 
 .colorgraph {
-  height: 7px;
-  border-top: 0;
-  background: #c4e17f;
-  border-radius: 5px;
-  background-image: -webkit-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
-  background-image: -moz-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
-  background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
-  background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+	height: 7px;
+	border-top: 0;
+	background: #c4e17f;
+	border-radius: 5px;
+	background-image: -webkit-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+	background-image: -moz-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+	background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+	background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
 }
 
 /******************************************************************************************/
@@ -358,76 +360,76 @@ div.sessionToolbar button, div.sessionToolbar li{
 /*STYLES FOR WORKFLOW LIST                              */
 /*------------------------------------------------------*/
 .workflow-toolbar{
-  margin: 60px 0px 0px 0px;
-  background-color: #FAFAFA;
-  max-width: none;
-  height: 100px;
+	margin: 60px 0px 0px 0px;
+	background-color: #FAFAFA;
+	max-width: none;
+	height: 100px;
 }
 .workflow-card-container, .workflow-run-container, .histories-container, .home-container {
-  max-width: 1400px;
-  padding: 10px 30px;
-  margin: auto;
-  margin-top: 40px;
+	max-width: 1400px;
+	padding: 10px 30px;
+	margin: auto;
+	margin-top: 40px;
 }
 .workflow-card-container{text-align: center;}
 
 .workflow-card {
-  text-align: left;
-  min-height: 180px;
-  margin: 12px;
-  max-width: 380px;
-  display: inline-block;
-  min-width: 380px;
-  box-shadow: 0 5px 12px rgb(202, 202, 202),0 5px 10px rgb(253, 253, 253);
+	text-align: left;
+	min-height: 180px;
+	margin: 12px;
+	max-width: 380px;
+	display: inline-block;
+	min-width: 380px;
+	box-shadow: 0 5px 12px rgb(202, 202, 202),0 5px 10px rgb(253, 253, 253);
 }
 .workflow-card-body {
-  padding: 10px 5px;
-  background: #ffffff;
-  border: 1px solid #BFBFBF;
-  min-height: 190px;
-  max-height: 190px;
-  overflow: hidden;
+	padding: 10px 5px;
+	background: #ffffff;
+	border: 1px solid #BFBFBF;
+	min-height: 190px;
+	max-height: 190px;
+	overflow: hidden;
 }
 .workflow-card h2.workflow-card-name {
-  font-size: 18px;
-  color: #333;
-  max-height: 40px;
-  overflow: hidden;
-  height: 40px;
+	font-size: 18px;
+	color: #333;
+	max-height: 40px;
+	overflow: hidden;
+	height: 40px;
 }
 .workflow-card div.workflow-card-description {
-  font-size: 12px;
-  color: #d3d3d3;
-  max-height: 70px;
-  overflow: hidden;
-  height: 70px;
+	font-size: 12px;
+	color: #d3d3d3;
+	max-height: 70px;
+	overflow: hidden;
+	height: 70px;
 }
 .workflow-card-author {
-  background: #F7F7F7;
-  border: 1px solid #BFBFBF;
-  border-top: 0px;
-  font-size: 15px;
-  padding: 10px;
+	background: #F7F7F7;
+	border: 1px solid #BFBFBF;
+	border-top: 0px;
+	font-size: 15px;
+	padding: 10px;
 }
 .workflow-card-description {
-  font-style: italic;
-  color: #8A8A8A;
+	font-style: italic;
+	color: #8A8A8A;
 }
 .workflow-card-tags-list {
-  padding: 10px 0px;
-  max-height: 35px;
-  overflow: hidden;
+	padding: 10px 0px;
+	max-height: 35px;
+	overflow: hidden;
 }
 i.tag {
-  font-style: normal;
-  display: inline-block;
-  padding: 2px 5px;
-  border-radius: 5px;
-  font-size: 10px;
-  margin: 0px 2px;
-  font-family: sans-serif;
-  font-weight: 700;
-  background-color: #d8d8d8;
+	font-style: normal;
+	display: inline-block;
+	padding: 2px 5px;
+	border-radius: 5px;
+	font-size: 10px;
+	margin: 0px 2px;
+	font-family: sans-serif;
+	font-weight: 700;
+	background-color: #d8d8d8;
 }
 i.tag span.tag-name {padding: 0px 4px; color: #848484;}
 i.tag span.tag-name > i{margin-right:5px; color: #C5C5C5;}
@@ -448,100 +450,117 @@ i.tag.purple2 {background-color: #8c5d81; color: #fff;}
 i.tag.pink2 {background-color: #db6070; color: #fff;}
 
 .workflow-card a.runWorkflowButton {
-  width: 100%;
-  border-radius: 0px;
+	width: 100%;
+	border-radius: 0px;
 }
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/
 select.ng-invalid-required, input.ng-invalid-required {
-  border: 1px solid #E88080;
+	border: 1px solid #E88080;
 }
 select.ng-valid-required, input.ng-valid-required {
-  border: 1px solid #54BF78;
+	border: 1px solid #54BF78;
 }
 .invalidFormMessage{
-  color: #E88080;
+	color: #E88080;
 }
 step-input {
-  display: block;
-  margin-top: 5px;
+	display: block;
+	margin-top: 5px;
 }
 step-input input, step-input i {
-  margin-left: 10px;
+	margin-left: 10px;
 }
 step-input input[type=checkbox] {
-  margin-right: 10px;
+	margin-right: 10px;
 }
 step-input i {
-  display: block;
+	display: block;
 }
 
 step-input .inputRepeatItem {
-  font-size: 12px;
-  margin: 5px 0px;
-  border-left: 3px solid #CEA81D;
-  padding-left: 10px;
+	font-size: 12px;
+	margin: 5px 0px;
+	border-left: 3px solid #CEA81D;
+	padding-left: 10px;
 }
 
 h1.workflow-state-title {
-  text-align: center;
-  font-size: 50px;
-  color: #8792a2;
-  text-shadow: 1px 3px 2px #D4D4D4;
-  padding: 20px;
-  display: none;
+	text-align: center;
+	font-size: 50px;
+	color: #8792a2;
+	text-shadow: 1px 3px 2px #D4D4D4;
+	padding: 20px;
+	display: none;
 }
 
 h1.workflow-state-title.currentState {
-  display: block;
+	display: block;
 }
 
 h1.workflow-state-title > img {
-  height: 60px;
-  display: inline-block;
-  margin-top: -10px;
-  margin-right: 20px;
+	height: 60px;
+	display: inline-block;
+	margin-top: -10px;
+	margin-right: 20px;
 }
-
+#workflow-summary{text-align: center;}
+#workflow-summary table {
+	display: block;
+	margin: auto;
+	padding: 10px 20px;
+	margin-bottom: 10px;
+	width: 500px;
+}
+#workflow-summary td, #workflow-summary th {
+	border: 1px solid;
+	text-align: center;
+	text-overflow: ellipsis;
+	width: 250px;
+	padding: 2px;
+}
+#workflow-summary th {
+	background: #f5f5f5;
+}
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW STATE INDICATOR                   */
 /*------------------------------------------------------*/
 .invocationListToolbar{display: inline-block; margin: 5px 20px;}
 .invocationListToolbar .panel{
-  padding: 10px 5px;
-  background: #ffffff;
-  border: 1px solid #BFBFBF;
-  float: left;
-  width: 300px;
+	padding: 10px 5px;
+	background: #ffffff;
+	border: 1px solid #BFBFBF;
+	float: left;
+	width: 300px;
 }
 
 .invocationListToolbar .job-status-cat {
-  font-style: normal;
-  font-size: 12px;
-  margin: 3px 2px;
-  display: inline-block;
-  text-align: center;
+	font-style: normal;
+	font-size: 12px;
+	margin: 3px 2px;
+	display: inline-block;
+	text-align: center;
 }
 
 .job-status-cat .job-number{
-  position: absolute;
-  margin-left: -11px;
-  margin-top: -3px;
-  background: #585858;
-  border-radius: 50%;
-  width: 15px;
-  height: 15px;
-  font-size: 11px;
-  font-weight: bold;
-  color: white;
-  font-family: sans-serif;
+	position: absolute;
+	margin-left: -11px;
+	margin-top: -3px;
+	background: #585858;
+	border-radius: 50%;
+	width: 15px;
+	height: 15px;
+	font-size: 11px;
+	font-weight: bold;
+	color: white;
+	font-family: sans-serif;
 }
 
 .job-status-cat .job-status-cat-title{
-  font-size: 9px;
-  margin-left: 3px;
-  padding-top: 20px;
+	font-size: 9px;
+	margin-left: 3px;
+	padding-top: 20px;
 }
 
 
@@ -554,7 +573,9 @@ table.historyListTable > tbody > tr > td:first-child{text-align: right;}
 table.historyListTable > tbody > tr.current{font-weight: bold;color: #337ab7;}
 table.historyListTable > thead > tr > th, .table.historyListTable > tbody > tr > td {text-align: center;}
 table.historyListTable tr:hover {
-  background: #F2FCFF;
-  color: #668B9C;
-  cursor: pointer;
+	background: #F2FCFF;
+	color: #668B9C;
+	cursor: pointer;
 }
+
+table.datasetsTable>tbody>tr>td:nth-child(1) {color: #9a9a9a;}

@@ -1,5 +1,5 @@
 <div ng-controller="WorkflowInvocationListController as controller" class="invocationListToolbar">
-  <div ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false">
+  <div ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-init="checkInterval=true">
     <span class="job-status-cat" ng-show="running > 0">
       <span class="fa-stack" style="font-size: 12px;">
         <i class="fa fa-square fa-stack-2x" style="color:#b900ff;"></i>
