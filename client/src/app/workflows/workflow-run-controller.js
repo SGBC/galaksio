@@ -91,7 +91,25 @@
 				if($scope.invocation.current_step === 3){
 					$scope.invocation.state = "ready";
 					$scope.invocation.state_text = "Ready for launch!";
-
+					//TODO: available types are
+					//  - genomebuild
+					//  - hidden
+					//  - hidden_data
+					//  - baseurl
+					//  - file
+					//  - ftpfile
+					//  - library_data
+					//  - color
+					//  - data_collection
+					//  - drill_down
+					//  - data_column
+					//  - select --> DONE
+					//  - data --> DONE
+					//  - boolean --> DONE
+					//  - integer and float
+					//  - text --> DONE
+					//  - repeat --> DONE
+					//  - conditional --> DONE
 					//Generate the summary
 					var html = "";
 					var steps = $scope.workflow.steps;
@@ -194,6 +212,12 @@
 			//and update its content after the http response
 			$scope.loadingComplete = false;
 			$scope.workflow = null;
+			$scope.filterInputSteps = function (item) {
+			    return item.type === 'data_input' || (item.type === 'tool' && (item.tool_id === 'upload_old' || item.tool_id === 'irods_pull'));
+			};
+			$scope.filterNotInputSteps = function (item) {
+					return !$scope.filterInputSteps(item);
+			};
 
 			if($stateParams.invocation_id !== null){
 				$scope.invocation = WorkflowInvocationList.getInvocation($stateParams.invocation_id);
@@ -343,7 +367,8 @@
 						for (var attrname in response.data) {
 							invocation[attrname] = response.data[attrname];
 						}
-
+						//Valid Galaxy job states include:
+						//TODO: ‘new’, ‘upload’, ‘waiting’, ‘queued’, ‘running’, ‘ok’, ‘error’, ‘paused’, ‘deleted’, ‘deleted_new’
 						for(var i in invocation.steps){
 							if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
 								doneSteps++;

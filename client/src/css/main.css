@@ -579,3 +579,9 @@ table.historyListTable tr:hover {
 }
 
 table.datasetsTable>tbody>tr>td:nth-child(1) {color: #9a9a9a;}
+tr.deletedDataset,tr.hiddenDataset {
+    color: #a7a7a7;
+}
+tr.deletedDataset {
+    text-decoration: line-through;
+}

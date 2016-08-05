@@ -196,6 +196,10 @@
     //request the data everytime that the history list panel is displayed (data persistance).
     $scope.histories = HistoryList.getHistories();
 
+		$scope.filterDatasets = function (item) {
+				return (item.deleted === false || $scope.showDeleted);
+		};
+
     if($state.current.name === "histories"){
       this.retrieveAllHistoriesList(true, false, this.retrieveCurrentHistoryData);
     }else if($state.current.name === "home"){
