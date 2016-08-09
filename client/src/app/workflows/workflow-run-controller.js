@@ -62,6 +62,9 @@
 								$scope.workflow[attrname] = response.data[attrname];
 							}
 							$scope.workflow.steps = Object.values($scope.workflow.steps);
+
+							$scope.diagram = me.generateWorkflowDiagram($scope.workflow.steps);
+							me.updateWorkflowDiagram();
 							//UPDATE VIEW
 							$scope.loadingComplete = true;
 						},
@@ -72,6 +75,103 @@
 				}else {
 					$state.go('workflows');
 				}
+			};
+
+			this.generateWorkflowDiagram = function(workflow_steps){
+				var step=null, edge_id="", edges={}, diagram = {"nodes":[], "edges": []};
+
+				if(workflow_steps === undefined){
+					workflow_steps = $scope.workflow.steps;
+				}
+
+				try {
+					for(var i in workflow_steps){
+						step = workflow_steps[i];
+
+						diagram.nodes.push({
+							id: step.id,
+							label: (step.id+1) + ". " + (step.name || step.label),
+							x: step.position.left,
+							y: step.position.top,
+							step_type: step.type,
+						});
+
+						for(var j in step.input_connections){
+							edge_id = step.id + "" + step.input_connections[j].id;
+							if(!edges[edge_id]){
+								edges[edge_id]=true;
+								diagram.edges.push({
+									id: edge_id,
+									source: step.input_connections[j].id,
+									target: step.id,
+									type: 'arrow'
+								});
+							}
+						}
+					}
+				} catch (e) {
+					debugger;
+				}
+
+				return diagram;
+			};
+
+			this.updateWorkflowDiagram = function(diagram){
+				if(diagram === undefined){
+					diagram = $scope.diagram;
+				}
+
+				if($scope.sigma !== undefined){
+					debugger
+				}
+
+				$scope.sigma = new sigma({
+			    graph: diagram,
+			    renderer: {
+			      container: document.getElementById('sigmaContainer'),
+			    },
+			    settings: {
+						edgeColor: 'default',
+						defaultEdgeColor: '#d3d3d3',
+						mouseEnabled: false,
+						sideMargin: 30,
+						labelAlignment: "bottom"
+					}
+			  });
+
+				// Create a custom color palette:
+				var myPalette = {
+					iconScheme: {
+						'data_input': {
+							font: 'FontAwesome',
+							scale: 1.0,
+							color: '#fff',
+							content: "\uf15c"
+						}
+					},
+					aSetScheme: {
+						7: ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628"]
+					}
+				};
+
+				var myStyles = {
+					nodes: {
+						size: {by: 'size', bins: 7, min: 20,max: 20},
+						icon: {by: 'step_type', scheme: 'iconScheme'},
+						color: {by: 'step_type', scheme: 'aSetScheme', set:7},
+					},
+					edges:{
+						size: {by: 'size', min: 7,max: 7},
+					}
+				};
+
+				// Instanciate the design:
+				design = sigma.plugins.design($scope.sigma, {
+					styles: myStyles,
+					palette: myPalette
+				});
+
+				design.apply();
 			};
 
 			//--------------------------------------------------------------------
@@ -213,10 +313,10 @@
 			$scope.loadingComplete = false;
 			$scope.workflow = null;
 			$scope.filterInputSteps = function (item) {
-			    return item.type === 'data_input' || (item.type === 'tool' && (item.tool_id === 'upload_old' || item.tool_id === 'irods_pull'));
+				return item.type === 'data_input' || (item.type === 'tool' && (item.tool_id === 'upload_workflows' || item.tool_id === 'irods_pull'));
 			};
 			$scope.filterNotInputSteps = function (item) {
-					return !$scope.filterInputSteps(item);
+				return !$scope.filterInputSteps(item);
 			};
 
 			if($stateParams.invocation_id !== null){
@@ -321,6 +421,7 @@
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
 		this.checkInvocationsState = function(){
+			// debugger
 			var invocations = WorkflowInvocationList.getInvocations();
 			var running = 0, erroneous = 0, done = 0;
 			for(var i in invocations){
@@ -331,6 +432,8 @@
 				}else if(invocations[i].state == "success"){
 					done++;
 				}else if(invocations[i].state == "error"){
+					erroneous++;
+				}else if(invocations[i].state == "failed"){
 					erroneous++;
 				}else{
 					debugger;

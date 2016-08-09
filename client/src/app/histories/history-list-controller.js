@@ -200,7 +200,7 @@
 				return (item.deleted === false || $scope.showDeleted);
 		};
 
-    if($state.current.name === "histories"){
+    if($state.current.name === "histories" || $state.current.name === "workflowDetail"){
       this.retrieveAllHistoriesList(true, false, this.retrieveCurrentHistoryData);
     }else if($state.current.name === "home"){
       this.retrieveCurrentHistoryData();

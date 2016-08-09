@@ -19,21 +19,25 @@
 *     and others.
 *
 * THIS FILE CONTAINS THE FOLLOWING MODULE DECLARATION
-* - history-list
+* - upload.services.upload-dataset
 *
 */
 (function(){
-	var app = angular.module('histories.directives.history-list', []);
+	var app = angular.module('upload.upload-dataset', []);
 
-	/***************************************************************************/
-	/*DIRECTIVES ***************************************************************/
-	/***************************************************************************/
-
-	app.directive("historyListPanel", function() {
+	app.directive('fileModel', ['$parse', function ($parse) {
 		return {
-			restrict: 'E',
-			templateUrl: 'app/histories/history-list.tpl.html'
-		};
-	});
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				var model = $parse(attrs.fileModel);
+				var modelSetter = model.assign;
 
+				element.bind('change', function(){
+					scope.$apply(function(){
+						modelSetter(scope, element[0].files[0]);
+					});
+				});
+			}
+		};
+	}]);
 })();

@@ -1,0 +1,11 @@
+<div ng-controller="UploadDatasetController as controller">
+	<nav class="navbar navbar-default navbar-top title-bar">
+		<h1>Upload datasets <small></small></h1>
+	</nav>
+	<div class="workflow-run-container">
+		<div  class="panel panel-container" >
+			<input type="file" file-model="myFile">
+			<button ng-click="controller.uploadDatasetHandler()">upload me</button>
+		</div>
+	</div>
+</div>
