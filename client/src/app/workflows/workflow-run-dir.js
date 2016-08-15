@@ -19,7 +19,11 @@
 *     and others.
 *
 * THIS FILE CONTAINS THE FOLLOWING MODULE DECLARATION
-* - workflow-run-form
+* - workflowInvocationToolbar
+* - workflowRunForm
+* - workflowStep
+* - stepDataInput
+* - stepInput
 *
 */
 (function(){
@@ -87,12 +91,19 @@
 
 				var template =
 				'<label>{{step.label}}</label>' +
-				'<select class="form-control" name="input_{{step.id}}"' +
+				'<select class="form-control" name="input_{{step.id}}" style=" max-width: 350px; display: inline-block; margin-left: 10px; "' +
 				'        ng-model="step.inputs[0].value"' +
 				'        ng-options="file.id as file.name for file in step.files"' +
 				'        required>'+
 				'  <option disabled value=""> -- Choose a file </option>' +
-				"</select>";
+				'</select>' +
+				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step);">' +
+				'	<i class="fa fa-search"></i> Browse file' +
+				'</a>'+
+				'<a type="button" class="btn btn-default btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, true);">' +
+				'	<i class="fa fa-upload"></i> Upload file' +
+				'</a>';
+
 				//Form Validation and fields added with $compile
 				//Based on http://stackoverflow.com/questions/19882506/form-validation-and-fields-added-with-compile
 				$compile($(template).appendTo(element))(scope);

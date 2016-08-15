@@ -26,7 +26,7 @@
       return GALAXY_SERVER_URL + "api/datasets/" + extra[0];
 			case "history-list":
       return GALAXY_SERVER_URL + "api/histories/" + extra;
-			case "upload-dataset":
+			case "dataset-upload":
 			return GALAXY_SERVER_URL + "api/tools/" + extra;
       default:
       return "";
@@ -70,7 +70,7 @@
     'workflows.controllers.workflow-list',
     'workflows.controllers.workflow-run',
 		'histories.controllers.history-list',
-    'upload.controllers.upload-dataset'
+    'datasets.controllers.dataset-list'
   ]);
 
   //DEFINE THE ENTRIES FOR THE WEB APP
@@ -114,19 +114,12 @@
         url: '/histories',
         templateUrl: "app/histories/history-page.tpl.html",
         data: {requireLogin: true}
-      },
-			upload = {
-				name: 'upload',
-				url: '/upload',
-				templateUrl: "app/upload/upload-dataset.tpl.html",
-				data: {requireLogin: true}
-			};
+      };
       $stateProvider.state(signin);
       $stateProvider.state(home);
       $stateProvider.state(workflows);
       $stateProvider.state(workflowDetail);
 			$stateProvider.state(histories);
-      $stateProvider.state(upload);
     }]);
 
     //Define the events that are fired when an user login, log out etc.
@@ -145,8 +138,7 @@
       this.pages = [
         {name: 'home', title: 'Home', icon : 'home'},
         {name: 'workflows', title: 'Workflows', icon : 'share-alt'},
-				{name: 'histories', title: 'Histories', icon : 'history'},
-        {name: 'upload', title: 'Upload data', icon : 'upload'},
+				{name: 'histories', title: 'Histories', icon : 'history'}
       ];
 
       $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {

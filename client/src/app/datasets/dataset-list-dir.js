@@ -19,25 +19,45 @@
 *     and others.
 *
 * THIS FILE CONTAINS THE FOLLOWING MODULE DECLARATION
-* - upload.services.upload-dataset
+* - datasets.services.dataset-upload
 *
 */
 (function(){
-	var app = angular.module('upload.upload-dataset', []);
+	var app = angular.module('datasets.dataset-list', []);
+
+	app.directive("datasetListPanel", function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/datasets/dataset-list.tpl.html'
+		};
+	});
+
+	app.directive("datasetUploadPanel", function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/datasets/dataset-upload.tpl.html'
+		};
+	});
 
 	app.directive('fileModel', ['$parse', function ($parse) {
 		return {
 			restrict: 'A',
-			link: function(scope, element, attrs) {
-				var model = $parse(attrs.fileModel);
-				var modelSetter = model.assign;
-
+			link: function($scope, element, attrs) {
 				element.bind('change', function(){
-					scope.$apply(function(){
-						modelSetter(scope, element[0].files[0]);
+					$scope.$apply(function(){
+						element[0].files[0].state="pending"
+						$scope.files.push(element[0].files[0]);
 					});
 				});
 			}
 		};
 	}]);
+
+
+	app.directive("datasetIrodsPullPanel", function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/datasets/dataset-irods-pull.tpl.html'
+		};
+	});
 })();

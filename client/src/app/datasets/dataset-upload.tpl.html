@@ -1,0 +1,29 @@
+<div class="panel panel-container" >
+	<table class="table">
+		<thead>
+			<tr style="text-align:center;">
+				<th style="text-align:center;">File name</th>
+				<th style="text-align:center;">Size</th>
+				<th style="text-align:center;">Type</th>
+				<th style="text-align:center;">Status</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-if="files === undefined || files.length === 0">
+				<td style="text-align:center;" colspan="4">No files selected, use the options below to load data</td>
+			</tr>
+			<tr ng-repeat="file in files">
+				<td style="max-width:250px;word-wrap:break-word;">{{file.name}}</td>
+				<td style="text-align:center;">{{file.size}}</td>
+				<td style="text-align:center;">{{file.type}}</td>
+				<td style="text-align:center;">{{file.state}}</td>
+				<!--  TODO -->
+				<td style="text-align:center;"><i class="fa fa-trash-o" ng-click="console.error('NOT IMPLEMENTED');"></i></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="file" file-model="myFile" style="display:none;" id="uploadDatasetSelector">
+	<a class="btn btn-default" style="float: right;" ng-click="controller.uploadDatasetHandler();">Upload files</a>
+	<a class="btn btn-primary" style="float: right; margin-right: 10px;" ng-click="controller.selectNewDatasetHandler();">Choose local file</a>
+</div>

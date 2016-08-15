@@ -26,6 +26,7 @@
 */
 (function(){
 	var app = angular.module('workflows.controllers.workflow-run', [
+		'ui.bootstrap',
 		'ui.router',
 		'workflows.services.workflow-list',
 		'workflows.services.workflow-run',
@@ -126,18 +127,18 @@
 				}
 
 				$scope.sigma = new sigma({
-			    graph: diagram,
-			    renderer: {
-			      container: document.getElementById('sigmaContainer'),
-			    },
-			    settings: {
+					graph: diagram,
+					renderer: {
+						container: document.getElementById('sigmaContainer'),
+					},
+					settings: {
 						edgeColor: 'default',
 						defaultEdgeColor: '#d3d3d3',
 						mouseEnabled: false,
 						sideMargin: 30,
 						labelAlignment: "bottom"
 					}
-			  });
+				});
 
 				// Create a custom color palette:
 				var myPalette = {
@@ -335,9 +336,37 @@
 	app.controller('WorkflowRunStepController', [
 		'$scope',
 		'$http',
+		'$uibModal',
 		'$stateParams',
 		'WorkflowList',
-		function($scope, $http, $stateParams, WorkflowList){
+		function($scope, $http, $uibModal, $stateParams, WorkflowList){
+			//--------------------------------------------------------------------
+			// CONTROLLER FUNCTIONS
+			//--------------------------------------------------------------------
+
+			/**
+			* This function opens a new dialog for selecting or uploading new datasets
+			*
+			* @chainable
+			* @return {Object} the controller.
+			*/
+			this.showDatasetSelectorDialog = function(stepInstance, isUpload){
+				$scope.active=(isUpload?1:0);
+				var modalInstance = $uibModal.open({
+					templateUrl: 'app/datasets/dataset-selector-dialog.tpl.html',
+					scope: $scope,
+					size: "lg"
+				});
+				modalInstance.result.then(function (selectedItem) {
+					try {
+						stepInstance.inputs[0].value = selectedItem[0].id
+					} catch (e) {
+						//pass
+					}
+				});
+				return this;
+			}
+
 			//--------------------------------------------------------------------
 			// EVENT HANDLERS
 			//--------------------------------------------------------------------

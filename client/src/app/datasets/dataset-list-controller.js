@@ -19,17 +19,18 @@
 *     and others.
 *
 * THIS FILE CONTAINS THE FOLLOWING MODULE DECLARATION
-* - UploadDatasetController
+* - DatasetListController
 * -
 *
 */
 (function(){
-	var app = angular.module('upload.controllers.upload-dataset', [
+	var app = angular.module('datasets.controllers.dataset-list', [
+		'ui.bootstrap',
 		'common.dialogs',
-		'upload.upload-dataset'
+		'datasets.dataset-list'
 	]);
 
-	app.controller('UploadDatasetController', function($scope, $http, $dialogs){
+	app.controller('DatasetListController', function($scope, $http, $dialogs) {
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -37,32 +38,71 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		this.uploadDatasetHandler = function(){
-			debugger
+		this.selectNewDatasetHandler = function(){
+			$('#uploadDatasetSelector').click();
+		};
+
+		this.uploadDatasetHandler = function(nItem){
+			if(nItem === undefined){
+				nItem = 0;
+			}
+
+			if($scope.files === undefined || nItem === $scope.files.length){
+				return;
+			}
+
+			var file = $scope.files[nItem];
+
+			if(file.state !== "pending"){
+				me.uploadDatasetHandler(nItem+1);
+				return;
+			}
+
 			var formData = new FormData();
-			formData.append('files_0|file_data', $scope.myFile);
+			formData.append('files_0|file_data', file);
 			formData.append('tool_id', 'upload1');
 
+			file.state = "uploading";
+
 			$http.post(
-				getRequestPath("upload-dataset"), formData, {
+				getRequestPath("dataset-upload"), formData, {
 					transformRequest: angular.identity,
 					headers: {'Content-Type': undefined}
 				}).then(
 					function successCallback(response){
-						debugger;
+						file.state = "done";
+						me.uploadDatasetHandler(nItem+1);
 					},
 					function errorCallback(response){
-						//TODO: SHOW ERROR MESSAGE
+						debugger;
+						file.state = "error";
+						me.uploadDatasetHandler(nItem+1);
 					}
 				);
 			};
 
+			this.setSelectedDatasetHandler = function(selectedItem){
+				if(!$scope.selectedDataset){
+					$scope.selectedDataset = [];
+				}
+				$scope.selectedDataset[0] = selectedItem.dataset;
+			};
 
+			this.datasetSelectorAcceptButtonHandler = function(){
+				$scope.$close($scope.selectedDataset);
+			};
+			this.datasetSelectorCancelButtonHandler = function(){
+				$scope.$dismiss('cancel');
+			};
 
 			//--------------------------------------------------------------------
 			// INITIALIZATION
 			//--------------------------------------------------------------------
 			var me = this;
+
+			$scope.filterDatasets = function (item) {
+				return (item.deleted === false || $scope.showDeleted);
+			};
 
 		});
 	})();

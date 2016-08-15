@@ -3,13 +3,13 @@
 		<h1>Dashboard <small></small></h1>
 	</nav>
 	<div class="home-container">
-		<div class="col-sm-12">
+		<div class="col-md-12">
 			<div class="panel panel-container" style="height: 135px;background-image: url('css/home_back_science.png');">
-				<h1>Welcome to Galaxy slim</h1>
+				<h1>Welcome to Galaxy <i>slim</i></h1>
 				<h4 style=" color: #6194bf; ">A simple but effective way to use Galaxy.</h4>
 			</div>
 		</div>
-		<div class="col-sm-6" ng-controller="UserSessionController as controller">
+		<div class="col-md-6" ng-controller="UserSessionController as controller">
 			<div class="panel panel-container" style="height: 170px;">
 				<h4>Your account</h4>
 				<p><b>Signed in as </b> <i>{{email}}</i></p>
@@ -18,13 +18,18 @@
 				</button>
 			</div>
 		</div>
-		<div class="col-sm-6" >
-			<div class="panel panel-container" style="height: 170px;">
+		<div class="col-md-6" >
+			<div class="panel panel-container" style="height: 170px; font-size: 16px;">
 				<h4>Resources</h4>
 				<ul>
 					<li>
 						<a href="' + GALAXY_SERVER_URL + '" target="_blank">Go to local Galaxy site</a>
 						<img src="css/galaxy_logo.png" style=" height: 15px; display: inline-block; border-radius: 10px; margin: auto; ">
+					</li>
+					<li>
+						<!--  TODO -->
+						<a href="https://readthedocs.org/builds/paintomics/" target="_blank">Galaxy <i>slim</i> quick tips</a>
+						<i class="tag blue">Learn</i>
 					</li>
 					<li>
 						<a href="https://wiki.galaxyproject.org/Learn" target="_blank">Galaxy tutorials</a>
@@ -37,7 +42,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="col-sm-6" ng-controller="WorkflowInvocationListController as controller">
+		<div class="col-md-6" ng-controller="WorkflowInvocationListController as controller">
 			<div class="panel panel-container">
 				<h4>Workflow queue</h4>
 				<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocations.length === 0">
@@ -85,41 +90,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6" ng-controller="HistoryListController as controller">
+		<div class="col-md-6" ng-controller="HistoryListController as controller">
 			<div class="panel panel-container">
 				<a class="btn btn-default btn-sm navbar-right" ui-sref="histories()">
 					<i class="fa fa-history fa-fw" ></i> Change history
 				</a>
 				<h4>Current history</h4>
 				<p><b>History name: </b>{{displayedHistory.name}}</p>
-
-				<table class="table datasetsTable">
-					<thead>
-						<tr style="text-align:center;">
-							<th></th>
-							<th>File name</th>
-							<th>Extension</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-if="displayedHistory.content === undefined">
-							<td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
-							<td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
-						</tr>
-						<tr ng-repeat="dataset in filtered = (displayedHistory.content | filter:{deleted:false} )  | orderBy:'-' | limitTo:10">
-							<td style="text-align:center;">{{$index + 1}}</td>
-							<td>{{dataset.name}}</td>
-							<td style="text-align:center;">{{dataset.extension}}</td>
-							<td style="text-align:center;"><a href="{{dataset.url + '/display'}}" target="_blank" download="{{dataset.name + '.' + dataset.extension}}"><i class="fa fa-download"></i></a></td>
-						</tr>
-					</tbody>
-				</table>
-				<div style="text-align: center; padding: 10px;" ng-show="filtered.length > 10">
-					<button class="btn btn-defa " ui-sref="histories()">
-						<i class="fa fa-sign-out fa-fw"></i> Show {{displayedHistory.content.length - 10}} more datasets.
-					</button>
-				</div>
+				<dataset-list-panel ng-init="maxDatasets=10;"></dataset-list-panel>
 			</div>
 		</div>
 	</div>
