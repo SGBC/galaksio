@@ -8,10 +8,6 @@ body{
 	font-weight: lighter;
 }
 
-.btn {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
 header {
 	margin-bottom: 10px;
 	background-color: #2B3143;
@@ -195,6 +191,15 @@ header .navbar-default .navbar-nav>li>a:hover {
 	background-color: #FFF;
 	box-shadow: 3px 3px 9px #D2D2D2;
 }
+
+/******************************************************************************************/
+/* OVERRIDE SOME BOOTSTRAP OPTIONS                                                        */
+/******************************************************************************************/
+.btn {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+table.table td, table.table th {text-align: center;}
+table.table td:nth-child(1) {text-align: left;}
 
 /******************************************************************************************/
 /* STYLES FOR DIALOGS                                                                     */
@@ -516,22 +521,23 @@ h1.workflow-state-title > img {
 	margin-top: -10px;
 	margin-right: 20px;
 }
-#workflow-summary{text-align: center;}
-#workflow-summary table {
+
+/*.workflow-summary-step{text-align: center;}*/
+table.workflow-summary-step {
 	display: block;
 	margin: auto;
 	padding: 10px 20px;
 	margin-bottom: 10px;
 	width: 500px;
 }
-#workflow-summary td, #workflow-summary th {
+table.workflow-summary-step td, table.workflow-summary-step th {
 	border: 1px solid;
 	text-align: center;
 	text-overflow: ellipsis;
 	width: 250px;
 	padding: 2px;
 }
-#workflow-summary th {
+table.workflow-summary-step th {
 	background: #f5f5f5;
 }
 /*------------------------------------------------------*/

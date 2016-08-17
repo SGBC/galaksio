@@ -30,7 +30,7 @@
 		'datasets.dataset-list'
 	]);
 
-	app.controller('DatasetListController', function($scope, $http, $dialogs) {
+	app.controller('DatasetListController', function($rootScope, $scope, $http, $dialogs, HISTORY_EVENTS) {
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -47,7 +47,13 @@
 				nItem = 0;
 			}
 
-			if($scope.files === undefined || nItem === $scope.files.length){
+			if($scope.files === undefined){
+				return;
+			}
+
+			if(nItem === $scope.files.length){
+				//Notify all the other controllers that history-list has changed
+				$rootScope.$broadcast(HISTORY_EVENTS.historyChanged);
 				return;
 			}
 
@@ -61,6 +67,7 @@
 			var formData = new FormData();
 			formData.append('files_0|file_data', file);
 			formData.append('tool_id', 'upload1');
+			formData.append('history_id', Cookies.get("current-history"));
 
 			file.state = "uploading";
 

@@ -8,17 +8,16 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-if="displayedHistory.content === undefined">
-			<td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
-			<td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
+		<tr ng-if="displayedHistory.content === undefined || displayedHistory.content.length === 0">
+			<td colspan="4" style="text-align:center;"><i>No data</i></td>
 		</tr>
 		<tr ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets) | orderBy:'-' | limitTo:maxDatasets"
 		    ng-class="{'deletedDataset' : dataset.deleted, 'hiddenDataset': !dataset.visible, 'selectedDataset': (dataset.id === selectedDataset[0].id)}"
 				ng-click="controller.setSelectedDatasetHandler(this);">
 			<td style="text-align:center;">{{$index + 1}}</td>
-			<td style="max-width:250px;word-wrap: break-word;">{{dataset.name}}</td>
-			<td style="text-align:center;">{{dataset.extension}}</td>
-			<td style="text-align:center;"><a href="{{dataset.url + '/display'}}" target="_blank" download="{{dataset.name + '.' + dataset.extension}}"><i class="fa fa-download"></i></a></td>
+			<td style="text-align:left; max-width:250px;word-wrap: break-word;">{{dataset.name}}</td>
+			<td>{{dataset.extension}}</td>
+			<td><a href="{{dataset.url + '/display'}}" target="_blank" download="{{dataset.name + '.' + dataset.extension}}"><i class="fa fa-download"></i></a></td>
 		</tr>
 	</tbody>
 </table>

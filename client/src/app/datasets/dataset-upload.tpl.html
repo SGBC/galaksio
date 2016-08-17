@@ -1,11 +1,11 @@
 <div class="panel panel-container" >
-	<table class="table">
+	<table class="table" style="margin-bottom:10px;">
 		<thead>
-			<tr style="text-align:center;">
-				<th style="text-align:center;">File name</th>
-				<th style="text-align:center;">Size</th>
-				<th style="text-align:center;">Type</th>
-				<th style="text-align:center;">Status</th>
+			<tr>
+				<th>File name</th>
+				<th>Size</th>
+				<th>Type</th>
+				<th>Status</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -15,11 +15,16 @@
 			</tr>
 			<tr ng-repeat="file in files">
 				<td style="max-width:250px;word-wrap:break-word;">{{file.name}}</td>
-				<td style="text-align:center;">{{file.size}}</td>
-				<td style="text-align:center;">{{file.type}}</td>
-				<td style="text-align:center;">{{file.state}}</td>
+				<td>{{file.size}}</td>
+				<td>{{file.type}}</td>
+				<td style="width:60px;max-width:60px;">
+					<span ng-if="file.state === 'pending'" class="label label-default">{{file.state}}</span>
+					<span ng-if="file.state === 'uploading'" class="label label-primary">{{file.state}}</span>
+					<span ng-if="file.state === 'done'" class="label label-success">{{file.state}}</span>
+					<span ng-if="file.state === 'error'" class="label label-danger">{{file.state}}</span>
+				</td>
 				<!--  TODO -->
-				<td style="text-align:center;"><i class="fa fa-trash-o" ng-click="console.error('NOT IMPLEMENTED');"></i></td>
+				<td style="max-width:30px;color:red;"><a href="javascript:void(0);"ng-click="console.error('NOT IMPLEMENTED');"><i class="fa fa-trash-o" ></i></a></td>
 			</tr>
 		</tbody>
 	</table>

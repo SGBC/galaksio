@@ -4,7 +4,7 @@
 	</div>
 	<div class="modal-body">
 		<uib-tabset active="active">
-			<uib-tab index="0" heading="Browse datasets" ng-hide="hiddenTabs && (hiddenTabs.indexOf(0)!=-1)">
+			<uib-tab index="0" heading="Browse datasets" ng-if="(hiddenTabs === undefined) || (hiddenTabs.indexOf(0) ==-1)">
 				<div ng-controller="HistoryListController as controller">
 					<div class="panel panel-container">
 						<nav class="navbar navbar-default navbar-top title-bar">

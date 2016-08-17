@@ -17,7 +17,7 @@
 	<!-- ************************************************************* -->
 	<!-- WORKFLOW DESCRIPTION -->
 	<!-- ************************************************************* -->
-	<div class="panel panel-container" ng-show="invocation.current_step == 1">
+	<div class="panel panel-container" ng-if="invocation.current_step == 1">
 		<h4>Details</h4>
 		<p><b>Author: </b>{{workflow.owner}}</p>
 		<p><b>Description: </b>{{workflow.annotation}}</p>
@@ -32,7 +32,7 @@
 	<!-- ************************************************************* -->
 	<!-- HISTORY SELECTION -->
 	<!-- ************************************************************* -->
-	<div ng-show="invocation.current_step == 2">
+	<div ng-if="invocation.current_step == 2">
 		<div class="panel panel-container" >
 			<h3>History selection</h3>
 			<p class="description">TODO: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
@@ -43,7 +43,7 @@
 		<!-- ************************************************************* -->
 		<!-- INPUT DATA SELECTION -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-show="invocation.current_step == 3" ng-form="step1form">
+		<div class="progressStep" ng-if="invocation.current_step == 3" ng-form="step1form">
 			<h3>Input data:</h3>
 			<p class="description">TODO: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
 			<p class="invalidFormMessage" ng-show="step1form.$invalid">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
@@ -55,7 +55,7 @@
 		<!-- ************************************************************* -->
 		<!-- OTHER STEPS CUSTOMIZATION -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-show="invocation.current_step == 4" ng-form="step2form">
+		<div class="progressStep" ng-if="invocation.current_step == 4" ng-form="step2form">
 			<h3>Other steps:</h3>
 			<p class="description">TODO: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
 			<p class="invalidFormMessage" ng-show="step2form.$invalid">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
@@ -66,10 +66,11 @@
 		<!-- ************************************************************* -->
 		<!-- PRE-RUN WORKFLOW SUMMARY -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-show="invocation.current_step == 5">
+		<div class="progressStep" ng-if="invocation.current_step == 5">
 			<h1 class="workflow-state-title">{{invocation.state_text}}</h1>
 			<h1 style=" text-align: center; font-size: 70px; color: #009CDE; "></h1>
-			<div class="description" style="text-align: center;"><h4>This is a summary of the input data and the custom values that you chose for this workflow.</h4>
+			<div class="description" style="text-align: center;">
+				<h4>This is a summary of the input data and the custom values that you chose for this workflow.</h4>
 				<p>
 					<b style="color: #E88080; width: 150px; margin-right: 10px; display: inline-block; ">Is something wrong?</b>
 					Just go back and choose the correct value.
@@ -77,13 +78,13 @@
 				<p><b style=" color: #54BF78; width: 150px; margin-right: 10px; display: inline-block; ">Ready to launch?</b>
 					Click on "Run workflow" to start your work!
 				</p>
-				<div id="workflow-summary"></div>
+				<workflow-summary></workflow-summary>
 			</div>
 		</div>
 		<!-- ************************************************************* -->
 		<!-- RUNNING WORKFLOW SUMMARY -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-show="invocation.current_step == 6">
+		<div class="progressStep" ng-if="invocation.current_step == 6">
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'sending')?'currentState':''" > <img src="css/startup.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'working')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'success')?'currentState':''" > <img src="css/success.png" style="height: 70px;">{{invocation.state_text}}</h1>

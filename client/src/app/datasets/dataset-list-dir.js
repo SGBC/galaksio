@@ -32,6 +32,20 @@
 		};
 	});
 
+	app.directive("datasetListInput", function() {
+		return {
+			restrict: 'E',
+			controller: 'DatasetListController',
+			template:
+			'<select class="form-control" name="input_{{step.id}}" style=" max-width: 350px; display: inline-block; margin-left: 10px; "' +
+			'        ng-model="step.inputs[0].value"' +
+			'        ng-options="dataset.id as dataset.name for dataset in filtered = (displayedHistory.content | filter:filterDatasets) "' +
+			'        required>'+
+			'  <option disabled value=""> -- Choose a file </option>' +
+			'</select>'
+		};
+	});
+
 	app.directive("datasetUploadPanel", function() {
 		return {
 			restrict: 'E',

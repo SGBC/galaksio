@@ -33,7 +33,7 @@
 	/***************************************************************************/
 	/*CONTROLLERS **************************************************************/
 	/***************************************************************************/
-	app.controller('HistoryListController', function($state, $scope, $http, $uibModal, HistoryList, AUTH_EVENTS){
+	app.controller('HistoryListController', function($state, $scope, $http, $uibModal, HistoryList, HISTORY_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -45,9 +45,13 @@
 		* @param  {Object} history contains the history data
 		* @return {Object} the controller.
 		*/
-		this.setDisplayedHistory = function(history){
+		this.setDisplayedHistory = function(history, force){
 			$scope.displayedHistory = history;
-			if(history.content === undefined){
+			if(history === undefined){
+				return;
+			}
+
+			if(history.content === undefined || force === true){
 				//GET THE EXTRA INFORMATION FOR THE HISTORY (datasets)
 				$http(getHttpRequestConfig("GET", "datasets-list", {extra: history.id})).then(
 					function successCallback(response){
@@ -92,11 +96,6 @@
 				scope: $scope,
 				size: "lg"
 			});
-			modalInstance.result.then(function () {
-				me.retrieveAllHistoriesList(true, false, me.retrieveCurrentHistoryData);
-			}, function () {
-				me.retrieveAllHistoriesList(true, false, me.retrieveCurrentHistoryData);
-			});
 			return this;
 		};
 
@@ -120,16 +119,17 @@
 							//Now get the details for each history
 							for(var i in $scope.histories){
 								//GET THE EXTRA INFORMATION FOR EACH HISTORY
-								me.retrieveHistoryData($scope.histories[i].id, callback);
+								me.retrieveHistoryData($scope.histories[i].id);
 							}
-						}else{
-							if(callback !== undefined){
-								callback();
-							}
+						}
+
+						if(callback !== undefined){
+							callback(force);
 						}
 					},
 					function errorCallback(response){
 						//TODO: SHOW ERROR MESSAGE
+						debugger
 					}
 				);
 			}else{
@@ -140,14 +140,13 @@
 			return this;
 		};
 
-
 		/**
 		* This function retrieves the information for the current history
 		*
 		* @chainable
 		* @return {Object} the controller.
 		*/
-		this.retrieveCurrentHistoryData = function(){
+		this.retrieveCurrentHistoryData = function(force){
 			if($scope.histories.length === 0){
 				this.retrieveAllHistoriesList(true, true, me.retrieveCurrentHistoryData)
 				return this;
@@ -159,13 +158,19 @@
 					function successCallback(response){
 						me.setCurrentHistory(HistoryList.getHistory(response.data.id));
 						me.retrieveHistoryData(response.data.id, function(){
-							me.setDisplayedHistory($scope.currentHistory);
+							me.setDisplayedHistory($scope.currentHistory, force);
 						});
 					},
 					function errorCallback(response){
 						//TODO: SHOW ERROR MESSAGE
+						debugger
 					}
 				);
+			}else	if(force == true){
+				$scope.currentHistory = HistoryList.getHistory(Cookies.get("current-history"));
+				me.retrieveHistoryData(Cookies.get("current-history"), function(){
+					me.setDisplayedHistory($scope.currentHistory, force);
+				});
 			}else {
 				//Set the current history based on the id (cookie)
 				$scope.currentHistory = HistoryList.getHistory(Cookies.get("current-history"));
@@ -198,10 +203,17 @@
 				},
 				function errorCallback(response){
 					//TODO: SHOW ERROR MESSAGE
+					debugger
 				}
 			);
 			return this;
 		};
+		//--------------------------------------------------------------------
+		// EVENT HANDLERS
+		//--------------------------------------------------------------------
+		$scope.$on(HISTORY_EVENTS.historyChanged, function (event, args) {
+			me.setDisplayedHistory($scope.currentHistory, true);
+		});
 
 		//--------------------------------------------------------------------
 		// INITIALIZATION
@@ -213,8 +225,10 @@
 		$scope.histories = HistoryList.getHistories();
 
 
-		if($state.current.name === "histories" || $state.current.name === "workflowDetail"){
+		if($state.current.name === "histories"){
 			this.retrieveAllHistoriesList(true, false, this.retrieveCurrentHistoryData);
+		}else if($state.current.name === "workflowDetail"){
+			this.retrieveAllHistoriesList(false, false, this.retrieveCurrentHistoryData);
 		}else if($state.current.name === "home"){
 			this.retrieveCurrentHistoryData();
 		}
