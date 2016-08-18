@@ -81,9 +81,11 @@
 						me.uploadDatasetHandler(nItem+1);
 					},
 					function errorCallback(response){
-						debugger;
 						file.state = "error";
 						me.uploadDatasetHandler(nItem+1);
+						debugger;
+						console.error("Error while uploading a new file at DatasetListController:uploadDatasetHandler.");
+						console.error(response);
 					}
 				);
 			};

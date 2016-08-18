@@ -472,10 +472,10 @@ h3.workflow-title:hover {
 	text-overflow: inherit;
 	overflow: visible;
 }
-select.ng-invalid-required, input.ng-invalid-required {
+select.ng-invalid, input.ng-invalid {
 	border: 1px solid #E88080;
 }
-select.ng-valid-required, input.ng-valid-required {
+select.ng-valid, input.ng-valid {
 	border: 1px solid #54BF78;
 }
 .invalidFormMessage{

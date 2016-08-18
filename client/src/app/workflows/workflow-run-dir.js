@@ -110,13 +110,13 @@
 		return {
 			restrict: 'E',
 			link: function(scope, element){
-				//TODO HACER EN ANGULAR
 				var model = scope.input;
 				var template = "";
 				var inputValue = "";
 				try{
 					inputValue = JSON.parse(scope.step.tool_state)[model.name].replace(/(^\"|\"$)/g,"");
 				}catch(err) {
+					console.error("Unable to parse 'step.tool_state' at stepInput directive.");
 				}
 
 				//TODO: available types are

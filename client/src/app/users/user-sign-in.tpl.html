@@ -1,26 +1,48 @@
-<div ng-controller="UserSessionController as controller" ng-init="isLogin=true">
-  <form name="signInForm" class="form-signin" novalidate ng-submit="controller.signInButtonHandler()" ng-show="isLogin">
-    <h3 class="form-signin-heading">Welcome Back! Please Sign In</h3>
-    <hr class="colorgraph"><br>
-    <input type="text" class="form-control" ng-model="email"  placeholder="Email" required="" autofocus="" />
-    <input type="password" class="form-control" ng-model="password" placeholder="Password" required=""/>
-    <a href="javascript:void(0);" class="text-info" ng-click="isLogin=false">Create an account</a>
-    <button type="submit" class="btn btn-success btn-lg navbar-right" ng-disabled="signInForm.$invalid">
-      <i class="fa fa-bolt fa-fw" ></i> Sign in
-    </button>
-  </form>
-  <form name="signUpForm" class="form-signin" novalidate ng-submit="controller.signUpButtonHandler()" ng-show="!isLogin">
-    <h3 class="form-signin-heading">Create your Galaxy account</h3>
-    <hr class="colorgraph"><br>
-    <input type="email" class="form-control" ng-model="email" placeholder="example@email.com" required="" autofocus="" />
-    <input type="text" class="form-control" ng-model="username" placeholder="Your name" required="" autofocus="" />
-    <input type="password" class="form-control" ng-model="password" placeholder="Password" required="" style="margin-bottom: 0; margin-top: 20px;"/>
-    <input type="password" class="form-control" ng-model="passconfirm" placeholder="Repeat the password" required=""/>
-    <a href="javascript:void(0);" class="text-danger" ng-click="isLogin=true">Cancel</a>
-    <button type="submit" class="btn btn-success btn-lg navbar-right" ng-disabled="signUpForm.$invalid">
-      <i class="fa fa-bolt fa-fw" ></i> Sign up
-    </button>
-  </form>
+<div ng-controller="UserSessionController as controller" ng-init="isLogin=true;">
+	<form name="signForm" class="form-signin" novalidate ng-submit="controller.signFormSubmitHandler()">
+		<h3 class="form-signin-heading">{{(isLogin)?"Welcome Back! Please Sign In":"Create your Galaxy account"}}</h3>
+		<hr class="colorgraph"><br>
+		<input name="email" type="email" class="form-control" ng-model="userInfo.email" placeholder="Email" required="" autofocus="" />
+		<span>
+			<span class="text-danger" ng-show="signForm.email.$error.required">Required!</span>
+			<span class="text-danger" ng-show="signForm.email.$error.email">Not valid email!</span>
+		</span>
 
+		<input name="username" type="text" class="form-control" placeholder="Your name" required="" style="margin-top: 10px;"
+		ng-model="userInfo.username"
+		ng-if="!isLogin"
+		ng-pattern="/^[a-z0-9\-]+$/"
+		/>
+		<span ng-if="!isLogin">
+			<span class="text-danger" ng-show="signForm.username.$error.required">Required!</span>
+			<span class="text-danger" ng-show="signForm.username.$error.pattern">Public name must contain only lower-case letters, numbers and '-'</span>
+		</span>
+		<input name="password" type="password" id="mainPass" class="form-control" placeholder="Password" style="margin-bottom: 0; margin-top: 20px;" required=""
+		ng-model="userInfo.password"
+		ng-minlength="6"
+		/>
+		<span ng-if="!isLogin">
+			<span class="text-danger" ng-show="signForm.password.$error.required">Required!</span>
+			<span class="text-danger" ng-show="signForm.password.$error.minlength">Password must be at least 6 characters.</span>
+		</span>
 
+		<input name="passconfirm" type="password" class="form-control" placeholder="Repeat the password" style="margin-bottom: 0; margin-top: 10px;" required=""
+		ng-model="userInfo.passconfirm"
+		ng-init=""
+		ng-minlength="6"
+		ng-minlength="50"
+		ng-if="!isLogin"
+		ng-pwcheck="mainPass"
+		/>
+		<span ng-if="!isLogin">
+			<span class="text-danger" ng-show="signForm.passconfirm.$error.pwmatch">Passwords are different.</span>
+		</span>
+		<div style="margin-top: 30px;">
+			<a href="javascript:void(0);" class="text-info" ng-show="isLogin" ng-click="isLogin=false">Create an account</a>
+			<a href="javascript:void(0);" class="text-danger" ng-show="!isLogin" ng-click="isLogin=true">Cancel</a>
+			<button type="submit" class="btn btn-success btn-lg navbar-right" ng-disabled="signForm.$invalid">
+				<i class="fa fa-bolt fa-fw" ></i> Sign {{(isLogin)?"in":"up"}}
+			</button>
+		</div>
+	</form>
 </div>

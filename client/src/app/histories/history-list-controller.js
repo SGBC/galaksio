@@ -19,12 +19,13 @@
 *     and others.
 *
 * THIS FILE CONTAINS THE FOLLOWING MODULE DECLARATION
-* - histories.controllers.history-list (HistoryListController)
+* - HistoryListController
 *
 */
 (function(){
 	var app = angular.module('histories.controllers.history-list', [
 		'ui.bootstrap',
+		'common.dialogs',
 		'ui.router',
 		'histories.services.history-list',
 		'histories.directives.history-list'
@@ -33,7 +34,7 @@
 	/***************************************************************************/
 	/*CONTROLLERS **************************************************************/
 	/***************************************************************************/
-	app.controller('HistoryListController', function($state, $scope, $http, $uibModal, HistoryList, HISTORY_EVENTS){
+	app.controller('HistoryListController', function($state, $scope, $http, $uibModal, $dialogs, HistoryList, HISTORY_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -58,7 +59,12 @@
 						$scope.displayedHistory.content = response.data;
 					},
 					function errorCallback(response){
-						//TODO: SHOW ERROR MESSAGE
+						debugger;
+						var message = "Failed when retrieving the list of datasets for displayed history.";
+						$dialogs.showErrorDialog(message, {
+							logMessage : message + " at HistoryListController:setDisplayedHistory."
+						});
+						console.error(response.data);
 					}
 				);
 			}
@@ -128,8 +134,12 @@
 						}
 					},
 					function errorCallback(response){
-						//TODO: SHOW ERROR MESSAGE
-						debugger
+						debugger;
+						var message = "Failed when retrieving the list of histories.";
+						$dialogs.showErrorDialog(message, {
+							logMessage : message + " at HistoryListController:retrieveAllHistoriesList."
+						});
+						console.error(response.data);
 					}
 				);
 			}else{
@@ -162,8 +172,12 @@
 						});
 					},
 					function errorCallback(response){
-						//TODO: SHOW ERROR MESSAGE
-						debugger
+						debugger;
+						var message = "Failed when retrieving the most recently used history.";
+						$dialogs.showErrorDialog(message, {
+							logMessage : message + " at HistoryListController:retrieveCurrentHistoryData."
+						});
+						console.error(response.data);
 					}
 				);
 			}else	if(force == true){
@@ -202,8 +216,12 @@
 					}
 				},
 				function errorCallback(response){
-					//TODO: SHOW ERROR MESSAGE
-					debugger
+					debugger;
+					var message = "Failed when retrieving the details for history.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at HistoryListController:retrieveHistoryData."
+					});
+					console.error(response.data);
 				}
 			);
 			return this;

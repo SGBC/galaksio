@@ -12,7 +12,7 @@
 		<div class="col-md-6" ng-controller="UserSessionController as controller">
 			<div class="panel panel-container" style="height: 170px;">
 				<h4>Your account</h4>
-				<p><b>Signed in as </b> <i>{{email}}</i></p>
+				<p><b>Signed in as </b> <i>{{userInfo.email}}</i></p>
 				<button class="btn btn-danger btn-sm" ng-click="controller.signOutButtonHandler()">
 					<i class="fa fa-sign-out fa-fw" ></i> Close session
 				</button>
@@ -27,7 +27,7 @@
 						<img src="css/galaxy_logo.png" style=" height: 15px; display: inline-block; border-radius: 10px; margin: auto; ">
 					</li>
 					<li>
-						<!--  TODO -->
+						<!--  TODO: update this link-->
 						<a href="https://readthedocs.org/builds/paintomics/" target="_blank">Galaxy <i>slim</i> quick tips</a>
 						<i class="tag blue">Learn</i>
 					</li>
