@@ -50,6 +50,7 @@
 	app.controller('WorkflowListController', [
 		'$scope',
 		'$http',
+		'$dialogs',
 		'WorkflowList',
 		function($scope, $http, $dialogs, WorkflowList){
 			//--------------------------------------------------------------------
