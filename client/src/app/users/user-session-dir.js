@@ -28,7 +28,6 @@
     'users.controllers.user-session'
   ]);
 
-
   app.service('loginModal', function ($uibModal, $rootScope) {
     function assignCurrentUser (user) {
       $rootScope.currentUser = userF;
@@ -50,13 +49,13 @@
       replace:true,
       template:
       '      <div class="sessionToolbar" ng-controller="UserSessionController as controller">' +
-      '        <div class="dropdown" ng-show="email !== undefined">' +
+      '        <div class="dropdown" ng-show="userInfo.email !== undefined">' +
       '          <button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
-      '            <i class="fa fa-user" aria-hidden="true"></i> {{email}}' +
+      '            <i class="fa fa-user" aria-hidden="true"></i> {{userInfo.email}}' +
       '            <span class="caret"></span>' +
       '          </button>' +
       '          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">' +
-      '            <li class="dropdown-header">Signed in as <b>{{email}}</b></li>' +
+      '            <li class="dropdown-header">Signed in as <b>{{userInfo.email}}</b></li>' +
       '            <li><a ng-click="controller.signOutButtonHandler()">Sign out</a></li>' +
       '            <li role="separator" class="divider"></li>' +
       '            <li><a href="' + GALAXY_SERVER_URL + '" target="_blank">Go to Galaxy site</a></li>' +
@@ -66,4 +65,24 @@
     };
   });
 
+	app.directive('ngPwcheck', [function () {
+    return {
+      require: 'ngModel',
+      link: function (scope, elem, attrs, ctrl) {
+        var firstPassword = '#' + attrs.ngPwcheck;
+				elem.on('keyup', function () {
+          scope.$apply(function () {
+            var v = elem.val()===$(firstPassword).val();
+            ctrl.$setValidity('pwmatch', v);
+          });
+        });
+				$(firstPassword).on('keyup', function () {
+					scope.$apply(function () {
+						var v = elem.val()===$(firstPassword).val();
+						ctrl.$setValidity('pwmatch', v);
+					});
+				});
+      }
+    }
+  }]);
 })();

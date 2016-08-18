@@ -1,0 +1,36 @@
+<span ng-init="selectedDataset=[]; files=[]; " ng-controller="DatasetListController as controller">
+	<div class="modal-header">
+		<h3 class="modal-title">Choose the input file</h3>
+	</div>
+	<div class="modal-body">
+		<uib-tabset active="active">
+			<uib-tab index="0" heading="Browse datasets" ng-if="(hiddenTabs === undefined) || (hiddenTabs.indexOf(0) ==-1)">
+				<div ng-controller="HistoryListController as controller">
+					<div class="panel panel-container">
+						<nav class="navbar navbar-default navbar-top title-bar">
+							<h1>Browse dataset</h1>
+						</nav>
+						<p><b>Current history name: </b>{{displayedHistory.name}}</p>
+						<dataset-list-panel ></dataset-list-panel>
+					</div>
+				</div>
+			</uib-tab>
+			<uib-tab index="1" heading="Upload new files" ng-hide="hiddenTabs && (hiddenTabs.indexOf(1)!=-1)">
+				<nav class="navbar navbar-default navbar-top title-bar">
+					<h1>Upload new file</h1>
+				</nav>
+				<dataset-upload-panel></dataset-upload-panel>
+			</uib-tab>
+			<uib-tab index="2" heading="Import from iRODS" ng-hide="hiddenTabs && (hiddenTabs.indexOf(2)!=-1)">
+				<nav class="navbar navbar-default navbar-top title-bar">
+					<h1>Load from iRODS</h1>
+				</nav>
+				<dataset-irods-pull-panel></dataset-irods-pull-panel>
+			</uib-tab>
+		</uib-tabset>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-success" type="button" ng-show="active === 0" ng-click="controller.datasetSelectorAcceptButtonHandler()">Use selected</button>
+		<button class="btn btn-default" type="button" ng-click="controller.datasetSelectorCancelButtonHandler()">Cancel</button>
+	</div>
+</span>

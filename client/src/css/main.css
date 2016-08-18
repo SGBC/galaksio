@@ -8,10 +8,6 @@ body{
 	font-weight: lighter;
 }
 
-.btn {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
 header {
 	margin-bottom: 10px;
 	background-color: #2B3143;
@@ -30,6 +26,7 @@ header .navbar-default .navbar-nav>li>a:hover {
 }
 
 
+.navbar-default{border-radius: 0;}
 #wrapper {
 	padding-left: 0;
 	-webkit-transition: all 0.5s ease;
@@ -125,7 +122,7 @@ header .navbar-default .navbar-nav>li>a:hover {
 	background: none;
 }
 
-@media(min-width:768px) {
+@media screen and (min-width: 1024px) {
 	#wrapper {
 		padding-left: 220px;
 	}
@@ -196,6 +193,15 @@ header .navbar-default .navbar-nav>li>a:hover {
 }
 
 /******************************************************************************************/
+/* OVERRIDE SOME BOOTSTRAP OPTIONS                                                        */
+/******************************************************************************************/
+.btn {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+table.table td, table.table th {text-align: center;}
+table.table td:nth-child(1) {text-align: left;}
+
+/******************************************************************************************/
 /* STYLES FOR DIALOGS                                                                     */
 /******************************************************************************************/
 .modal-error .modal-header {
@@ -240,25 +246,25 @@ header .navbar-default .navbar-nav>li>a:hover {
 	margin-top: 33px;
 }
 .progressIndicator .progressStep {
-	color: #D4D4D4;
-	font-weight: bold;
-	font-size: 15px;
+	color: #a9a9a9;
+	/*font-weight: bold;*/
+	font-size: 10px;
 }
 .progressIndicator .progressStep.currentStep {
-	color: #3f82bb;
+	color: #c12f5c;
 }
 .progressIndicator .progressStep.doneStep {
-	color: #54BF78;
+	color: #44a063;
 }
 .progressIndicator .stepNumber, .progressIndicator .stepDone {
-	font-size: 35px;
-	border: 3px solid #ffffff;
-	background-color: #D4D4D4;
-	padding: 2px 17px;
+	font-size: 30px;
+	border: 3px solid #c5c5c5;
+	background-color: #d8d8d8;
+	padding: 2px 15px;
 	display: inline-block;
 	border-radius: 50%;
 	margin-bottom: 5px;
-	color: #ffffff;
+	color: #fff;
 }
 .progressIndicator .stepDone {
 	display: none;
@@ -270,10 +276,11 @@ header .navbar-default .navbar-nav>li>a:hover {
 .progressIndicator .doneStep .stepDone {
 	display: inline-block;
 	background: #54BF78;
-	color: white;
+	border-color: #44a063;
 }
 .progressIndicator .currentStep .stepNumber {
-	background: #3f82bb;
+	background: #f75b83;
+	border-color: #c12f5c;
 }
 .progressStepContainer {
 	margin-bottom: 75px;
@@ -399,7 +406,7 @@ div.sessionToolbar button, div.sessionToolbar li{
 }
 .workflow-card div.workflow-card-description {
 	font-size: 12px;
-	color: #d3d3d3;
+	color: #9c9c9c;
 	max-height: 70px;
 	overflow: hidden;
 	height: 70px;
@@ -437,7 +444,7 @@ i.tag span.tag-name > i:hover{color: #E89090; cursor: pointer;}
 
 
 i.tag.yellow {background-color: #f1c40f; color: #fff;}
-i.tag.green {background-color: #2ECC71; color: #fff;}
+i.tag.green {background-color: #37b16b; color: #fff;}
 i.tag.red {background-color: #E74C3C; color: #fff;}
 i.tag.blue {background-color: #3498DB; color: #fff;}
 i.tag.purple {background-color: #bf73ce; color: #fff;}
@@ -456,10 +463,19 @@ i.tag.pink2 {background-color: #db6070; color: #fff;}
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/
-select.ng-invalid-required, input.ng-invalid-required {
+h3.workflow-title{
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+h3.workflow-title:hover {
+	text-overflow: inherit;
+	overflow: visible;
+}
+select.ng-invalid, input.ng-invalid {
 	border: 1px solid #E88080;
 }
-select.ng-valid-required, input.ng-valid-required {
+select.ng-valid, input.ng-valid {
 	border: 1px solid #54BF78;
 }
 .invalidFormMessage{
@@ -505,22 +521,23 @@ h1.workflow-state-title > img {
 	margin-top: -10px;
 	margin-right: 20px;
 }
-#workflow-summary{text-align: center;}
-#workflow-summary table {
+
+/*.workflow-summary-step{text-align: center;}*/
+table.workflow-summary-step {
 	display: block;
 	margin: auto;
 	padding: 10px 20px;
 	margin-bottom: 10px;
 	width: 500px;
 }
-#workflow-summary td, #workflow-summary th {
+table.workflow-summary-step td, table.workflow-summary-step th {
 	border: 1px solid;
 	text-align: center;
 	text-overflow: ellipsis;
 	width: 250px;
 	padding: 2px;
 }
-#workflow-summary th {
+table.workflow-summary-step th {
 	background: #f5f5f5;
 }
 /*------------------------------------------------------*/
@@ -580,8 +597,11 @@ table.historyListTable tr:hover {
 
 table.datasetsTable>tbody>tr>td:nth-child(1) {color: #9a9a9a;}
 tr.deletedDataset,tr.hiddenDataset {
-    color: #a7a7a7;
+	color: #a7a7a7;
 }
 tr.deletedDataset {
-    text-decoration: line-through;
+	text-decoration: line-through;
+}
+tr.selectedDataset {
+	background-color: #d9edf7;
 }

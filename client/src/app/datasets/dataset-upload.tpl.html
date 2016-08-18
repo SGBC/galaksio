@@ -1,0 +1,34 @@
+<div class="panel panel-container" >
+	<table class="table" style="margin-bottom:10px;">
+		<thead>
+			<tr>
+				<th>File name</th>
+				<th>Size</th>
+				<th>Type</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-if="files === undefined || files.length === 0">
+				<td style="text-align:center;" colspan="4">No files selected, use the options below to load data</td>
+			</tr>
+			<tr ng-repeat="file in files">
+				<td style="max-width:250px;word-wrap:break-word;">{{file.name}}</td>
+				<td>{{file.size}}</td>
+				<td>{{file.type}}</td>
+				<td style="width:60px;max-width:60px;">
+					<span ng-if="file.state === 'pending'" class="label label-default">{{file.state}}</span>
+					<span ng-if="file.state === 'uploading'" class="label label-primary">{{file.state}}</span>
+					<span ng-if="file.state === 'done'" class="label label-success">{{file.state}}</span>
+					<span ng-if="file.state === 'error'" class="label label-danger">{{file.state}}</span>
+				</td>
+				<!--  TODO: add this code -->
+				<td style="max-width:30px;color:red;"><a href="javascript:void(0);"ng-click="console.error('NOT IMPLEMENTED');"><i class="fa fa-trash-o" ></i></a></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="file" file-model="myFile" style="display:none;" id="uploadDatasetSelector">
+	<a class="btn btn-default" style="float: right;" ng-click="controller.uploadDatasetHandler();">Upload files</a>
+	<a class="btn btn-primary" style="float: right; margin-right: 10px;" ng-click="controller.selectNewDatasetHandler();">Choose local file</a>
+</div>

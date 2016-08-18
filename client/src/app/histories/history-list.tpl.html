@@ -1,80 +1,57 @@
-<div ng-controller="HistoryListController as controller">
-	<nav class="navbar navbar-default navbar-top title-bar">
-		<h1>Histories <small>Selection</small></h1>
-	</nav>
-	<div class="histories-container">
-		<div class="col-sm-6">
-			<div class="panel panel-container">
-				<div>
-					<p style=" float: left; line-height: 30px; "><i class="fa fa-info"></i> Click on one history name to get more details.</p>
-					<button class="btn btn-default btn-sm navbar-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
-						<i class="fa fa-refresh fa-fw" ></i> Refresh
-					</button>
-				</div>
-				<table class="table historyListTable">
-					<thead>
-						<tr style="text-align:center;">
-							<th>History name</th>
-							<th>Creation date</th>
-							<th>Last updated</th>
-							<th>Current</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="history in histories" ng-click="controller.setDisplayedHistory(history)" ng-class="(history === currentHistory)?'current':''">
-							<td>{{history.name}}</td>
-							<td>
-								<i class="fa fa-spinner fa-pulse fa-fw" ng-if="history.create_time === undefined"></i>
-								<span ng-if="history.create_time !== undefined">{{history.create_time | date:'dd/MM/yyyy HH:mm'}}</span>
-							</td>
-							<td>
-								<i class="fa fa-spinner fa-pulse fa-fw" ng-if="history.update_time === undefined"></i>
-								<span ng-if="history.update_time !== undefined">{{history.update_time | date:'dd/MM/yyyy HH:mm'}}</span>
-							</td>
-							<td>
-								<i class="fa fa-check-circle fa-2x" ng-if="history === currentHistory"></i>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+<div class="histories-container" ng-controller="HistoryListController as controller">
+	<div class="col-lg-6">
+		<div class="panel panel-container">
+			<div>
+				<p style=" float: left; line-height: 30px; "><i class="fa fa-info"></i> Click on one history name to get more details.</p>
+				<a class="btn btn-default btn-sm navbar-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
+					<i class="fa fa-refresh fa-fw" ></i> Refresh
+				</a>
 			</div>
+			<table class="table historyListTable">
+				<thead>
+					<tr style="text-align:center;">
+						<th>History name</th>
+						<th>Creation date</th>
+						<th>Last updated</th>
+						<th>Current</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="history in histories" ng-click="controller.setDisplayedHistory(history)" ng-class="(history === currentHistory)?'current':''">
+						<td>{{history.name}}</td>
+						<td>
+							<i class="fa fa-spinner fa-pulse fa-fw" ng-if="history.create_time === undefined"></i>
+							<span ng-if="history.create_time !== undefined">{{history.create_time | date:'dd/MM/yyyy HH:mm'}}</span>
+						</td>
+						<td>
+							<i class="fa fa-spinner fa-pulse fa-fw" ng-if="history.update_time === undefined"></i>
+							<span ng-if="history.update_time !== undefined">{{history.update_time | date:'dd/MM/yyyy HH:mm'}}</span>
+						</td>
+						<td>
+							<i class="fa fa-check-circle fa-2x" ng-if="history === currentHistory"></i>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
-		<div class="col-sm-6" ng-show="displayedHistory !== undefined">
-			<div class="panel panel-container">
-				<button class="btn btn-success btn-sm navbar-right" ng-hide="displayedHistory === currentHistory" ng-click="controller.setCurrentHistory(displayedHistory)">
-					<i class="fa fa-bolt fa-fw" ></i> Switch to this history
-				</button>
-				<p><b>History name: </b>{{displayedHistory.name}}</p>
-				<p><input type="checkbox" ng-model="showDeleted"</input> Show hidden and deleted datasets</p>
-				<table class="table datasetsTable">
-					<thead>
-						<tr style="text-align:center;">
-							<th></th>
-							<th>File name</th>
-							<th>Extension</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-if="displayedHistory.content === undefined">
-							<td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
-							<td><i class="fa fa-spinner fa-pulse fa-fw"></i></td>
-						</tr>
-						<tr ng-class="(content.deleted)?'deletedDataset':''" ng-class="(content.visible)?'':'hiddenDataset'" ng-repeat="content in displayedHistory.content | filter:filterDatasets | orderBy:'-'">
-							<td style="text-align:center;">{{$index + 1}}</td>
-							<td>{{content.name}}</td>
-							<td style="text-align:center;">{{content.extension}}</td>
-							<td style="text-align:center;"><a ng-if="content.purged===false" href="{{content.url + '/display'}}" target="_blank" download="{{content.name + '.' + content.extension}}"><i class="fa fa-download"></i></a></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<!-- child of the body tag -->
-		<span id="top-link-block" class="hidden">
-			<a href="#top" class="well well-sm" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
-				<i class="glyphicon glyphicon-chevron-up"></i> Back to Top
-			</a>
-		</span><!-- /top-link-block -->
 	</div>
+	<div class="col-lg-6" ng-show="displayedHistory !== undefined">
+		<div class="panel panel-container">
+			<a class="btn btn-success btn-sm navbar-right" ng-hide="displayedHistory === currentHistory" ng-click="controller.setCurrentHistory(displayedHistory)">
+				<i class="fa fa-exchange fa-fw" ></i> Switch to this history
+			</a>
+			<a class="btn btn-primary btn-sm navbar-right" ng-hide="displayedHistory !== currentHistory" ng-click="controller.showUploadDatasetsDialog();">
+				<i class="fa fa-upload fa-fw" ></i> Upload new files
+			</a>
+			<p><b>History name: </b>{{displayedHistory.name}}</p>
+			<p><input type="checkbox" ng-model="showDeleted"</input> Show hidden and deleted datasets</p>
+			<dataset-list-panel></dataset-list-panel>
+		</div>
+	</div>
+	<!-- child of the body tag -->
+	<span id="top-link-block" class="hidden">
+		<a href="#top" class="well well-sm" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
+			<i class="glyphicon glyphicon-chevron-up"></i> Back to Top
+		</a>
+	</span><!-- /top-link-block -->
 </div>

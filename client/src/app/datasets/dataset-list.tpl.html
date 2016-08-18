@@ -1,0 +1,29 @@
+<table class="table datasetsTable" ng-controller="DatasetListController as controller">
+	<thead>
+		<tr style="text-align:center;">
+			<th></th>
+			<th>File name</th>
+			<th>Extension</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-if="displayedHistory.content === undefined || displayedHistory.content.length === 0">
+			<td colspan="4" style="text-align:center;"><i>No data</i></td>
+		</tr>
+		<tr ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets) | orderBy:'-' | limitTo:maxDatasets"
+		    ng-class="{'deletedDataset' : dataset.deleted, 'hiddenDataset': !dataset.visible, 'selectedDataset': (dataset.id === selectedDataset[0].id)}"
+				ng-click="controller.setSelectedDatasetHandler(this);">
+			<td style="text-align:center;">{{$index + 1}}</td>
+			<td style="text-align:left; max-width:250px;word-wrap: break-word;">{{dataset.name}}</td>
+			<td>{{dataset.extension}}</td>
+			<td><a href="{{dataset.url + '/display'}}" target="_blank" download="{{dataset.name + '.' + dataset.extension}}"><i class="fa fa-download"></i></a></td>
+		</tr>
+	</tbody>
+</table>
+<p>{{filtered.length}}</p>
+<div style="text-align: center; padding: 10px;" ng-show="displayedHistory.content.length > maxDatasets">
+	<a class="btn btn-default" ui-sref="histories()">
+		<i class="fa fa-sign-out fa-fw"></i> Show {{displayedHistory.content.length - maxDatasets}} more datasets.
+	</a>
+</div>

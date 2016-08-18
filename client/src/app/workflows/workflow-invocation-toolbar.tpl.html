@@ -1,42 +1,48 @@
 <div ng-controller="WorkflowInvocationListController as controller" class="invocationListToolbar">
-  <div ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-init="checkInterval=true">
-    <span class="job-status-cat" ng-show="running > 0">
-      <span class="fa-stack" style="font-size: 12px;">
-        <i class="fa fa-square fa-stack-2x" style="color:#b900ff;"></i>
-        <i class="fa fa-refresh fa-spin fa-fw fa-stack-1x fa-inverse"></i>
-      </span>
-      <span class="job-number">{{running}}</span>
-      <span class="job-status-cat-title">Running</span>
-    </span>
-    <span class="job-status-cat" ng-show="done > 0">
-      <span class="fa-stack" style="font-size: 12px;">
-        <i class="fa fa-square fa-stack-2x" style="color:#00b353;"></i>
-        <i class="fa fa-check fa-fw fa-stack-1x fa-inverse"></i>
-      </span>
-      <span class="job-number">{{done}}</span>
-      <span class="job-status-cat-title">Done</span>
-    </span>
-    <span class="job-status-cat" ng-show="erroneous > 0">
-      <span class="fa-stack" style="font-size: 12px;">
-        <i class="fa fa-square fa-stack-2x" style="color:#de2b2b;"></i>
-        <i class="fa fa-times fa-fw fa-stack-1x fa-inverse"></i>
-      </span>
-      <span class="job-number">{{erroneous}}</span>
-      <span class="job-status-cat-title">Erroneous</span>
-    </span>
-  </div>
-  <div class="panel" ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-show="showPanel === true">
-    <table style="width:100%">
-      <tr><th>Workflow name</th><th>State</th><th style="width:75px;">Recover</th></tr>
-      <tr ng-show="invocations.length === 0"><td colspan="2">No data</td></tr>
-      <tr ng-repeat="invocation in invocations track by $index" >
-        <td>{{invocation.workflow_title}}</td><td>{{invocation.state}}</td>
-        <td>
-          <a style="font-size:12px; cursor:pointer" ng-click="controller.recoverWorkflowInvocation(invocation)">
-            <i class="fa fa-undo" aria-hidden="true"></i> Recover
-          </a>
-        </td>
-      </tr>
-    </table>
-  </div>
+	<div ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-init="checkInterval=true">
+		<span class="job-status-cat" ng-show="running > 0">
+			<span class="fa-stack" style="font-size: 12px;">
+				<i class="fa fa-square fa-stack-2x" style="color:#b900ff;"></i>
+				<i class="fa fa-refresh fa-spin fa-fw fa-stack-1x fa-inverse"></i>
+			</span>
+			<span class="job-number">{{running}}</span>
+			<span class="job-status-cat-title">Running</span>
+		</span>
+		<span class="job-status-cat" ng-show="done > 0">
+			<span class="fa-stack" style="font-size: 12px;">
+				<i class="fa fa-square fa-stack-2x" style="color:#00b353;"></i>
+				<i class="fa fa-check fa-fw fa-stack-1x fa-inverse"></i>
+			</span>
+			<span class="job-number">{{done}}</span>
+			<span class="job-status-cat-title">Done</span>
+		</span>
+		<span class="job-status-cat" ng-show="erroneous > 0">
+			<span class="fa-stack" style="font-size: 12px;">
+				<i class="fa fa-square fa-stack-2x" style="color:#de2b2b;"></i>
+				<i class="fa fa-times fa-fw fa-stack-1x fa-inverse"></i>
+			</span>
+			<span class="job-number">{{erroneous}}</span>
+			<span class="job-status-cat-title">Erroneous</span>
+		</span>
+	</div>
+	<div class="panel" ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-show="showPanel === true">
+		<table style="width:100%">
+			<tr><th>Workflow name</th><th>State</th><th style="width:75px;">Recover</th></tr>
+			<tr ng-show="invocations.length === 0"><td colspan="2">No data</td></tr>
+			<tr ng-repeat="invocation in invocations track by $index" >
+				<td>{{invocation.workflow_title}}</td>
+				<td>
+					<span ng-if="invocation.state === 'sending'" class="label label-default">{{invocation.state}}</span>
+					<span ng-if="invocation.state === 'working'" class="label label-primary">{{invocation.state}}</span>
+					<span ng-if="invocation.state === 'success'" class="label label-success">{{invocation.state}}</span>
+					<span ng-if="invocation.state === 'error'" class="label label-danger">{{invocation.state}}</span>
+				</td>
+				<td>
+					<a style="font-size:12px; cursor:pointer" ng-click="controller.recoverWorkflowInvocation(invocation)">
+						<i class="fa fa-undo" aria-hidden="true"></i> Recover
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
 </div>
