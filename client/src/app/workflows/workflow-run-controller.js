@@ -26,6 +26,7 @@
 */
 (function(){
 	var app = angular.module('workflows.controllers.workflow-run', [
+		'common.dialogs',
 		'ui.bootstrap',
 		'ui.router',
 		'workflows.services.workflow-list',
@@ -36,7 +37,7 @@
 	/***************************************************************************/
 	/*WORKFLOW CONTROLLER*******************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunController', function($state, $scope, $http, $stateParams, $timeout, WorkflowList, WorkflowInvocationList, HistoryList){
+	app.controller('WorkflowRunController', function($state, $scope, $http, $stateParams, $timeout, $dialogs, WorkflowList, WorkflowInvocationList, HistoryList){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -326,290 +327,289 @@
 		}
 
 		this.retrieveWorkflowDetails($stateParams.id);
-	}
-);
-
-/***************************************************************************/
-/*WORKFLOW STEP CONTROLLER *************************************************/
-/***************************************************************************/
-app.controller('WorkflowRunStepController', function($scope, $http, $uibModal, $stateParams, WorkflowList, HistoryList, HISTORY_EVENTS){
-	//--------------------------------------------------------------------
-	// CONTROLLER FUNCTIONS
-	//--------------------------------------------------------------------
-
-	/**
-	* This function opens a new dialog for selecting or uploading new datasets
-	*
-	* @chainable
-	* @return {Object} the controller.
-	*/
-	this.showDatasetSelectorDialog = function(stepInstance, isUpload){
-		$scope.active=(isUpload?1:0);
-		var modalInstance = $uibModal.open({
-			templateUrl: 'app/datasets/dataset-selector-dialog.tpl.html',
-			scope: $scope,
-			size: "lg"
-		});
-		modalInstance.result.then(function (selectedItem) {
-			try {
-				stepInstance.inputs[0].value = selectedItem[0].id
-			} catch (e) {
-				//pass
-			}
-		});
-		return this;
-	}
-
-	//--------------------------------------------------------------------
-	// EVENT HANDLERS
-	//--------------------------------------------------------------------
-	$scope.$on(HISTORY_EVENTS.historyChanged, function (event, args) {
-		$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
 	});
-	/**
-	* toogleCollapseHandler - this function handles the event fired when the
-	* user press the button for hide or show the body of a step panel.
-	* If it's the first time that the panel is shown, then we need to create
-	* the body of the panel, which includes a HTTP request to Galaxy API in
-	* order to retrieve the extra information for the step.
-	*
-	* @param  {type} event the click event
-	* @return {type}       description
-	*/
-	this.toogleCollapseHandler = function(event){
-		//Toggle collapsed (view will automatically change due to ng-hide directive)
-		//TODO: CHANGE THE ICON TO +/-
-		$scope.collapsed = !$scope.collapsed;
-		//If the remaining data for the step was not loaded yet, send the request
-		if(!$scope.loadingComplete){
-			//If not an input field
-			if($scope.step.type !== "data_input"){
-				//If the tool is not an input data tool, request the info from server
-				//and store the extra info for the tool at the "extra" field
-				$http(getHttpRequestConfig("GET", "tools-info", {
-					extra: $scope.step.tool_id,
-					params: {history_id : Cookies.get("current-history")}})
-				).then(
+
+	/***************************************************************************/
+	/*WORKFLOW STEP CONTROLLER *************************************************/
+	/***************************************************************************/
+	app.controller('WorkflowRunStepController', function($scope, $http, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, HISTORY_EVENTS){
+		//--------------------------------------------------------------------
+		// CONTROLLER FUNCTIONS
+		//--------------------------------------------------------------------
+
+		/**
+		* This function opens a new dialog for selecting or uploading new datasets
+		*
+		* @chainable
+		* @return {Object} the controller.
+		*/
+		this.showDatasetSelectorDialog = function(stepInstance, isUpload){
+			$scope.active=(isUpload?1:0);
+			var modalInstance = $uibModal.open({
+				templateUrl: 'app/datasets/dataset-selector-dialog.tpl.html',
+				scope: $scope,
+				size: "lg"
+			});
+			modalInstance.result.then(function (selectedItem) {
+				try {
+					stepInstance.inputs[0].value = selectedItem[0].id
+				} catch (e) {
+					//pass
+				}
+			});
+			return this;
+		}
+
+		//--------------------------------------------------------------------
+		// EVENT HANDLERS
+		//--------------------------------------------------------------------
+		$scope.$on(HISTORY_EVENTS.historyChanged, function (event, args) {
+			$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
+		});
+		/**
+		* toogleCollapseHandler - this function handles the event fired when the
+		* user press the button for hide or show the body of a step panel.
+		* If it's the first time that the panel is shown, then we need to create
+		* the body of the panel, which includes a HTTP request to Galaxy API in
+		* order to retrieve the extra information for the step.
+		*
+		* @param  {type} event the click event
+		* @return {type}       description
+		*/
+		this.toogleCollapseHandler = function(event){
+			//Toggle collapsed (view will automatically change due to ng-hide directive)
+			//TODO: CHANGE THE ICON TO +/-
+			$scope.collapsed = !$scope.collapsed;
+			//If the remaining data for the step was not loaded yet, send the request
+			if(!$scope.loadingComplete){
+				//If not an input field
+				if($scope.step.type !== "data_input"){
+					//If the tool is not an input data tool, request the info from server
+					//and store the extra info for the tool at the "extra" field
+					$http(getHttpRequestConfig("GET", "tools-info", {
+						extra: $scope.step.tool_id,
+						params: {history_id : Cookies.get("current-history")}})
+					).then(
+						function successCallback(response){
+							$scope.step["extra"] = response.data;
+							//UPDATE VIEW
+							$scope.loadingComplete = true;
+						},
+						function errorCallback(response){
+							debugger;
+							var message = "Failed while retrieving the details for the tool.";
+							$dialogs.showErrorDialog(message, {
+								logMessage : message + " at WorkflowRunController:toogleCollapseHandler."
+							});
+							console.error(response.data);
+						}
+					);
+				}else{
+					//However, if the tool is an input data field, we need to retrieve the
+					//available datasets for current history and display as a selector
+					// The current-history should exist because we shown the list of all histories
+					// in the previous step
+					$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
+					//UPDATE VIEW
+					$scope.loadingComplete = true;
+				}
+			}
+		};
+		//--------------------------------------------------------------------
+		// INITIALIZATION
+		//--------------------------------------------------------------------
+		//The corresponding view will be watching to this variable
+		//and update its content after the http response
+		$scope.loadingComplete = false;
+		$scope.collapsed = true;
+	});
+
+	/***************************************************************************/
+	/*WORKFLOW INVOCATION LIST CONTROLLER *************************************************/
+	/***************************************************************************/
+	app.controller('WorkflowInvocationListController', function($state, $scope, $http, $interval, $dialogs, WorkflowInvocationList, AUTH_EVENTS){
+		//--------------------------------------------------------------------
+		// CONTROLLER FUNCTIONS
+		//--------------------------------------------------------------------
+		this.checkInvocationsState = function(){
+			// debugger
+			var invocations = WorkflowInvocationList.getInvocations();
+			var running = 0, erroneous = 0, done = 0;
+			for(var i in invocations){
+				if(invocations[i].state == "working"){
+					running++;
+				}else if(invocations[i].state == "sending"){
+					running++;
+				}else if(invocations[i].state == "success"){
+					done++;
+				}else if(invocations[i].state == "error"){
+					erroneous++;
+				}else if(invocations[i].state == "failed"){
+					erroneous++;
+				}else{
+					debugger;
+				}
+			}
+
+			$scope.invocations = WorkflowInvocationList.getInvocations();
+			$scope.running = running;
+			$scope.done = done;
+			$scope.erroneous = erroneous;
+
+			if($scope.checkInterval === true){
+				for(var i in invocations){
+					me.checkInvocationState(invocations[i]);
+				}
+				WorkflowInvocationList.saveInvocations();
+			}
+		};
+
+		this.checkInvocationState = function(invocation){
+			if(invocation.state != "error" && (invocation.state !== "success" || invocation.hasOutput !== true)){
+				$http(getHttpRequestConfig("GET", "invocation-state", {
+					extra: [invocation.workflow_id, invocation.id]
+				})).then(
 					function successCallback(response){
-						$scope.step["extra"] = response.data;
-						//UPDATE VIEW
-						$scope.loadingComplete = true;
+						var erroneousSteps = 0;
+						var waitingSteps = 0;
+						var runningSteps = 0;
+						var doneSteps = 0;
+						var queuedSteps = 0;
+
+						delete response.data.state
+						delete response.data.workflow_id
+						for (var attrname in response.data) {
+							invocation[attrname] = response.data[attrname];
+						}
+						//Valid Galaxy job states include:
+						//TODO: ‘new’, ‘upload’, ‘waiting’, ‘queued’, ‘running’, ‘ok’, ‘error’, ‘paused’, ‘deleted’, ‘deleted_new’
+						for(var i in invocation.steps){
+							if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
+								doneSteps++;
+							}else if(invocation.steps[i].state === 'queued'){
+								queuedSteps++;
+							}else if(invocation.steps[i].state === 'new'){
+								waitingSteps++;
+							}else if(invocation.steps[i].state === 'running'){
+								runningSteps++;
+							}else if(invocation.steps[i].state === 'error'){
+								erroneousSteps++;
+							}else{
+								debugger;
+							}
+						}
+
+						if(runningSteps > 0 || waitingSteps > 0 || queuedSteps > 0){
+							invocation.state = "working";
+							invocation.state_text = "Running your workflow...";
+						}else if(erroneousSteps > 0){
+							//TODO: show summary of results
+							invocation.state = "error";
+							invocation.state_text = "Failed...";
+						}else if(invocation.state !== "sending"){
+							invocation.state_text = "Done!!";
+							invocation.state = "success";
+							//Generate the summary of results
+							me.recoverWorkflowResults(invocation);
+						}
 					},
 					function errorCallback(response){
-						debugger;
-						var message = "Failed while retrieving the details for the tool.";
-						$dialogs.showErrorDialog(message, {
-							logMessage : message + " at WorkflowRunController:toogleCollapseHandler."
-						});
-						console.error(response.data);
+						invocation.state = "error";
+						invocation.state_text = "Failed.";
 					}
 				);
-			}else{
-				//However, if the tool is an input data field, we need to retrieve the
-				//available datasets for current history and display as a selector
-				// The current-history should exist because we shown the list of all histories
-				// in the previous step
-				$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
-				//UPDATE VIEW
-				$scope.loadingComplete = true;
 			}
-		}
-	};
-	//--------------------------------------------------------------------
-	// INITIALIZATION
-	//--------------------------------------------------------------------
-	//The corresponding view will be watching to this variable
-	//and update its content after the http response
-	$scope.loadingComplete = false;
-	$scope.collapsed = true;
-});
+		};
 
-/***************************************************************************/
-/*WORKFLOW INVOCATION LIST CONTROLLER *************************************************/
-/***************************************************************************/
-app.controller('WorkflowInvocationListController', function($state, $scope, $http, $interval, WorkflowInvocationList, AUTH_EVENTS){
-	//--------------------------------------------------------------------
-	// CONTROLLER FUNCTIONS
-	//--------------------------------------------------------------------
-	this.checkInvocationsState = function(){
-		// debugger
-		var invocations = WorkflowInvocationList.getInvocations();
-		var running = 0, erroneous = 0, done = 0;
-		for(var i in invocations){
-			if(invocations[i].state == "working"){
-				running++;
-			}else if(invocations[i].state == "sending"){
-				running++;
-			}else if(invocations[i].state == "success"){
-				done++;
-			}else if(invocations[i].state == "error"){
-				erroneous++;
-			}else if(invocations[i].state == "failed"){
-				erroneous++;
-			}else{
-				debugger;
+		this.recoverWorkflowInvocation = function(invocation){
+			$state.go('workflowDetail', {
+				'id' : invocation.workflow_id,
+				'invocation_id': invocation.id
+			});
+		};
+
+		this.recoverWorkflowResults = function(invocation){
+			for(var i in invocation.steps){
+				if(invocation.steps[i].job_id !== null){
+					me.recoverWorkflowResultStepDetails(invocation, invocation.steps[i]);
+				}
 			}
-		}
+		};
 
-		$scope.invocations = WorkflowInvocationList.getInvocations();
-		$scope.running = running;
-		$scope.done = done;
-		$scope.erroneous = erroneous;
-
-		if($scope.checkInterval === true){
-			for(var i in invocations){
-				me.checkInvocationState(invocations[i]);
-			}
-			WorkflowInvocationList.saveInvocations();
-		}
-	};
-
-	this.checkInvocationState = function(invocation){
-		if(invocation.state != "error" && (invocation.state !== "success" || invocation.hasOutput !== true)){
-			$http(getHttpRequestConfig("GET", "invocation-state", {
-				extra: [invocation.workflow_id, invocation.id]
+		this.recoverWorkflowResultStepDetails = function(invocation, step){
+			$http(getHttpRequestConfig("GET", "invocation-result", {
+				extra: [invocation.workflow_id, invocation.id, step.id]
 			})).then(
 				function successCallback(response){
-					var erroneousSteps = 0;
-					var waitingSteps = 0;
-					var runningSteps = 0;
-					var doneSteps = 0;
-					var queuedSteps = 0;
+					step.outputs = response.data.outputs;
+					invocation.hasOutput = true;
 
-					delete response.data.state
-					delete response.data.workflow_id
-					for (var attrname in response.data) {
-						invocation[attrname] = response.data[attrname];
-					}
-					//Valid Galaxy job states include:
-					//TODO: ‘new’, ‘upload’, ‘waiting’, ‘queued’, ‘running’, ‘ok’, ‘error’, ‘paused’, ‘deleted’, ‘deleted_new’
-					for(var i in invocation.steps){
-						if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
-							doneSteps++;
-						}else if(invocation.steps[i].state === 'queued'){
-							queuedSteps++;
-						}else if(invocation.steps[i].state === 'new'){
-							waitingSteps++;
-						}else if(invocation.steps[i].state === 'running'){
-							runningSteps++;
-						}else if(invocation.steps[i].state === 'error'){
-							erroneousSteps++;
-						}else{
-							debugger;
-						}
-					}
-
-					if(runningSteps > 0 || waitingSteps > 0 || queuedSteps > 0){
-						invocation.state = "working";
-						invocation.state_text = "Running your workflow...";
-					}else if(erroneousSteps > 0){
-						//TODO: show summary of results
-						invocation.state = "error";
-						invocation.state_text = "Failed...";
-					}else if(invocation.state !== "sending"){
-						invocation.state_text = "Done!!";
-						invocation.state = "success";
-						//Generate the summary of results
-						me.recoverWorkflowResults(invocation);
+					for(var j in step.outputs){
+						me.recoverWorkflowResultStepOutputDetails(invocation, step, step.outputs[j])
 					}
 				},
 				function errorCallback(response){
-					invocation.state = "error";
-					invocation.state_text = "Failed.";
+					debugger;
+					var message = "Failed while retrieving the details for the step.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at WorkflowRunController:recoverWorkflowResultStepDetails."
+					});
+					console.error(response.data);
 				}
 			);
-		}
-	};
+		};
 
-	this.recoverWorkflowInvocation = function(invocation){
-		$state.go('workflowDetail', {
-			'id' : invocation.workflow_id,
-			'invocation_id': invocation.id
-		});
-	};
-
-	this.recoverWorkflowResults = function(invocation){
-		for(var i in invocation.steps){
-			if(invocation.steps[i].job_id !== null){
-				me.recoverWorkflowResultStepDetails(invocation, invocation.steps[i]);
-			}
-		}
-	};
-
-	this.recoverWorkflowResultStepDetails = function(invocation, step){
-		$http(getHttpRequestConfig("GET", "invocation-result", {
-			extra: [invocation.workflow_id, invocation.id, step.id]
-		})).then(
-			function successCallback(response){
-				step.outputs = response.data.outputs;
-				invocation.hasOutput = true;
-
-				for(var j in step.outputs){
-					me.recoverWorkflowResultStepOutputDetails(invocation, step, step.outputs[j])
+		this.recoverWorkflowResultStepOutputDetails = function(invocation, step, output){
+			$http(getHttpRequestConfig("GET", "dataset-details", {
+				extra: [output.id]
+			})).then(
+				function successCallback(response){
+					output.name = response.data.name;
+					output.extension = response.data.extension;
+					output.url = response.data.download_url;
+				},
+				function errorCallback(response){
+					debugger;
+					var message = "Failed while retrieving the details for the workflow results.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at WorkflowRunController:recoverWorkflowResultStepOutputDetails."
+					});
+					console.error(response.data);
 				}
-			},
-			function errorCallback(response){
-				debugger;
-				var message = "Failed while retrieving the details for the step.";
-				$dialogs.showErrorDialog(message, {
-					logMessage : message + " at WorkflowRunController:recoverWorkflowResultStepDetails."
-				});
-				console.error(response.data);
-			}
-		);
-	};
+			);
+		};
 
-	this.recoverWorkflowResultStepOutputDetails = function(invocation, step, output){
-		$http(getHttpRequestConfig("GET", "dataset-details", {
-			extra: [output.id]
-		})).then(
-			function successCallback(response){
-				output.name = response.data.name;
-				output.extension = response.data.extension;
-				output.url = response.data.download_url;
-			},
-			function errorCallback(response){
-				debugger;
-				var message = "Failed while retrieving the details for the workflow results.";
-				$dialogs.showErrorDialog(message, {
-					logMessage : message + " at WorkflowRunController:recoverWorkflowResultStepOutputDetails."
-				});
-				console.error(response.data);
-			}
-		);
-	};
+		//--------------------------------------------------------------------
+		// EVENT HANDLERS
+		//--------------------------------------------------------------------
+		$scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+			WorkflowInvocationList.recoverInvocations();
+		});
 
-	//--------------------------------------------------------------------
-	// EVENT HANDLERS
-	//--------------------------------------------------------------------
-	$scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
-		WorkflowInvocationList.recoverInvocations();
+		$scope.$on('$destroy', function () {
+			console.log("Removing interval");
+			$interval.cancel(me.checkInvocationInterval);
+		});
+
+
+
+		//--------------------------------------------------------------------
+		// INITIALIZATION
+		//--------------------------------------------------------------------
+		var me = this;
+
+		//The corresponding view will be watching to this variable
+		//and update its content after the http response
+
+		$scope.invocations = WorkflowInvocationList.recoverInvocations().getInvocations();
+		$scope.running = 0;
+		$scope.done = 0;
+		$scope.erroneous = 0;
+		$scope.checkInterval = false;
+		this.checkInvocationInterval = null;
+
+		me.checkInvocationsState();
+		//Start the interval that checks the state of the invocation
+		me.checkInvocationInterval = $interval(me.checkInvocationsState, 5000);
 	});
-
-	$scope.$on('$destroy', function () {
-		console.log("Removing interval");
-		$interval.cancel(me.checkInvocationInterval);
-	});
-
-
-
-	//--------------------------------------------------------------------
-	// INITIALIZATION
-	//--------------------------------------------------------------------
-	var me = this;
-
-	//The corresponding view will be watching to this variable
-	//and update its content after the http response
-
-	$scope.invocations = WorkflowInvocationList.recoverInvocations().getInvocations();
-	$scope.running = 0;
-	$scope.done = 0;
-	$scope.erroneous = 0;
-	$scope.checkInterval = false;
-	this.checkInvocationInterval = null;
-
-	me.checkInvocationsState();
-	//Start the interval that checks the state of the invocation
-	me.checkInvocationInterval = $interval(me.checkInvocationsState, 5000);
-});
 })();

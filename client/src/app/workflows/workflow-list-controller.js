@@ -24,10 +24,12 @@
 */
 (function(){
 	var app = angular.module('workflows.controllers.workflow-list', [
+		'common.dialogs',
 		'workflows.services.workflow-list',
 		'workflows.directives.workflow-card'
 	]);
 
+	//TODO: MOVE TO DIRECTIVES
 	app.directive('ngEnter', function () {
 		return function (scope, element, attrs) {
 			element.bind("keydown keypress", function (event) {
@@ -49,7 +51,7 @@
 		'$scope',
 		'$http',
 		'WorkflowList',
-		function($scope, $http, WorkflowList){
+		function($scope, $http, $dialogs, WorkflowList){
 			//--------------------------------------------------------------------
 			// CONTROLLER FUNCTIONS
 			//--------------------------------------------------------------------
