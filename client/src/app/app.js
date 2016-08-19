@@ -1,6 +1,7 @@
 (function() {
 
-	GALAXY_SERVER_URL= "/galaxy/";
+	GALAXY_SERVER    = "/";
+	GALAXY_SERVER_URL= GALAXY_SERVER +  "";
 	getRequestPath = function(service, extra){
 		extra = (extra || "");
 		switch (service) {
@@ -14,6 +15,8 @@
 			return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/download";
 			case "workflow-run":
 			return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/invocations";
+			case "workflow-import":
+			return GALAXY_SERVER_URL + "api/workflows/" + extra;
 			case "invocation-state":
 			return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
 			case "invocation-result":

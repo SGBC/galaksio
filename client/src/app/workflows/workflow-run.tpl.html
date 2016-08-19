@@ -20,7 +20,7 @@
 		<div class="panel panel-container" ng-if="invocation.current_step == 1">
 			<h4>Details</h4>
 			<p><b>Author: </b>{{workflow.owner}}</p>
-			<p><b>Description: </b>{{workflow.annotation}}</p>
+			<p><b>Description: </b>{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</p>
 		</div>
 		<!-- ************************************************************* -->
 		<!-- WORKFLOW DIAGRAM -->

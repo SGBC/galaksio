@@ -1,8 +1,20 @@
 <div class="workflow-card">
   <div class="workflow-card-body">
     <h2 class="workflow-card-name">{{workflow.name}}</h2>
-    <i class="fa fa-spinner fa-pulse fa-fw" ng-if="workflow.annotation === undefined"></i>
-    <div class="workflow-card-description" ng-if="workflow.annotation !== undefined">{{workflow.annotation || "No description provided"}}</div>
+    <div class="workflow-card-description" ng-if="workflow.annotation === undefined">
+			<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading details...
+		</div>
+    <div class="workflow-card-description" ng-if="workflow.annotation !== undefined">
+			<div ng-if="workflow.valid === false" style="text-align: center;">
+				<span  class='text-danger'>{{workflow.annotation}}</span>
+				<span ng-if="workflow.importable">
+					<a class="btn btn-default btn-sm" style="margin-top: 20px;" ng-click="controller.importWorkflowHandler(workflow);">
+						<i class="fa fa-plus"></i> Add this workflow to my collection.
+					</a>
+				</span>
+			</div>
+			<span ng-if="workflow.valid !== false">{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</span>
+		</div>
     <div class="workflow-card-tags-list">
       <i class="tag {{getTagColor(tag)}}" ng-repeat="tag in workflow.tags | orderBy">{{tag}}</i>
     </div>
@@ -10,7 +22,6 @@
   <div class="workflow-card-author">
     Created by <span style="color:#0F8CDA;">{{workflow.owner}}</span>
   </div>
-  <a class="btn btn-info runWorkflowButton" ui-sref="workflowDetail({id: workflow.id})">
-    <i class="fa fa-info-circle"></i> More details
-  </a>
+	<a ng-if="workflow.valid !== false" class="btn btn-info runWorkflowButton" ui-sref="workflowDetail({id: workflow.id})"> <i class="fa fa-info-circle"></i> More details </a>
+  <a ng-if="workflow.valid === false" ng-disabled="true" class="btn btn-info runWorkflowButton"> <i class="fa fa-info-circle"></i> More details </a>
 </div>

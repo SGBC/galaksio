@@ -1,12 +1,13 @@
 #SERVER SETTINGS
 SERVER_HOST_NAME          = "0.0.0.0"
-SERVER_PORT_NUMBER        = 80
+SERVER_PORT_NUMBER        = 8081
 SERVER_ALLOW_DEBUG        = False
 SERVER_SUBDOMAIN          = ""
 SERVER_MAX_CONTENT_LENGTH = 200 * pow(1024,2) #MAX_CLIENT_SPACE IN MB
 
 #FILES SETTINGS
 ROOT_DIRECTORY       = "/datadev/b3g/"
+CLIENT_TMP_DIR       = "/tmp/"
 
 #SMTP CONFIGURATION
 smtp_host       = "smtp.gmail.com"           #Sets Gmail, Office... as the SMTP server

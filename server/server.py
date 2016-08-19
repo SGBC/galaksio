@@ -22,12 +22,29 @@
 
 import logging
 import logging.config
+import requests
+import urllib
+import httplib
+import re
+import urllib
+import urlparse
 
-from flask import Flask, request, send_from_directory, jsonify
+from flask import Flask, request, send_from_directory, jsonify, request, abort, Response, redirect, stream_with_context, url_for
 from flask.json import JSONEncoder
 from re import sub
+from werkzeug.datastructures import Headers
+from werkzeug.exceptions import NotFound
 
 from conf.serverconf import *
+
+from servlets.GalaxyAPI import passRequestToAPI
+
+HTML_REGEX = re.compile(r'((?:src|action|href)=["\'])/')
+JQUERY_REGEX = re.compile(r'(\$\.(?:get|post)\(["\'])/')
+JS_LOCATION_REGEX = re.compile(r'((?:window|document)\.location.*=.*["\'])/')
+CSS_REGEX = re.compile(r'(url\(["\']?)/')
+
+REGEXES = [HTML_REGEX, JQUERY_REGEX, JS_LOCATION_REGEX, CSS_REGEX]
 
 class Application(object):
     #******************************************************************************************************************
@@ -62,13 +79,57 @@ class Application(object):
         def get_static(filename):
             return send_from_directory(ROOT_DIRECTORY + 'client/src/', filename)
 
+        #******************************************************************************************
+        #     _____          _               __   ____     __           _____ _____
+        #    / ____|   /\   | |        /\    \ \ / /\ \   / /     /\   |  __ \_   _|
+        #   | |  __   /  \  | |       /  \    \ V /  \ \_/ /     /  \  | |__) || |
+        #   | | |_ | / /\ \ | |      / /\ \    > <    \   /     / /\ \ |  ___/ | |
+        #   | |__| |/ ____ \| |____ / ____ \  / . \    | |     / ____ \| |    _| |_
+        #    \_____/_/    \_\______/_/    \_\/_/ \_\   |_|    /_/    \_\_|   |_____|
+        #
+        #******************************************************************************************
+        @self.app.route(SERVER_SUBDOMAIN + GALAXY_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET'])
+        def passRequest(service):
+            # # return passRequestToAPI(service, request)
+            # # return redirect(GALAXY_SERVER + GALAXY_SUBDOMAIN + '/api/' + service)
+            # requests.
+            # req = requests.get(GALAXY_SERVER + GALAXY_SUBDOMAIN + '/api/' + service, stream = True)
+            # return Response(stream_with_context(req.iter_content()), content_type = req.headers['content-type'])
+            auth = None
+            if request.authorization is not None and len(request.authorization) > 0:
+                auth = ()
+                for i in request.authorization:
+                    auth = auth + (request.authorization[i],)
+
+            resp = requests.request(
+                method=request.method,
+                url= GALAXY_SERVER + GALAXY_SUBDOMAIN + '/api/' + service,
+                # headers={key: value for (key, value) in request.headers if key != 'Host'},
+                params= dict(request.args),
+                data=request.get_data(),
+                auth=auth,
+                cookies=request.cookies,
+                allow_redirects=False)
+
+            # headers = []
+            # excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+            # headers = [(name, value) for (name, value) in resp.raw.headers.items()
+            #            if name.lower() not in excluded_headers]
+
+            response = Response(resp.content, resp.status_code, resp.raw.headers.items())
+            return response
+
+    def iterform(self, multidict):
+        for key in multidict.keys():
+            for value in multidict.getlist(key):
+                yield (key.encode("utf8"), value.encode("utf8"))
+
     def launch(self):
         ##*******************************************************************************************
         ##* LAUNCH APPLICATION
         ##*******************************************************************************************
-        self.app.run(host=SERVER_HOST_NAME, port=SERVER_PORT_NUMBER,  debug=SERVER_ALLOW_DEBUG )
+        self.app.run(host=SERVER_HOST_NAME, port=SERVER_PORT_NUMBER,  debug=SERVER_ALLOW_DEBUG, threaded=True)
 
     def readConfigurationFile(self):
         #PREPARE LOGGING
-        #logging.config.fileConfig(ROOT_DIRECTORY + 'server/conf/logging.cfg')
-        pass
+        logging.config.fileConfig(ROOT_DIRECTORY + 'server/conf/logging.cfg')

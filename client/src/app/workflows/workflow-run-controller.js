@@ -105,7 +105,7 @@
 
 					for(var j in step.input_connections){
 						edge_id = step.id + "" + step.input_connections[j].id;
-						if(!edges[edge_id]){
+						if(!edges[edge_id] && step.input_connections[j].id !== undefined && step.id !== undefined){
 							edges[edge_id]=true;
 							diagram.edges.push({
 								id: edge_id,
@@ -141,7 +141,7 @@
 				settings: {
 					edgeColor: 'default',
 					defaultEdgeColor: '#d3d3d3',
-					mouseEnabled: false,
+					// mouseEnabled: false,
 					sideMargin: 30,
 					labelAlignment: "bottom"
 				}
@@ -162,14 +162,24 @@
 				}
 			};
 
+			var nodeSize = 20;
+			var edgeSize = 7;
+			if(diagram.nodes.length > 15){
+				nodeSize = 9;
+				edgeSize = 3;
+			}else if(diagram.nodes.length > 10){
+				nodeSize = 15;
+				edgeSize = 4;
+			}
+
 			var myStyles = {
 				nodes: {
-					size: {by: 'size', bins: 7, min: 20,max: 20},
+					size: {by: 'size', bins: 7, min: nodeSize,max: nodeSize},
 					icon: {by: 'step_type', scheme: 'iconScheme'},
 					color: {by: 'step_type', scheme: 'aSetScheme', set:7},
 				},
 				edges:{
-					size: {by: 'size', min: 7,max: 7},
+					size: {by: 'size', min: edgeSize, max: edgeSize},
 				}
 			};
 
@@ -496,6 +506,7 @@
 								erroneousSteps++;
 							}else{
 								debugger;
+								erroneousSteps++;
 							}
 						}
 

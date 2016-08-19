@@ -3,3 +3,4 @@ server/.idea
 server/log/application.log
 server/conf/serverconf.py
 *.pyc
+.idea

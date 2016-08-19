@@ -25,6 +25,7 @@
 (function(){
 	var app = angular.module('workflows.controllers.workflow-list', [
 		'common.dialogs',
+		'angular.backtop',
 		'workflows.services.workflow-list',
 		'workflows.directives.workflow-card'
 	]);
@@ -58,10 +59,13 @@
 			//--------------------------------------------------------------------
 
 			this.retrieveWorkflowsData = function(){
+				$scope.isLoading = true;
 				$http(getHttpRequestConfig("GET", "workflow-list", {
-					params:  {"show_published" : true}})
+					params:  {"show_published" : ($scope.show === 'all_workflows')}})
 				).then(
 					function successCallback(response){
+						$scope.isLoading = false;
+
 						$scope.workflows = WorkflowList.setWorkflows(response.data).getWorkflows();
 						$scope.tags =  WorkflowList.updateTags().getTags();
 						$scope.filteredWorkflows = $scope.workflows.length;
@@ -78,6 +82,8 @@
 						$scope.visibleWorkflows = Math.min($scope.filteredWorkflows, $scope.visibleWorkflows);
 					},
 					function errorCallback(response){
+						$scope.isLoading = false;
+
 						debugger;
 						var message = "Failed while retrieving the workflows list.";
 						$dialogs.showErrorDialog(message, {
@@ -101,12 +107,15 @@
 						workflow.steps = Object.values(workflow.steps);
 					},
 					function errorCallback(response){
-						debugger;
-						var message = "Failed while retrieving the workflow's details.";
-						$dialogs.showErrorDialog(message, {
-							logMessage : message + " at WorkflowListController:retrieveWorkflowDetails."
-						});
-						console.error(response.data);
+						if(response.data.err_code === 403002){
+							workflow.annotation = "This workflow is not owned by or shared with you.";
+							workflow.valid = false;
+							workflow.importable = true;
+						}else{
+							workflow.annotation = "Unable to get the description: " + response.data.err_msg;
+							workflow.valid = false;
+						}
+						return;
 					}
 				);
 			};
@@ -149,6 +158,36 @@
 			//--------------------------------------------------------------------
 			// EVENT HANDLERS
 			//--------------------------------------------------------------------
+			this.importWorkflowHandler = function(workflow) {
+				debugger
+				$dialogs.showConfirmationDialog('Add the workflow ' + workflow.name + ' to your collection?', {
+					title: "Please confirm this action.",
+					callback : function(result){
+						if(result === 'ok'){
+							debugger
+							$http(getHttpRequestConfig("POST", "workflow-import", {
+								headers: {'Content-Type': 'application/json; charset=utf-8'},
+								data: {"shared_workflow_id" : workflow.id}
+							})).then(
+								function successCallback(response){
+									//TODO: FINISH THIS CODE
+									debugger
+								},
+								function errorCallback(response){
+									//TODO: FINISH THIS CODE
+									debugger
+								}
+							);
+						}
+					}
+				});
+
+				this.retrieveWorkflowsData();
+			}
+
+			this.showWorkflowChooserChangeHandler = function() {
+				this.retrieveWorkflowsData();
+			}
 			/**
 			* This function applies the filters when the user clicks on "Search"
 			*/

@@ -1,54 +1,76 @@
 <div ng-controller="WorkflowListController as controller">
-  <nav class="navbar navbar-default navbar-top title-bar">
-    <h1>Workflows <small>Selection</small></h1>
-  </nav>
-  <div class="navbar-form navbar-default top-toolbar" role="search">
-    <div class="row">
-      <div class="col-sm-2">
-        <ul class="nav navbar-nav navbar-left">
-          <li class="dropdown">
-            <label for="sortBySelector" >Sort by:</label>
-            <select class="form-control" id="sortBySelector" ng-model="sortBy" ng-init="sortBy = 'name'" >
-              <option value="name" >Name</option>
-              <option value="owner">Author</option>
-            </select>
-          </li>
-        </ul>
-      </div>
-      <div class="col-sm-6">
-        <div class="input-group" style="width: 100%;margin-bottom: 4px;">
-          <input type="text" class="form-control" placeholder="Search for..." ng-model="searchFor" ng-enter="controller.applySearchHandler()">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button" ng-click="controller.applySearchHandler()">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-          </span>
-        </div><!-- /input-group -->
-        <div class="currentSearchTagContainer">
-          <i class="tag" ng-repeat="item in filters">
-            <span class="tag-name ">
-              <i class="fa fa-times" ng-click="controller.removeFilterHandler(item);"></i>{{item}}
-            </span>
-          </i>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        Popular:
-        <span ng-repeat="item in tags | orderBy:'-times' | limitTo: 4">
-          <i class="tag {{item.color}}">{{item.times}}</i><i> {{item.name}} </i>
-        </span>
-      </div>
-    </div>
-  </div>
-  <h5 class="ng-binding" style="text-align: left;">Found {{filteredWorkflows}} workflows</h5>
-  <div class="row workflow-card-container" id="workflowContainer">
-    <workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy | limitTo : visibleWorkflows" after-render="controller.retrieveWorkflowDetails(workflow);"></workflow-card>
-    <div class="row" style="text-align: center;">
-      <button class="btn btn-lg btn-success" type="button" ng-click="controller.showMoreWorkflowsHandler()" ng-show="(filteredWorkflows-visibleWorkflows)>0">
-      Show {{filteredWorkflows-visibleWorkflows}} more workflows
-    </button>
-  </div>
-</div>
+	<nav class="navbar navbar-default navbar-top title-bar">
+		<h1>Workflows <small>Selection</small></h1>
+	</nav>
+	<div class="navbar-form navbar-default top-toolbar" role="search">
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="input-group" style="width: 100%;margin-bottom: 4px;">
+					<input type="text" class="form-control" placeholder="Search for..." ng-model="searchFor" ng-enter="controller.applySearchHandler()">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button" ng-click="controller.applySearchHandler()">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+					</span>
+				</div><!-- /input-group -->
+				<div class="currentSearchTagContainer">
+					<i class="tag" ng-repeat="item in filters">
+						<span class="tag-name ">
+							<i class="fa fa-times" ng-click="controller.removeFilterHandler(item);"></i>{{item}}
+						</span>
+					</i>
+				</div>
+			</div>
+			<div class="col-sm-4" style="padding-top: 8px;">
+				Popular tags:
+				<span ng-repeat="item in tags | orderBy:'-times' | limitTo: 4" style="font-size:10px;">
+					<i class="tag {{item.color}}">{{item.times}}</i><i> {{item.name}} </i>
+				</span>
+			</div>
+		</div>
+	</div>
 
 
+	<div class="navbar-form">
+		<div style="margin: auto;display: block;max-width: 600px;">
+			<ul class="nav navbar-nav">
+				<li class="dropdown">
+					<label for="sortBySelector">Show:</label>
+					<select style="display:inline-block;" class="form-control" id="sortBySelector"
+					ng-model="show"
+					ng-init="show = 'my_workflows'"
+					ng-change="controller.showWorkflowChooserChangeHandler(value);"
+					>
+						<option value="my_workflows">Only my workflows</option>
+						<option value="all_workflows">All public workflows</option>
+					</select>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav" style="margin-left: 15px;">
+				<li class="dropdown">
+					<label for="sortBySelector">Sort by:</label>
+					<select class="form-control" id="sortBySelector" ng-model="sortBy" ng-init="sortBy = 'name'">
+						<option value="name">Name</option>
+						<option value="owner">Author</option>
+					</select>
+				</li>
+			</ul>
+			<i ng-show="isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;"><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflows...</i>
+			<i ng-show="!isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">Found 1 workflows</i>
+		</div>
+	</div>
+	<div class="row workflow-card-container" id="workflowContainer">
+		<workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy | limitTo : visibleWorkflows" after-render="controller.retrieveWorkflowDetails(workflow);"></workflow-card>
+		<div class="row" style="text-align: center;">
+			<button class="btn btn-lg btn-success" type="button" ng-click="controller.showMoreWorkflowsHandler()" ng-show="(filteredWorkflows-visibleWorkflows)>0">
+				Show {{filteredWorkflows-visibleWorkflows}} more workflows
+			</button>
+		</div>
+	</div>
+	<nav class=" navbar-fixed-bottom" style="left: initial;">
+		<back-top scroll-speed=600 button-theme="btn btn-default btn-sm navbar-right"></back-top>
+		<!-- <a class="btn btn-default btn-sm navbar-right" ng-click="" style="font-size: 9px;margin: 5px 10px;">
+
+	</a> -->
+</nav>
 </div>
