@@ -30,15 +30,15 @@
     var tags = [];
     var filters = [];
     var tagColors = ['yellow', 'green', 'red', 'blue', 'purple', 'pink', 'yellow2', 'green2', 'red2', 'blue2', 'purple2', 'pink2']
-
+    var old = new Date(0);
     //http://stackoverflow.com/questions/18247130/how-to-store-the-data-to-local-storage
-
     return {
       getWorkflows: function() {
         return workflows;
       },
       setWorkflows: function(_workflows) {
         workflows = _workflows;
+        old = new Date();
         return this;
       },
       getWorkflow: function(workflow_id) {
@@ -99,6 +99,9 @@
           filters.splice(pos,1);
         }
         return this;
+      },
+      getOld: function(){
+        return (new Date() - old)/60000
       }
     };
   }]);

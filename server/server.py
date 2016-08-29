@@ -88,19 +88,16 @@ class Application(object):
         #    \_____/_/    \_\______/_/    \_\/_/ \_\   |_|    /_/    \_\_|   |_____|
         #
         #******************************************************************************************
-        @self.app.route(SERVER_SUBDOMAIN + GALAXY_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET'])
+        @self.app.route(SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET'])
         def passRequest(service):
-            # # return passRequestToAPI(service, request)
-            # # return redirect(GALAXY_SERVER + GALAXY_SUBDOMAIN + '/api/' + service)
-            # requests.
-            # req = requests.get(GALAXY_SERVER + GALAXY_SUBDOMAIN + '/api/' + service, stream = True)
-            # return Response(stream_with_context(req.iter_content()), content_type = req.headers['content-type'])
+            # STEP 1. Read requests auth params
             auth = None
             if request.authorization is not None and len(request.authorization) > 0:
                 auth = ()
                 for i in request.authorization:
                     auth = auth + (request.authorization[i],)
 
+            # STEP 2. Generate the new requests
             resp = requests.request(
                 method=request.method,
                 url= GALAXY_SERVER + GALAXY_SUBDOMAIN + '/api/' + service,

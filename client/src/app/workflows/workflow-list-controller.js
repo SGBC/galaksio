@@ -58,40 +58,47 @@
 			// CONTROLLER FUNCTIONS
 			//--------------------------------------------------------------------
 
-			this.retrieveWorkflowsData = function(){
+			this.retrieveWorkflowsData = function(force){
 				$scope.isLoading = true;
-				$http(getHttpRequestConfig("GET", "workflow-list", {
-					params:  {"show_published" : ($scope.show === 'all_workflows')}})
-				).then(
-					function successCallback(response){
-						$scope.isLoading = false;
+				if(WorkflowList.getOld() > 1 || force){ //Max age for data 5min.
+					$http(getHttpRequestConfig("GET", "workflow-list", {
+						params:  {"show_published" : true}})
+					).then(
+						function successCallback(response){
+							$scope.isLoading = false;
 
-						$scope.workflows = WorkflowList.setWorkflows(response.data).getWorkflows();
-						$scope.tags =  WorkflowList.updateTags().getTags();
-						$scope.filteredWorkflows = $scope.workflows.length;
+							$scope.workflows = WorkflowList.setWorkflows(response.data).getWorkflows();
+							$scope.tags =  WorkflowList.updateTags().getTags();
+							$scope.filteredWorkflows = $scope.workflows.length;
 
-						//Display the workflows in batches
-						if(window.innerWidth > 1500){
-							$scope.visibleWorkflows = 9;
-						}else if(window.innerWidth > 1200){
-							$scope.visibleWorkflows = 6;
-						}else{
-							$scope.visibleWorkflows = 4;
+							//Display the workflows in batches
+							if(window.innerWidth > 1500){
+								$scope.visibleWorkflows = 9;
+							}else if(window.innerWidth > 1200){
+								$scope.visibleWorkflows = 6;
+							}else{
+								$scope.visibleWorkflows = 4;
+							}
+
+							$scope.visibleWorkflows = Math.min($scope.filteredWorkflows, $scope.visibleWorkflows);
+						},
+						function errorCallback(response){
+							$scope.isLoading = false;
+
+							debugger;
+							var message = "Failed while retrieving the workflows list.";
+							$dialogs.showErrorDialog(message, {
+								logMessage : message + " at WorkflowListController:retrieveWorkflowsData."
+							});
+							console.error(response.data);
 						}
-
-						$scope.visibleWorkflows = Math.min($scope.filteredWorkflows, $scope.visibleWorkflows);
-					},
-					function errorCallback(response){
-						$scope.isLoading = false;
-
-						debugger;
-						var message = "Failed while retrieving the workflows list.";
-						$dialogs.showErrorDialog(message, {
-							logMessage : message + " at WorkflowListController:retrieveWorkflowsData."
-						});
-						console.error(response.data);
-					}
-				);
+					);
+				}else{
+					$scope.workflows = WorkflowList.getWorkflows();
+					$scope.tags =  WorkflowList.getTags();
+					$scope.filteredWorkflows = $scope.workflows.length;
+					$scope.isLoading = false;
+				}
 			};
 
 			this.retrieveWorkflowDetails = function(workflow){
@@ -130,15 +137,17 @@
 			*/
 			$scope.filterWorkflows = function() {
 				$scope.filteredWorkflows = 0;
+				$scope.username = $scope.username || Cookies.get("galaxyusername");
 				return function( item ) {
+					if($scope.show === "my_workflows" && item.owner !== $scope.username){
+						return false;
+					}
+
 					var filterAux, item_tags;
 					for(var i in $scope.filters){
 						filterAux = $scope.filters[i].toLowerCase();
 						item_tags = item.tags.join("");
-						if(!(
-							(item.name.toLowerCase().indexOf(filterAux)) !== -1 ||
-							(item_tags.toLowerCase().indexOf(filterAux)) !== -1
-						)){
+						if(!((item.name.toLowerCase().indexOf(filterAux)) !== -1 ||(item_tags.toLowerCase().indexOf(filterAux)) !== -1)){
 							return false;
 						}
 					}
@@ -164,17 +173,20 @@
 					title: "Please confirm this action.",
 					callback : function(result){
 						if(result === 'ok'){
-							debugger
 							$http(getHttpRequestConfig("POST", "workflow-import", {
 								headers: {'Content-Type': 'application/json; charset=utf-8'},
 								data: {"shared_workflow_id" : workflow.id}
 							})).then(
 								function successCallback(response){
-									//TODO: FINISH THIS CODE
-									debugger
+									$dialogs.showSuccessDialog("The workflow has being successfully imported.")
 								},
 								function errorCallback(response){
-									//TODO: FINISH THIS CODE
+									debugger;
+									var message = "Failed while importing the workflow.";
+									$dialogs.showErrorDialog(message, {
+										logMessage : message + " at WorkflowListController:importWorkflowHandler."
+									});
+									console.error(response.data);
 									debugger
 								}
 							);

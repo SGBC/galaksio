@@ -142,7 +142,7 @@
 					edgeColor: 'default',
 					defaultEdgeColor: '#d3d3d3',
 					// mouseEnabled: false,
-					sideMargin: 30,
+					sideMargin: 100,
 					labelAlignment: "bottom"
 				}
 			});

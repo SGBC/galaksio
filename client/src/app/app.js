@@ -9,6 +9,8 @@
 			return GALAXY_SERVER_URL + "api/authenticate/baseauth";
 			case "user-sign-up":
 			return GALAXY_SERVER_URL + "user/create?cntrller=user";
+			case "user-info":
+			return GALAXY_SERVER_URL + "api/users/" + extra;
 			case "workflow-list":
 			return GALAXY_SERVER_URL + "api/workflows/";
 			case "workflow-info":

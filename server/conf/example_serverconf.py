@@ -9,6 +9,10 @@ SERVER_MAX_CONTENT_LENGTH = 200 * pow(1024,2) #MAX_CLIENT_SPACE IN MB
 ROOT_DIRECTORY       = "/datadev/b3g/"
 CLIENT_TMP_DIR       = "/tmp/"
 
+#GALAXY SETTINGS
+GALAXY_SERVER        =  "https://usegalaxy.org"
+GALAXY_SUBDOMAIN     =  ""
+
 #SMTP CONFIGURATION
 smtp_host       = "smtp.gmail.com"           #Sets Gmail, Office... as the SMTP server
 smtp_port       = 465                        #Set the SMTP port for the GMAIL

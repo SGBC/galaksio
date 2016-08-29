@@ -32,6 +32,28 @@
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
+		this.getCurrentUserDetails = function(){
+			$http(getHttpRequestConfig("GET", "user-info", {
+				headers: {'Content-Type': 'application/json; charset=utf-8'},
+				extra: "current"
+			})).then(
+				function successCallback(response){
+					$scope.userInfo.email = response.data.email;
+					$scope.userInfo.username = response.data.username;
+					$scope.userInfo.disk_usage = response.data.nice_total_disk_usage;
+					Cookies.remove("galaxyusername", {path: window.location.pathname});
+					Cookies.set("galaxyusername", $scope.userInfo.username, {expires : 1, path: window.location.pathname});
+					Cookies.remove("galaxyuser", {path: window.location.pathname});
+					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});
+				},
+				function errorCallback(response){
+					debugger;
+					var message = "Failed while getting user's details at UserSessionController:signInButtonHandler";
+					console.error(message);
+					console.error(response.data);
+				}
+			);
+		};
 
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
@@ -39,6 +61,10 @@
 		$scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
 			debugger
 			$scope.userInfo.email = Cookies.get("galaxyuser");
+		});
+
+		$scope.$on(AUTH_EVENTS.logoutSuccess, function (event, args) {
+			delete $scope.userInfo.email;
 		});
 
 		this.signFormSubmitHandler = function () {
@@ -133,9 +159,13 @@
 			Cookies.remove("galaxyuser", {path: window.location.pathname});
 			Cookies.remove("galaxysession", {path: window.location.pathname});
 			Cookies.remove("current-history", {path: window.location.pathname});
+			Cookies.remove("galaxyusername", {path: window.location.pathname});
 			sessionStorage.removeItem("workflow_invocations");
 			delete $scope.userInfo.email;
 			$state.go('signin');
+
+			//Notify all the other controllers that user has signed in
+			$rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
 		};
 
 		//--------------------------------------------------------------------
@@ -144,6 +174,7 @@
 		$scope.userInfo = {
 			email : Cookies.get("galaxyuser")
 		};
+		this.getCurrentUserDetails();
 	}
 );
 })();

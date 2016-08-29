@@ -32,7 +32,7 @@
 
 
 	<div class="navbar-form">
-		<div style="margin: auto;display: block;max-width: 600px;">
+		<div style="margin: auto;display: block;max-width: 625px;">
 			<ul class="nav navbar-nav">
 				<li class="dropdown">
 					<label for="sortBySelector">Show:</label>
@@ -55,15 +55,20 @@
 					</select>
 				</li>
 			</ul>
-			<i ng-show="isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;"><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflows...</i>
-			<i ng-show="!isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">Found 1 workflows</i>
+			<i ng-show="isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
+				<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflows...
+			</i>
+			<i ng-show="!isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
+				Found {{filteredWorkflows}} workflows
+				<a ng-click="controller.retrieveWorkflowsData(true);" style="margin-left:10px; font-size: 10px;"><i class="fa fa-refresh"></i>Refresh list</a>
+			</i>
 		</div>
 	</div>
 	<div class="row workflow-card-container" id="workflowContainer">
 		<workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy | limitTo : visibleWorkflows" after-render="controller.retrieveWorkflowDetails(workflow);"></workflow-card>
 		<div class="row" style="text-align: center;">
 			<button class="btn btn-lg btn-success" type="button" ng-click="controller.showMoreWorkflowsHandler()" ng-show="(filteredWorkflows-visibleWorkflows)>0">
-				Show {{filteredWorkflows-visibleWorkflows}} more workflows
+				Show more workflows ({{filteredWorkflows-visibleWorkflows}} left)
 			</button>
 		</div>
 	</div>

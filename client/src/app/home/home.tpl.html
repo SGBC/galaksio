@@ -9,14 +9,8 @@
 				<h4 style=" color: #6194bf; ">A simple but effective way to use Galaxy.</h4>
 			</div>
 		</div>
-		<div class="col-md-6" ng-controller="UserSessionController as controller">
-			<div class="panel panel-container" style="height: 170px;">
-				<h4>Your account</h4>
-				<p><b>Signed in as </b> <i>{{userInfo.email}}</i></p>
-				<button class="btn btn-danger btn-sm" ng-click="controller.signOutButtonHandler()">
-					<i class="fa fa-sign-out fa-fw" ></i> Close session
-				</button>
-			</div>
+		<div class="col-md-6">
+			<user-session-info-panel style="height: 170px;"></user-session-info-panel>
 		</div>
 		<div class="col-md-6" >
 			<div class="panel panel-container" style="height: 170px; font-size: 16px;">

@@ -85,4 +85,21 @@
       }
     }
   }]);
+
+  app.directive("userSessionInfoPanel", function() {
+    return {
+      restrict: 'E',
+      replace:true,
+      template:
+      ' <div class="panel panel-container" ng-controller="UserSessionController as controller">' +
+      '   <h4>Your account</h4>' +
+      '   <p><b>Signed in as </b> <i>{{userInfo.email}}</i></p>' +
+      '   <p><b>Disk usage: </b>{{userInfo.disk_usage || "Loading..."}}</p>' +
+      '   <a class="btn btn-danger btn-sm" style=" display: block; margin: auto; width: 130px; " ng-click="controller.signOutButtonHandler()">' +
+      '     <i class="fa fa-sign-out fa-fw" ></i> Close session' +
+      '   </a>' +
+      ' </div>'
+    };
+  });
+
 })();

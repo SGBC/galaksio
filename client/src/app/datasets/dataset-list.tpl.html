@@ -8,7 +8,12 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-if="displayedHistory.content === undefined || displayedHistory.content.length === 0">
+		<tr ng-if="isLoading === true || displayedHistory.content === undefined">
+			<td colspan="4" style="text-align:center;">
+				<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading datasets...
+			</td>
+		</tr>
+		<tr ng-if="(displayedHistory.content !== undefined && displayedHistory.content.length === 0)">
 			<td colspan="4" style="text-align:center;"><i>No data</i></td>
 		</tr>
 		<tr ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets) | orderBy:'-' | limitTo:maxDatasets"

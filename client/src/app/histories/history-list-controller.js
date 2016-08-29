@@ -118,9 +118,13 @@
 		*/
 		this.retrieveAllHistoriesList = function(force, lite, callback){
 			if($scope.histories.length === 0 || force===true){
+				$scope.isLoading = true;
 				$http(getHttpRequestConfig("GET", "history-list")).then(
 					function successCallback(response){
+						$scope.isLoading = false;
+
 						$scope.histories = HistoryList.setHistories(response.data).getHistories();
+
 						if(lite !== true){ //always enter by default
 							//Now get the details for each history
 							for(var i in $scope.histories){
@@ -134,6 +138,8 @@
 						}
 					},
 					function errorCallback(response){
+						$scope.isLoading = false;
+
 						debugger;
 						var message = "Failed when retrieving the list of histories.";
 						$dialogs.showErrorDialog(message, {
@@ -163,15 +169,19 @@
 			}
 
 			if(Cookies.get("current-history") === undefined){
+				$scope.isLoading = true;
+
 				//Get the most recently used history
 				$http(getHttpRequestConfig("GET", "history-list", {extra: 'most_recently_used'})).then(
 					function successCallback(response){
+						$scope.isLoading = false;
 						me.setCurrentHistory(HistoryList.getHistory(response.data.id));
 						me.retrieveHistoryData(response.data.id, function(){
 							me.setDisplayedHistory($scope.currentHistory, force);
 						});
 					},
 					function errorCallback(response){
+						$scope.isLoading = false;
 						debugger;
 						var message = "Failed when retrieving the most recently used history.";
 						$dialogs.showErrorDialog(message, {
@@ -202,8 +212,11 @@
 		* @return {Object} the controller.
 		*/
 		this.retrieveHistoryData = function(history_id, callback){
+			$scope.isLoading = true;
+
 			$http(getHttpRequestConfig("GET", "history-list", {extra: history_id})).then(
 				function successCallback(response){
+					$scope.isLoading = false;
 					var history = HistoryList.getHistory(history_id);
 					//Update the object content with the new data
 					if(history !== null){
@@ -216,6 +229,8 @@
 					}
 				},
 				function errorCallback(response){
+					$scope.isLoading = false;
+					
 					debugger;
 					var message = "Failed when retrieving the details for history.";
 					$dialogs.showErrorDialog(message, {
@@ -241,7 +256,6 @@
 		//a list of histories. Hence, the application will not
 		//request the data everytime that the history list panel is displayed (data persistance).
 		$scope.histories = HistoryList.getHistories();
-
 
 		if($state.current.name === "histories"){
 			this.retrieveAllHistoriesList(true, false, this.retrieveCurrentHistoryData);

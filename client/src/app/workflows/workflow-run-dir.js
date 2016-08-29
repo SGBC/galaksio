@@ -24,6 +24,7 @@
 * - workflowStep
 * - stepDataInput
 * - stepInput
+* - workflowSummary
 *
 */
 (function(){
@@ -220,48 +221,46 @@
 				}catch(err) {
 					debugger;
 					template = '<b color="red">Unknown input</b>';
-					$dialogs.showErrorDialog(
-						"Error while creating the form: "  + err.split(":")[0],
-						{
-							title        : "Error while creating the form",
-							reportButton : true,
-							logMessage   : err,
-							callback     : function(reason){
-								// Show error message
-								debugger;
-								// Collapse the tool
-								scope.loadingComplete = false;
-								scope.collapsed = true;
-								// Remove extra information from step
-								delete scope.step.extra;
-							}
-						});
-					}
-
-					$compile($(template).appendTo(element))(scope);
+					$dialogs.showErrorDialog("Error while creating the form: "  + err.split(":")[0],{
+						title        : "Error while creating the form",
+						reportButton : true,
+						logMessage   : err,
+						callback     : function(reason){
+							// Show error message
+							debugger;
+							// Collapse the tool
+							scope.loadingComplete = false;
+							scope.collapsed = true;
+							// Remove extra information from step
+							delete scope.step.extra;
+						}
+					});
 				}
-			};
-		}]);
 
-		app.directive("workflowSummary", ['$timeout', '$dialogs', function($timeout, $dialogs) {
-			return {
-				restrict: 'E',
-				//templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG
-				template:
-				'<table class="workflow-summary-step" ng-repeat="step in workflow.steps">' +
-				'  <thead>'+
-				'    <tr><th colspan="2">{{step.name}}</th></tr>' +
-				'    <tr><th>Field name</th><th>Value</th></tr>' +
-				'  </thead>'+
-				'  <tbody>'+
-				'    <tr ng-if="step.type === \'data_input\'"><td>{{step.inputs[0].name}}</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
-				'    <tr ng-if="step.type !== \'data_input\' && step.extra === undefined"><td colspan="2">Using default values</td></tr>' +
-				'    <tr ng-if="step.extra !== undefined" ng-repeat="input in step.extra.inputs">' +
-				'       <td>{{input.label || input.title}}</td>' +
-				'       <td>{{adjustValueString(input)}}</td>' +
-				'    </tr>' +
-				'  </tbody>'+
-				'</table>'
-			};
-		}]);
-	})();
+				$compile($(template).appendTo(element))(scope);
+			}
+		};
+	}]);
+
+	app.directive("workflowSummary", ['$timeout', '$dialogs', function($timeout, $dialogs) {
+		return {
+			restrict: 'E',
+			//templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG
+			template:
+			'<table class="workflow-summary-step" ng-repeat="step in workflow.steps">' +
+			'  <thead>'+
+			'    <tr><th colspan="2">Step {{$index + 1}}. {{step.name}}</th></tr>' +
+			'    <tr><th>Field name</th><th>Value</th></tr>' +
+			'  </thead>'+
+			'  <tbody>'+
+			'    <tr ng-if="step.type === \'data_input\'"><td>{{step.inputs[0].name}}</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
+			'    <tr ng-if="step.type !== \'data_input\' && step.extra === undefined"><td colspan="2">Using default values</td></tr>' +
+			'    <tr ng-if="step.extra !== undefined" ng-repeat="input in step.extra.inputs">' +
+			'       <td>{{input.label || input.title}}</td>' +
+			'       <td>{{adjustValueString(input)}}</td>' +
+			'    </tr>' +
+			'  </tbody>'+
+			'</table>'
+		};
+	}]);
+})();

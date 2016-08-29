@@ -39,7 +39,7 @@
 			</div>
 			<history-list-panel></history-list-panel>
 		</div>
-		<form class="panel panel-container" name='workflowRunForm' novalidate style="margin-bottom: 55px;" ng-show="invocation.current_step > 2">
+		<form class="panel panel-container" name='workflowRunForm' novalidate ng-show="invocation.current_step > 2">
 			<!-- ************************************************************* -->
 			<!-- INPUT DATA SELECTION -->
 			<!-- ************************************************************* -->
@@ -151,25 +151,26 @@
 				</div>
 			</div>
 		</form>
+		<div style="margin-top: 100px; display:block; clear:both;"></div>
 		<!-- ************************************************************* -->
 		<!-- NAVIGATION BAR -->
 		<!-- ************************************************************* -->
 		<nav class="navbar navbar-default navbar-fixed-bottom progressNavigator" >
 			<div class="container">
-				<a type="button" class="btn btn-danger btn-lg navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
+				<a class="btn btn-danger btn-md navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
 					<i class="fa fa-chevron-left"></i> Cancel and go back
 				</a>
-				<a type="button" class="btn btn-default btn-lg navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
+				<a class="btn btn-default btn-md navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
 					<i class="fa fa-chevron-left"></i> Previous step
 				</a>
-				<a class="btn btn-lg" ui-sref="workflows()" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
-				<a type="button" class="btn btn-info btn-lg navbar-right"
+				<a class="btn btn-md" ui-sref="workflows()" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
+				<a class="btn btn-info btn-md navbar-right"
 					ng-disabled="(invocation.current_step === 3 || invocation.current_step === 4) && !invocation.valid"
 					ng-click="controller.nextStepButtonHandler()"
 					ng-show="invocation.current_step < 5">
 					<i class="fa fa-chevron-right"></i> Next step
 				</a>
-				<a type="submit" class="btn btn-success btn-lg navbar-right" ng-show="invocation.current_step === 5" ng-click="controller.executeWorkflowHandler()" >
+				<a type="submit" class="btn btn-success btn-md navbar-right" ng-show="invocation.current_step === 5" ng-click="controller.executeWorkflowHandler()" >
 					<i class="fa fa-bolt fa-fw" ></i> Run workflow!
 				</a>
 			</div>
