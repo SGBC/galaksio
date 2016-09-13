@@ -3,177 +3,187 @@
 		<h1>Workflows <small>Run workflow</small></h1>
 	</nav>
 	<div class="workflow-run-container">
+		<h2 class="workflow-title" style="text-align:center;margin-bottom: 17px;margin-top: 0;"><b>Running </b>{{workflow.name}}</h2>
+
 		<div class="progressIndicator row">
 			<div class="background-bar"></div>
 			<div class="progressStep col-md-2"
-				ng-repeat="(key, value) in {1 : 'Workflow overview', 2 : 'History selection', 3 : 'Input selection', 4 : 'Custom parameters', 5: 'Run workflow', 6: 'Results'}"
-				ng-class="(invocation.current_step == key)?'currentStep':((invocation.current_step > key)?'doneStep':'')">
-				<span class="stepNumber">{{key}}</span>
-				<span class="stepDone"><i class="fa fa-check" aria-hidden="true"></i></span>
-				<p>{{value}}</p>
-			</div>
+			ng-repeat="(key, value) in {1 : 'Workflow overview', 2 : 'History selection', 3 : 'Input selection', 4 : 'Custom parameters', 5: 'Run workflow', 6: 'Results'}"
+			ng-class="(invocation.current_step == key)?'currentStep':((invocation.current_step > key)?'doneStep':'')">
+			<span class="stepNumber">{{key}}</span>
+			<span class="stepDone"><i class="fa fa-check" aria-hidden="true"></i></span>
+			<p>{{value}}</p>
 		</div>
-		<h3 class="workflow-title">{{workflow.name}}</h3>
-		<!-- ************************************************************* -->
-		<!-- WORKFLOW DESCRIPTION -->
-		<!-- ************************************************************* -->
-		<div class="panel panel-container" ng-if="invocation.current_step == 1">
-			<h4>Details</h4>
-			<p><b>Author: </b>{{workflow.owner}}</p>
-			<p><b>Description: </b>{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</p>
-		</div>
-		<!-- ************************************************************* -->
-		<!-- WORKFLOW DIAGRAM -->
-		<!-- ************************************************************* -->
-		<div class="panel panel-container" ng-show="invocation.current_step != 2">
-			<h4>Workflow overview</h4>
-			<div id="sigmaContainer" style="height:250px;"></div>
-		</div>
-		<!-- ************************************************************* -->
-		<!-- HISTORY SELECTION -->
-		<!-- ************************************************************* -->
-		<div ng-if="invocation.current_step == 2" ng-show="invocation.valid= true">
-			<div class="panel panel-container" >
-				<h3>History selection</h3>
-				<p class="description">TODO: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
-			</div>
-			<history-list-panel></history-list-panel>
-		</div>
-		<form class="panel panel-container" name='workflowRunForm' novalidate ng-show="invocation.current_step > 2">
-			<!-- ************************************************************* -->
-			<!-- INPUT DATA SELECTION -->
-			<!-- ************************************************************* -->
-			<div class="progressStep" ng-if="invocation.current_step == 3" ng-form="step1form" >
-				<h3>Input data:</h3>
-				<p class="description">TODO: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
-				<p class="invalidFormMessage" ng-show="!(invocation.valid= !step1form.$invalid)">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
-				<span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...</span>
-				<div ng-show="loadingComplete">
-					<workflow-step ng-repeat="step in workflow.steps | filter:filterInputSteps"></workflow-step>
-				</div>
-			</div>
-			<!-- ************************************************************* -->
-			<!-- OTHER STEPS CUSTOMIZATION -->
-			<!-- ************************************************************* -->
-			<div class="progressStep" ng-if="invocation.current_step == 4" ng-form="step2form" ng-init="invocation.valid=!step2form.$invalid">
-				<h3>Other steps:</h3>
-				<p class="description">TODO: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut scelerisque risus. Donec suscipit condimentum rutrum. Quisque enim mauris, molestie dignissim congue a, rutrum at nibh. Nullam convallis consectetur sapien at eleifend. Nullam eu feugiat felis. Sed suscipit nec turpis vitae efficitur. Nullam aliquam mi id felis cursus, a dictum mauris efficitur.</p>
-				<p class="invalidFormMessage" ng-show="!(invocation.valid= !step2form.$invalid)">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
-				<div ng-show="loadingComplete" >
-					<workflow-step ng-repeat="step in workflow.steps | filter:filterNotInputSteps"></workflow-step>
-				</div>
-			</div>
-			<!-- ************************************************************* -->
-			<!-- PRE-RUN WORKFLOW SUMMARY -->
-			<!-- ************************************************************* -->
-			<div class="progressStep" ng-if="invocation.current_step == 5">
-				<h1 class="workflow-state-title">{{invocation.state_text}}</h1>
-				<h1 style=" text-align: center; font-size: 70px; color: #009CDE; "></h1>
-				<div class="description" style="text-align: center;">
-					<h4>This is a summary of the input data and the custom values that you chose for this workflow.</h4>
-					<p>
-						<b style="color: #E88080; width: 150px; margin-right: 10px; display: inline-block; ">Is something wrong?</b>
-						Just go back and choose the correct value.
-					</p>
-					<p><b style=" color: #54BF78; width: 150px; margin-right: 10px; display: inline-block; ">Ready to launch?</b>
-						Click on "Run workflow" to start your work!
-					</p>
-					<workflow-summary></workflow-summary>
-				</div>
-			</div>
-			<!-- ************************************************************* -->
-			<!-- RUNNING WORKFLOW SUMMARY -->
-			<!-- ************************************************************* -->
-			<div class="progressStep" ng-if="invocation.current_step == 6">
-				<h1 class="workflow-state-title" ng-class="(invocation.state === 'sending')?'currentState':''" > <img src="css/startup.png" style="height: 70px;">{{invocation.state_text}}</h1>
-				<h1 class="workflow-state-title" ng-class="(invocation.state === 'working')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>
-				<h1 class="workflow-state-title" ng-class="(invocation.state === 'success')?'currentState':''" > <img src="css/success.png" style="height: 70px;">{{invocation.state_text}}</h1>
-				<h1 class="workflow-state-title" ng-class="(invocation.state === 'error')?'currentState':''" > <img src="css/error.png" style="height: 70px;">{{invocation.state_text}}</h1>
-				<!-- #################### -->
-				<!-- SENDING WORKFLOW     -->
-				<!-- #################### -->
-				<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocation.state === 'sending'">
-					<h3>We are sending your job to Galaxy. Please be patient...</h3>
-					<p>
-						<b>Tired of waiting? </b><b>Run your workflows in background!!</b><br>
-						You can run several workflows in background.<br>
-						Use the tools on the topbar to check the state of your workflows and recover them.<br>
-						You will be notified as soon as your workflows finish.
-					</p>
-					<a class="btn btn-info " ui-sref="workflows()">
-						<i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
-					</a>
-				</div>
-				<!-- #################### -->
-				<!-- RUNNING WORKFLOW     -->
-				<!-- #################### -->
-				<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocation.state === 'working'">
-					<h3>Your workflow is now running on Galaxy. Please be patient...</h3>
-					<!--  TODO: show running step-->
-					<!-- <span ng-repeat="step in invocation.steps"><b>{{step.name}}</b><b>{{step.state}}</b></span> -->
-					<p>
-						<b>Tired of waiting? </b><b>Run your workflows in background!!</b><br>
-						You can run several workflows in background.<br>
-						Use the tools on the topbar to check the state of your workflows and recover them.<br>
-						You will be notified as soon as your workflows finish.
-					</p>
-					<a class="btn btn-info " ui-sref="workflows()">
-						<i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
-					</a>
-				</div>
-				<!-- #################### -->
-				<!-- FINISHED WORKFLOW    -->
-				<!-- #################### -->
-				<div style="text-align: center; padding: 10px;" class="bg-success" ng-show="invocation.state === 'success'">
-					<h3>Your workflow has finished successfully!!</h3>
-					<div style="display:block; max-width: 800px; margin: auto;">
-						<table ng-if="invocation.hasOutput === true" style="margin: auto;" class="table">
-							<thead>
-								<tr><th>File name</th><th>Extension</th><th></th></tr>
-							</thead>
-							<tbody ng-repeat="step in invocation.steps">
-								<tr ng-repeat="output in step.outputs">
-									<td style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
-									<td><a href="{{output.url}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<!-- #################### -->
-				<!-- ERRONEUS WORKFLOW    -->
-				<!-- #################### -->
-				<div style="text-align: center; padding: 10px;" class="bg-danger" ng-show="invocation.state === 'error'">
-					<h3>Oops! Something went wrong during the execution of your workflow...</h3>
-					<a class="btn btn-danger" ui-sref="workflows()">
-						<i class="fa fa-sign-out fa-fw"></i>Let's take a look to the results!
-					</a>
-				</div>
-			</div>
-		</form>
-		<div style="margin-top: 100px; display:block; clear:both;"></div>
-		<!-- ************************************************************* -->
-		<!-- NAVIGATION BAR -->
-		<!-- ************************************************************* -->
-		<nav class="navbar navbar-default navbar-fixed-bottom progressNavigator" >
-			<div class="container">
-				<a class="btn btn-danger btn-md navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
-					<i class="fa fa-chevron-left"></i> Cancel and go back
-				</a>
-				<a class="btn btn-default btn-md navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
-					<i class="fa fa-chevron-left"></i> Previous step
-				</a>
-				<a class="btn btn-md" ui-sref="workflows()" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
-				<a class="btn btn-info btn-md navbar-right"
-					ng-disabled="(invocation.current_step === 3 || invocation.current_step === 4) && !invocation.valid"
-					ng-click="controller.nextStepButtonHandler()"
-					ng-show="invocation.current_step < 5">
-					<i class="fa fa-chevron-right"></i> Next step
-				</a>
-				<a type="submit" class="btn btn-success btn-md navbar-right" ng-show="invocation.current_step === 5" ng-click="controller.executeWorkflowHandler()" >
-					<i class="fa fa-bolt fa-fw" ></i> Run workflow!
-				</a>
-			</div>
-		</nav>
 	</div>
+	<!-- ************************************************************* -->
+	<!-- WORKFLOW DESCRIPTION -->
+	<!-- ************************************************************* -->
+	<div class="panel panel-container" ng-if="invocation.current_step == 1">
+		<h4>Details</h4>
+		<p><b>Author: </b>{{workflow.owner}}</p>
+		<p><b>Description: </b>{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</p>
+	</div>
+	<!-- ************************************************************* -->
+	<!-- WORKFLOW DIAGRAM -->
+	<!-- ************************************************************* -->
+	<div class="panel panel-container" ng-show="invocation.current_step != 2">
+		<h4>Workflow overview</h4>
+		<div id="sigmaContainer" style="height:250px;"></div>
+	</div>
+	<!-- ************************************************************* -->
+	<!-- HISTORY SELECTION -->
+	<!-- ************************************************************* -->
+	<div ng-if="invocation.current_step == 2" ng-show="invocation.valid= true">
+		<div class="panel panel-container" >
+			<h3>History selection</h3>
+			<p class="description">
+				<b>First, choose the history that contains the files that will be used in the workflow.</b><br>Remember that when data is uploaded from your computer or analysis is done on existing data using Galaxy, each output from those steps generates a dataset. These datasets (and the output datasets from later analysis on them) are stored by Galaxy in <b>Histories</b>.
+			</p>
+		</div>
+		<history-list-panel ng-init="showHelp=false;"></history-list-panel>
+	</div>
+	<form class="panel panel-container" name='workflowRunForm' novalidate ng-show="invocation.current_step > 2">
+		<!-- ************************************************************* -->
+		<!-- INPUT DATA SELECTION -->
+		<!-- ************************************************************* -->
+		<div class="progressStep" ng-if="invocation.current_step == 3" ng-form="step1form" >
+			<h3>Input data:</h3>
+			<p class="description">
+				<b>Now, choose the input file for each input step.</b> Use the diagram above to identify each step in the process.<br>
+				Remember that workflows are analyses that are intended to be executed (one ore more times) with different user-provided input Datasets.</br>
+			</p>
+			<p class="invalidFormMessage" ng-show="!(invocation.valid= !step1form.$invalid)">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
+			<span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...</span>
+			<div ng-show="loadingComplete">
+				<workflow-step ng-repeat="step in workflow.steps | filter:filterInputSteps"></workflow-step>
+			</div>
+		</div>
+		<!-- ************************************************************* -->
+		<!-- OTHER STEPS CUSTOMIZATION -->
+		<!-- ************************************************************* -->
+		<div class="progressStep" ng-if="invocation.current_step == 4" ng-form="step2form" ng-init="invocation.valid=!step2form.$invalid">
+			<h3>Other steps:</h3>
+			<p class="description">
+				<b>We are almost done! In this step you can customize the execution of all the steps in the workflow.</b><br>
+				Workflow can be reused over and over and for that reason, all the steps in the process have default values for execution. Note that these default values were considered as optimal by the creator of the workflow. Nevertheless, feel free to customize the settings for each step at your convenience. <b>Remember that this is a optional step!</b>
+			</p>
+			<p class="invalidFormMessage" ng-show="!(invocation.valid= !step2form.$invalid)">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
+			<div ng-show="loadingComplete" >
+				<workflow-step ng-repeat="step in workflow.steps | filter:filterNotInputSteps"></workflow-step>
+			</div>
+		</div>
+		<!-- ************************************************************* -->
+		<!-- PRE-RUN WORKFLOW SUMMARY -->
+		<!-- ************************************************************* -->
+		<div class="progressStep" ng-if="invocation.current_step == 5">
+			<h1 class="workflow-state-title">{{invocation.state_text}}</h1>
+			<h1 style=" text-align: center; font-size: 70px; color: #009CDE; "></h1>
+			<div class="description" style="text-align: center;">
+				<h3>Ready for launch!</h3>
+				<h4>This is a summary of the input data and the custom values that you chose for this workflow.</h4>
+				<p>
+					<b style="color: #E88080; width: 150px; margin-right: 10px; display: inline-block; ">Is something wrong?</b>
+					Just go back and choose the correct values.
+				</p>
+				<p><b style=" color: #54BF78; width: 150px; margin-right: 10px; display: inline-block; ">Ready to launch?</b>
+					Click on "Run workflow" to start your work!
+				</p>
+				<workflow-summary></workflow-summary>
+			</div>
+		</div>
+		<!-- ************************************************************* -->
+		<!-- RUNNING WORKFLOW SUMMARY -->
+		<!-- ************************************************************* -->
+		<div class="progressStep" ng-if="invocation.current_step == 6">
+			<h1 class="workflow-state-title" ng-class="(invocation.state === 'sending')?'currentState':''" > <img src="css/startup.png" style="height: 70px;">{{invocation.state_text}}</h1>
+			<h1 class="workflow-state-title" ng-class="(invocation.state === 'working')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>
+			<h1 class="workflow-state-title" ng-class="(invocation.state === 'success')?'currentState':''" > <img src="css/success.png" style="height: 70px;">{{invocation.state_text}}</h1>
+			<h1 class="workflow-state-title" ng-class="(invocation.state === 'error')?'currentState':''" > <img src="css/error.png" style="height: 70px;">{{invocation.state_text}}</h1>
+			<!-- #################### -->
+			<!-- SENDING WORKFLOW     -->
+			<!-- #################### -->
+			<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocation.state === 'sending'">
+				<h3>We are sending your job to Galaxy. Please be patient...</h3>
+				<p>
+					<b>Tired of waiting? </b><b>Run your workflows in background!!</b><br>
+					You can run several workflows in background.<br>
+					Use the tools on the topbar to check the state of your workflows and recover them.<br>
+					You will be notified as soon as your workflows finish.
+				</p>
+				<a class="btn btn-info " ui-sref="workflows()">
+					<i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
+				</a>
+			</div>
+			<!-- #################### -->
+			<!-- RUNNING WORKFLOW     -->
+			<!-- #################### -->
+			<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocation.state === 'working'">
+				<h3>Your workflow is now running on Galaxy. Please be patient...</h3>
+				<!--  TODO: show running step-->
+				<!-- <span ng-repeat="step in invocation.steps"><b>{{step.name}}</b><b>{{step.state}}</b></span> -->
+				<p>
+					<b>Tired of waiting? </b><b>Run your workflows in background!!</b><br>
+					You can run several workflows in background.<br>
+					Use the tools on the topbar to check the state of your workflows and recover them.<br>
+					You will be notified as soon as your workflows finish.
+				</p>
+				<a class="btn btn-info " ui-sref="workflows()">
+					<i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
+				</a>
+			</div>
+			<!-- #################### -->
+			<!-- FINISHED WORKFLOW    -->
+			<!-- #################### -->
+			<div style="text-align: center; padding: 10px;" class="bg-success" ng-show="invocation.state === 'success'">
+				<h3>Your workflow has finished successfully!!</h3>
+				<div style="display:block; max-width: 800px; margin: auto;">
+					<table ng-if="invocation.hasOutput === true" style="margin: auto;" class="table">
+						<thead>
+							<tr><th>File name</th><th>Extension</th><th></th></tr>
+						</thead>
+						<tbody ng-repeat="step in invocation.steps">
+							<tr ng-repeat="output in step.outputs">
+								<td style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
+								<td><a href="{{output.url}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- #################### -->
+			<!-- ERRONEUS WORKFLOW    -->
+			<!-- #################### -->
+			<div style="text-align: center; padding: 10px;" class="bg-danger" ng-show="invocation.state === 'error'">
+				<h3>Oops! Something went wrong during the execution of your workflow...</h3>
+				<a class="btn btn-danger" ui-sref="workflows()">
+					<i class="fa fa-sign-out fa-fw"></i>Let's take a look to the results!
+				</a>
+			</div>
+		</div>
+	</form>
+	<div style="margin-top: 100px; display:block; clear:both;"></div>
+	<!-- ************************************************************* -->
+	<!-- NAVIGATION BAR -->
+	<!-- ************************************************************* -->
+	<nav class="navbar navbar-default navbar-fixed-bottom progressNavigator" >
+		<div class="container">
+			<a class="btn btn-danger btn-md navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
+				<i class="fa fa-chevron-left"></i> Cancel and go back
+			</a>
+			<a class="btn btn-default btn-md navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
+				<i class="fa fa-chevron-left"></i> Previous step
+			</a>
+			<a class="btn btn-md" ui-sref="workflows()" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
+			<a class="btn btn-info btn-md navbar-right"
+			ng-disabled="(invocation.current_step === 3 || invocation.current_step === 4) && !invocation.valid"
+			ng-click="controller.nextStepButtonHandler()"
+			ng-show="invocation.current_step < 5">
+			<i class="fa fa-chevron-right"></i> Next step
+		</a>
+		<a type="submit" class="btn btn-success btn-md navbar-right" ng-show="invocation.current_step === 5" ng-click="controller.executeWorkflowHandler()" >
+			<i class="fa fa-bolt fa-fw" ></i> Run workflow!
+		</a>
+	</div>
+</nav>
+</div>
 </div>

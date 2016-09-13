@@ -6,7 +6,7 @@
 				<th>Size</th>
 				<th>Type</th>
 				<th>Status</th>
-				<th></th>
+				<th style="width:65px;"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -23,12 +23,15 @@
 					<span ng-if="file.state === 'done'" class="label label-success">{{file.state}}</span>
 					<span ng-if="file.state === 'error'" class="label label-danger">{{file.state}}</span>
 				</td>
-				<!--  TODO: add this code -->
-				<td style="max-width:30px;color:red;"><a href="javascript:void(0);"ng-click="console.error('NOT IMPLEMENTED');"><i class="fa fa-trash-o" ></i></a></td>
+				<td style="max-width:30px;color:red;">
+					<a class="removeButton" ng-click="controller.deleteToUploadDatasetHandler(file);" ng-show="controller.removeAllowed !== false">
+						<i class="fa fa-trash-o" ></i>
+					</a>
+				</td>
 			</tr>
 		</tbody>
 	</table>
 	<input type="file" file-model="myFile" style="display:none;" id="uploadDatasetSelector">
-	<a class="btn btn-default" style="float: right;" ng-click="controller.uploadDatasetHandler();">Upload files</a>
-	<a class="btn btn-primary" style="float: right; margin-right: 10px;" ng-click="controller.selectNewDatasetHandler();">Choose local file</a>
+	<a class="btn btn-default" style="float: right;" ng-click="controller.uploadDatasetHandler();" ng-disabled="controller.removeAllowed === false">Upload files</a>
+	<a class="btn btn-primary" style="float: right; margin-right: 10px;" ng-click="controller.selectNewDatasetHandler();" ng-disabled="controller.removeAllowed === false">Choose local file</a>
 </div>

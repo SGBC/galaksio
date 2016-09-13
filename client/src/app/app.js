@@ -1,72 +1,5 @@
 (function() {
 
-	GALAXY_SERVER    = "/";
-	GALAXY_SERVER_URL= GALAXY_SERVER +  "";
-	getRequestPath = function(service, extra){
-		extra = (extra || "");
-		switch (service) {
-			case "user-sign-in":
-			return GALAXY_SERVER_URL + "api/authenticate/baseauth";
-			case "user-sign-up":
-			return GALAXY_SERVER_URL + "user/create?cntrller=user";
-			case "user-info":
-			return GALAXY_SERVER_URL + "api/users/" + extra;
-			case "workflow-list":
-			return GALAXY_SERVER_URL + "api/workflows/";
-			case "workflow-info":
-			return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/download";
-			case "workflow-run":
-			return GALAXY_SERVER_URL + "api/workflows/"+ extra + "/invocations";
-			case "workflow-import":
-			return GALAXY_SERVER_URL + "api/workflows/" + extra;
-			case "invocation-state":
-			return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
-			case "invocation-result":
-			return GALAXY_SERVER_URL + "api/workflows/"+ extra[0] + "/invocations/" + extra[1] + "/steps/" + extra[2];
-			case "tools-info":
-			return GALAXY_SERVER_URL + "api/tools/" + extra + "/build";
-			case "datasets-list":
-			return GALAXY_SERVER_URL + "api/histories/" + extra + "/contents";
-			case "dataset-details":
-			return GALAXY_SERVER_URL + "api/datasets/" + extra[0];
-			case "history-list":
-			return GALAXY_SERVER_URL + "api/histories/" + extra;
-			case "dataset-upload":
-			return GALAXY_SERVER_URL + "api/tools/" + extra;
-			default:
-			return "";
-		}
-	};
-
-	getHttpRequestConfig = function(method, service, options){
-		options = (options || {});
-		options.params = (options.params || {});
-		if(Cookies.get("galaxysession")){
-			options.params = angular.merge(options.params, {"key" : window.atob(Cookies.get("galaxysession"))});
-		}
-		if(options.urlEncodedRequest === true){
-			//CONVERT TO URL ENCODE DATA
-			options.transformRequest =  function(obj) {
-				var str = [];
-				for(var p in obj)
-				str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-				return str.join("&");
-			};
-		}
-		var requestData = {
-			method: method,
-			headers: options.headers,
-			url: getRequestPath(service, options.extra),
-			params: options.params,
-			data: options.data
-		};
-		if(options.transformRequest !== undefined){
-			requestData.transformRequest = options.transformRequest;
-		}
-
-		return requestData;
-	}
-
 	var app = angular.module('b3galaxyApp', [
 		'common.dialogs',
 		'ui.router',
@@ -78,6 +11,23 @@
 		'datasets.controllers.dataset-list'
 	]);
 
+	app.constant('myAppConfig', {
+		VERSION: '0.1',
+		GALAXY_SERVER : "/"
+	});
+	//Define the events that are fired when an user login, log out etc.
+	app.constant('AUTH_EVENTS', {
+		loginSuccess: 'auth-login-success',
+		loginFailed: 'auth-login-failed',
+		logoutSuccess: 'auth-logout-success',
+		sessionTimeout: 'auth-session-timeout',
+		notAuthenticated: 'auth-not-authenticated',
+		notAuthorized: 'auth-not-authorized'
+	});
+	app.constant('HISTORY_EVENTS', {
+		historyChanged: 'history-changed'
+	});
+
 	//DEFINE THE ENTRIES FOR THE WEB APP
 	app.config([
 		'$stateProvider',
@@ -85,7 +35,6 @@
 		function ($stateProvider, $urlRouterProvider) {
 			// For any unmatched url, redirect to /login
 			$urlRouterProvider.otherwise("/");
-
 			var signin = {
 				name: 'signin',
 				url: '/signin',
@@ -125,58 +74,116 @@
 			$stateProvider.state(workflows);
 			$stateProvider.state(workflowDetail);
 			$stateProvider.state(histories);
-		}]);
+		}]
+	);
 
-		//Define the events that are fired when an user login, log out etc.
-		app.constant('AUTH_EVENTS', {
-			loginSuccess: 'auth-login-success',
-			loginFailed: 'auth-login-failed',
-			logoutSuccess: 'auth-logout-success',
-			sessionTimeout: 'auth-session-timeout',
-			notAuthenticated: 'auth-not-authenticated',
-			notAuthorized: 'auth-not-authorized'
-		});
-		app.constant('HISTORY_EVENTS', {
-			historyChanged: 'history-changed'
-		});
+	app.controller('MainController', function ($rootScope, $scope, $state, myAppConfig) {
+		var me = this;
+		$rootScope.myAppConfig = myAppConfig;
+		$scope.currentPage = 'home';
 
-		app.controller('MainController', function ($rootScope, $scope, $state) {
-			var me = this;
+		this.pages = [
+			{name: 'home', title: 'Home', icon : 'home'},
+			{name: 'workflows', title: 'Workflows', icon : 'share-alt'},
+			{name: 'histories', title: 'Histories', icon : 'history'}
+		];
 
-			this.pages = [
-				{name: 'home', title: 'Home', icon : 'home'},
-				{name: 'workflows', title: 'Workflows', icon : 'share-alt'},
-				{name: 'histories', title: 'Histories', icon : 'history'}
-			];
+		$rootScope.getRequestPath = function(service, extra){
+			extra = (extra || "");
+			switch (service) {
+				case "user-sign-in":
+				return myAppConfig.GALAXY_SERVER + "api/authenticate/baseauth";
+				case "user-sign-up":
+				return myAppConfig.GALAXY_SERVER + "user/create?cntrller=user";
+				case "user-info":
+				return myAppConfig.GALAXY_SERVER + "api/users/" + extra;
+				case "workflow-list":
+				return myAppConfig.GALAXY_SERVER + "api/workflows/";
+				case "workflow-info":
+				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra + "/download";
+				case "workflow-run":
+				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra + "/invocations";
+				case "workflow-import":
+				return myAppConfig.GALAXY_SERVER + "api/workflows/" + extra;
+				case "workflow-delete":
+				return myAppConfig.GALAXY_SERVER + "api/workflows/" + extra;
+				case "invocation-state":
+				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
+				case "invocation-result":
+				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1] + "/steps/" + extra[2];
+				case "tools-info":
+				return myAppConfig.GALAXY_SERVER + "api/tools/" + extra + "/build";
+				case "datasets-list":
+				return myAppConfig.GALAXY_SERVER + "api/histories/" + extra + "/contents";
+				case "dataset-details":
+				return myAppConfig.GALAXY_SERVER + "api/datasets/" + extra[0];
+				case "history-list":
+				return myAppConfig.GALAXY_SERVER + "api/histories/" + extra;
+				case "dataset-upload":
+				return myAppConfig.GALAXY_SERVER + "api/tools/" + extra;
+				default:
+				return "";
+			}
+		};
 
-			$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-				var requireLogin = toState.data.requireLogin;
-
-				var galaxyuser = Cookies.get("galaxyuser");
-				var galaxysession = Cookies.get("galaxysession");
-
-				//Check if the user is logged in, redirect to signin panel
-				if (requireLogin && (galaxyuser === undefined || galaxysession === undefined)) {
-					event.preventDefault();
-					Cookies.remove("galaxysession");
-					$state.go('signin');
-				}
-			});
-
-			this.setPage = function (page) {
-				$state.transitionTo(page);
+		$rootScope.getHttpRequestConfig = function(method, service, options){
+			options = (options || {});
+			options.params = (options.params || {});
+			if(Cookies.get("galaxysession")){
+				options.params = angular.merge(options.params, {"key" : window.atob(Cookies.get("galaxysession"))});
+			}
+			if(options.urlEncodedRequest === true){
+				//CONVERT TO URL ENCODE DATA
+				options.transformRequest =  function(obj) {
+					var str = [];
+					for(var p in obj)
+					str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+					return str.join("&");
+				};
+			}
+			var requestData = {
+				method: method,
+				headers: options.headers,
+				url: this.getRequestPath(service, options.extra),
+				params: options.params,
+				data: options.data
 			};
+			if(options.transformRequest !== undefined){
+				requestData.transformRequest = options.transformRequest;
+			}
 
-			this.getPageTitle  = function(page){
-				return
-			};
+			return requestData;
+		};
 
-			this.setCurrentPageTitle = function(page){
-				$scope.currentPageTitle = page;
-			};
+		$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+			var requireLogin = toState.data.requireLogin;
 
-			this.toogleMenuCollapseHandler = function(){
-				$("#wrapper").toggleClass("toggled")
+			var galaxyuser = Cookies.get("galaxyuser");
+			var galaxysession = Cookies.get("galaxysession");
+
+			//Check if the user is logged in, redirect to signin panel
+			if (requireLogin && (galaxyuser === undefined || galaxysession === undefined)) {
+				event.preventDefault();
+				Cookies.remove("galaxysession");
+				$state.go('signin');
 			}
 		});
-	})();
+
+		this.setPage = function (page) {
+			$state.transitionTo(page);
+			$scope.currentPage = page;
+		};
+
+		this.getPageTitle  = function(page){
+			return
+		};
+
+		this.setCurrentPageTitle = function(page){
+			$scope.currentPageTitle = page;
+		};
+
+		this.toogleMenuCollapseHandler = function(){
+			$("#wrapper").toggleClass("toggled")
+		}
+	});
+})();

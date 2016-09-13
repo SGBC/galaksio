@@ -1,5 +1,12 @@
 <div class="histories-container" ng-controller="HistoryListController as controller">
 	<div class="col-lg-6">
+		<div class="panel panel-container" ng-hide="showHelp===false" >
+			<h3>About histories</h3>
+			<p class="description">
+				When data is uploaded from your computer or analysis is done on existing data using Galaxy, each output from those steps generates a dataset. These datasets (and the output datasets from later analysis on them) are stored by Galaxy in <b>Histories</b>.
+			</p>
+			<a href="https://wiki.galaxyproject.org/Histories" target="_blank"><i class="fa fa-question-circle"></i> Learn more about histories</a>
+		</div>
 		<div class="panel panel-container">
 			<div>
 				<p style=" float: left; line-height: 30px; "><i class="fa fa-info"></i> Click on one history name to get more details.</p>

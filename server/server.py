@@ -88,7 +88,7 @@ class Application(object):
         #    \_____/_/    \_\______/_/    \_\/_/ \_\   |_|    /_/    \_\_|   |_____|
         #
         #******************************************************************************************
-        @self.app.route(SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET'])
+        @self.app.route(SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE'])
         def passRequest(service):
             # STEP 1. Read requests auth params
             auth = None

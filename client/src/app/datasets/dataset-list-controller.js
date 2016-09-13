@@ -43,16 +43,20 @@
 		};
 
 		this.uploadDatasetHandler = function(nItem){
+			this.removeAllowed = false;
+
 			if(nItem === undefined){
 				nItem = 0;
 			}
 
 			if($scope.files === undefined){
+				this.removeAllowed = true;
 				return;
 			}
 
 			if(nItem === $scope.files.length){
 				//Notify all the other controllers that history-list has changed
+				this.removeAllowed = true;
 				$rootScope.$broadcast(HISTORY_EVENTS.historyChanged);
 				return;
 			}
@@ -60,6 +64,7 @@
 			var file = $scope.files[nItem];
 
 			if(file.state !== "pending"){
+				this.removeAllowed = true;
 				me.uploadDatasetHandler(nItem+1);
 				return;
 			}
@@ -75,43 +80,54 @@
 				getRequestPath("dataset-upload"), formData, {
 					transformRequest: angular.identity,
 					headers: {'Content-Type': undefined}
-				}).then(
-					function successCallback(response){
-						file.state = "done";
-						me.uploadDatasetHandler(nItem+1);
-					},
-					function errorCallback(response){
-						file.state = "error";
-						me.uploadDatasetHandler(nItem+1);
-						debugger;
-						console.error("Error while uploading a new file at DatasetListController:uploadDatasetHandler.");
-						console.error(response);
-					}
-				);
-			};
-
-			this.setSelectedDatasetHandler = function(selectedItem){
-				if(!$scope.selectedDataset){
-					$scope.selectedDataset = [];
 				}
-				$scope.selectedDataset[0] = selectedItem.dataset;
-			};
+			).then(
+				function successCallback(response){
+					file.state = "done";
+					me.uploadDatasetHandler(nItem+1);
+				},
+				function errorCallback(response){
+					file.state = "error";
+					me.uploadDatasetHandler(nItem+1);
+					debugger;
+					console.error("Error while uploading a new file at DatasetListController:uploadDatasetHandler.");
+					console.error(response);
+				}
+			);
+		};
 
-			this.datasetSelectorAcceptButtonHandler = function(){
-				$scope.$close($scope.selectedDataset);
-			};
-			this.datasetSelectorCancelButtonHandler = function(){
-				$scope.$dismiss('cancel');
-			};
+		this.deleteToUploadDatasetHandler = function(selectedItem){
+			$('#uploadDatasetSelector').val("");
+			for(var i in $scope.files){
+				if($scope.files[i] === selectedItem){
+					$scope.files.splice(i,1);
+					return;
+				}
+			}
+		};
 
-			//--------------------------------------------------------------------
-			// INITIALIZATION
-			//--------------------------------------------------------------------
-			var me = this;
+		this.setSelectedDatasetHandler = function(selectedItem){
+			if(!$scope.selectedDataset){
+				$scope.selectedDataset = [];
+			}
+			$scope.selectedDataset[0] = selectedItem.dataset;
+		};
 
-			$scope.filterDatasets = function (item) {
-				return (item.deleted === false || $scope.showDeleted);
-			};
+		this.datasetSelectorAcceptButtonHandler = function(){
+			$scope.$close($scope.selectedDataset);
+		};
+		this.datasetSelectorCancelButtonHandler = function(){
+			$scope.$dismiss('cancel');
+		};
 
-		});
-	})();
+		//--------------------------------------------------------------------
+		// INITIALIZATION
+		//--------------------------------------------------------------------
+		var me = this;
+
+		$scope.filterDatasets = function (item) {
+			return (item.deleted === false || $scope.showDeleted);
+		};
+
+	});
+})();

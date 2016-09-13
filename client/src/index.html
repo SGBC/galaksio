@@ -1,53 +1,68 @@
 <!DOCTYPE html>
 <html ng-app="b3galaxyApp">
 <head>
-  <title>B3Galaxy v0.1</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
-  <link href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css" rel="stylesheet">
-  <!-- <link rel="stylesheet" href="css/font-awesome.min.css"> -->
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/bootstrap-dialogs.min.css">
+	<title>B3Galaxy v0.1</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
+	<link href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css" rel="stylesheet">
+	<!-- <link rel="stylesheet" href="css/font-awesome.min.css"> -->
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/bootstrap-dialogs.min.css">
 
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  <!-- <script type="text/javascript" src="lib/angular.min.js"></script> -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.min.js"></script>
-  <script type="text/javascript" src="lib/angular-backtop.min.js"></script>
-  <!-- <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-cookies.js"></script> -->
-  <script type="text/javascript" src="lib/js.cookie.js"></script>
-  <!-- <script type="text/javascript" src="lib/angular-ui-router.min.js"></script> -->
-  <script type="text/javascript" src="lib/ui-bootstrap-tpls-1.3.2.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!-- <script type="text/javascript" src="lib/angular.min.js"></script> -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.min.js"></script>
+	<script type="text/javascript" src="lib/angular-backtop.min.js"></script>
+	<!-- <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-cookies.js"></script> -->
+	<script type="text/javascript" src="lib/js.cookie.js"></script>
+	<!-- <script type="text/javascript" src="lib/angular-ui-router.min.js"></script> -->
+	<script type="text/javascript" src="lib/ui-bootstrap-tpls-1.3.2.min.js"></script>
 	<script type="text/javascript" src="lib/sigma.min.js"></script>
 	<script type="text/javascript" src="lib/sigma.plugins.min.js"></script>
 </head>
 
 <body ng-controller="MainController as controller">
-  <span ng-controller="HistoryListController"></span>  <!-- Dummy component that starts the history -->
-  <div id="wrapper">
-    <nav class="navbar navbar-default navbar-fixed-top topbar-nav">
-      <div class="notification-area">
-        <a href="#" class="brand-logo"><img src="css/galaxy_logo.png"></a>
-        <a href="javascript:void(0);" ng-click="controller.toogleMenuCollapseHandler()"><i class="fa fa-bars" aria-hidden="true"></i> Menu</a>
-      </div>
-      <workflow-invocation-toolbar></workflow-invocation-toolbar>
-      <session-toolbar></session-toolbar>
-    </nav>
-    <div id="sidebar-wrapper">
-      <ul class="sidebar-nav">
-        <li ng-repeat="page in controller.pages">
-          <a ng-click="controller.setPage(page.name)"><i class="fa" ng-class="'fa-' + page.icon" aria-hidden="true"></i>{{page.title}}</a>
-        </li>
-      </ul>
-    </div>
-    <div id="page-content-wrapper" >
-      <div class="container-fluid">
-        <div ui-view></div>
-      </div>
-    </div>
-  </div><!-- /#wrapper -->
+	<span ng-controller="HistoryListController"></span>  <!-- Dummy component that starts the history -->
+	<div id="wrapper">
+		<nav id ="header" class="navbar navbar-default navbar-fixed-top topbar-nav">
+			<div class="navbar-header"></div>
+			<span id="app_version">v{{myAppConfig.VERSION}}</span>
+			<ul id="alt_menu" class="nav navbar-nav">
+				<li class="dropdown" style="margin: 5px 20px;">
+					<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<i class="fa fa-bars" aria-hidden="true"></i> Menu
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style=" font-size: 20px; cursor: pointer; ">
+						<li ng-repeat="page in controller.pages">
+							<a ng-click="controller.setPage(page.name)">
+								<i class="fa menuIcon" ng-class="'fa-' + page.icon" aria-hidden="true"></i>{{page.title}}
+							</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<workflow-invocation-toolbar></workflow-invocation-toolbar>
+			<session-toolbar class="nav navbar-nav navbar-right"></session-toolbar>
+		</nav>
+		<div id="sidebar-wrapper">
+			<ul class="sidebar-nav">
+				<li ng-repeat="page in controller.pages"  ng-class="(page.name===currentPage)?'currentPage':''">
+					<a ng-click="controller.setPage(page.name)">
+						<i class="fa" ng-class="'fa-' + page.icon" aria-hidden="true"></i>{{page.title}}
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div id="page-content-wrapper" >
+			<div class="container-fluid">
+				<div ui-view></div>
+			</div>
+		</div>
+	</div><!-- /#wrapper -->
 </body>
 <script type="text/javascript" src="app/app.js"></script>
 <script type="text/javascript" src="app/users/user-session-controller.js"></script>

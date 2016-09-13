@@ -33,7 +33,7 @@
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
 		this.getCurrentUserDetails = function(){
-			$http(getHttpRequestConfig("GET", "user-info", {
+			$http($rootScope.getHttpRequestConfig("GET", "user-info", {
 				headers: {'Content-Type': 'application/json; charset=utf-8'},
 				extra: "current"
 			})).then(
@@ -77,7 +77,7 @@
 
 		this.signInButtonHandler = function () {
 			if ( $scope.userInfo.email !== '' && $scope.userInfo.password !== '') {
-				$http(getHttpRequestConfig("GET","user-sign-in",{
+				$http($rootScope.getHttpRequestConfig("GET","user-sign-in",{
 					headers: {"Authorization": "Basic " + btoa($scope.userInfo.email + ":" + $scope.userInfo.password)}}
 				)).then(
 					function successCallback(response){
@@ -118,7 +118,7 @@
 
 		this.signUpButtonHandler = function () {
 			if ( $scope.userInfo.email !== '' && $scope.userInfo.username !== '' && $scope.userInfo.password !== '' && $scope.userInfo.password == $scope.userInfo.passconfirm ) {
-				$http(getHttpRequestConfig("POST","user-sign-up",{
+				$http($rootScope.getHttpRequestConfig("POST","user-sign-up",{
 					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 					urlEncodedRequest: true,
 					data: {

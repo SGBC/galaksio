@@ -23,24 +23,18 @@
 			</div>
 			<div class="col-sm-4" style="padding-top: 8px;">
 				Popular tags:
-				<span ng-repeat="item in tags | orderBy:'-times' | limitTo: 4" style="font-size:10px;">
+				<span ng-repeat="item in tags | orderBy:'-times' | limitTo: 4" style="font-size:10px;cursor:pointer;" ng-click="controller.filterByTag(item.name);">
 					<i class="tag {{item.color}}">{{item.times}}</i><i> {{item.name}} </i>
 				</span>
 			</div>
 		</div>
 	</div>
-
-
 	<div class="navbar-form">
 		<div style="margin: auto;display: block;max-width: 625px;">
 			<ul class="nav navbar-nav">
 				<li class="dropdown">
 					<label for="sortBySelector">Show:</label>
-					<select style="display:inline-block;" class="form-control" id="sortBySelector"
-					ng-model="show"
-					ng-init="show = 'my_workflows'"
-					ng-change="controller.showWorkflowChooserChangeHandler(value);"
-					>
+					<select style="display:inline-block;" class="form-control" id="sortBySelector" ng-model="show" ng-init="show = 'my_workflows'" ng-change="controller.showWorkflowChooserChangeHandler();" >
 						<option value="my_workflows">Only my workflows</option>
 						<option value="all_workflows">All public workflows</option>
 					</select>
@@ -60,22 +54,29 @@
 			</i>
 			<i ng-show="!isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
 				Found {{filteredWorkflows}} workflows
-				<a ng-click="controller.retrieveWorkflowsData(true);" style="margin-left:10px; font-size: 10px;"><i class="fa fa-refresh"></i>Refresh list</a>
+				<a ng-click="controller.retrieveWorkflowsData(show,true);" style="margin-left:10px; font-size: 10px; cursor: pointer;"><i class="fa fa-refresh"></i>Refresh list</a>
 			</i>
 		</div>
 	</div>
 	<div class="row workflow-card-container" id="workflowContainer">
-		<workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy | limitTo : visibleWorkflows" after-render="controller.retrieveWorkflowDetails(workflow);"></workflow-card>
-		<div class="row" style="text-align: center;">
-			<button class="btn btn-lg btn-success" type="button" ng-click="controller.showMoreWorkflowsHandler()" ng-show="(filteredWorkflows-visibleWorkflows)>0">
-				Show more workflows ({{filteredWorkflows-visibleWorkflows}} left)
-			</button>
-		</div>
+		<div class="workflow-card" style="max-width: 790px;margin: auto;background: #fff;padding: 10px;">
+		<h3>About workflows</h3>
+		<p class="description">
+			Workflows are analyses that are intended to be executed (one ore more times) with different user-provided input Datasets. Workflow can be reused over and over, not only reducing tedious work, but enhancing reproducibility by applying the same exact methods to all of your data.
+		</p>
+		<a href="https://wiki.galaxyproject.org/Learn/AdvancedWorkflow" target="_blank"><i class="fa fa-question-circle"></i> Learn more about workflows</a>
 	</div>
-	<nav class=" navbar-fixed-bottom" style="left: initial;">
-		<back-top scroll-speed=600 button-theme="btn btn-default btn-sm navbar-right"></back-top>
-		<!-- <a class="btn btn-default btn-sm navbar-right" ng-click="" style="font-size: 9px;margin: 5px 10px;">
+	<workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy | limitTo : visibleWorkflows" after-render="controller.retrieveWorkflowDetails(workflow);"></workflow-card>
+	<div class="row" style="text-align: center;">
+		<button class="btn btn-lg btn-success" type="button" ng-click="controller.showMoreWorkflowsHandler()" ng-show="(filteredWorkflows-visibleWorkflows)>0">
+			Show more workflows ({{filteredWorkflows-visibleWorkflows}} left)
+		</button>
+	</div>
+</div>
+<nav class=" navbar-fixed-bottom" style="left: initial;">
+	<back-top scroll-speed=600 button-theme="btn btn-default btn-sm navbar-right"></back-top>
+	<!-- <a class="btn btn-default btn-sm navbar-right" ng-click="" style="font-size: 9px;margin: 5px 10px;">
 
-	</a> -->
+</a> -->
 </nav>
 </div>

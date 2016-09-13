@@ -63,12 +63,12 @@
 							</span>
 							<span class="job-status-cat-title">Running</span>
 						</td>
-						<td  class="job-status-cat" ng-if="invocation.state === 'erroneous'">
+						<td  class="job-status-cat" ng-if="invocation.state === 'error'">
 							<span class="fa-stack" style="font-size: 12px;">
 								<i class="fa fa-square fa-stack-2x" style="color:#de2b2b;"></i>
 								<i class="fa fa-times fa-fw fa-stack-1x fa-inverse"></i>
 							</span>
-							<span class="job-status-cat-title">Running</span>
+							<span class="job-status-cat-title">Failed</span>
 						</td>
 						<td>
 							<a style="font-size:12px; cursor:pointer" ng-click="controller.recoverWorkflowInvocation(invocation)">

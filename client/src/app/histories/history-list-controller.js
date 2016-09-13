@@ -34,7 +34,7 @@
 	/***************************************************************************/
 	/*CONTROLLERS **************************************************************/
 	/***************************************************************************/
-	app.controller('HistoryListController', function($state, $scope, $http, $uibModal, $dialogs, HistoryList, HISTORY_EVENTS){
+	app.controller('HistoryListController', function($state, $rootScope, $scope, $http, $uibModal, $dialogs, HistoryList, HISTORY_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -54,7 +54,7 @@
 
 			if(history.content === undefined || force === true){
 				//GET THE EXTRA INFORMATION FOR THE HISTORY (datasets)
-				$http(getHttpRequestConfig("GET", "datasets-list", {extra: history.id})).then(
+				$http($rootScope.getHttpRequestConfig("GET", "datasets-list", {extra: history.id})).then(
 					function successCallback(response){
 						$scope.displayedHistory.content = response.data;
 					},
@@ -96,6 +96,7 @@
 		this.showUploadDatasetsDialog = function(){
 			$scope.active= 1;
 			$scope.hiddenTabs=[0];
+			$scope.files= $scope.files || [];
 
 			var modalInstance = $uibModal.open({
 				templateUrl: 'app/datasets/dataset-selector-dialog.tpl.html',
@@ -119,7 +120,7 @@
 		this.retrieveAllHistoriesList = function(force, lite, callback){
 			if($scope.histories.length === 0 || force===true){
 				$scope.isLoading = true;
-				$http(getHttpRequestConfig("GET", "history-list")).then(
+				$http($rootScope.getHttpRequestConfig("GET", "history-list")).then(
 					function successCallback(response){
 						$scope.isLoading = false;
 
@@ -172,7 +173,7 @@
 				$scope.isLoading = true;
 
 				//Get the most recently used history
-				$http(getHttpRequestConfig("GET", "history-list", {extra: 'most_recently_used'})).then(
+				$http($rootScope.getHttpRequestConfig("GET", "history-list", {extra: 'most_recently_used'})).then(
 					function successCallback(response){
 						$scope.isLoading = false;
 						me.setCurrentHistory(HistoryList.getHistory(response.data.id));
@@ -214,7 +215,7 @@
 		this.retrieveHistoryData = function(history_id, callback){
 			$scope.isLoading = true;
 
-			$http(getHttpRequestConfig("GET", "history-list", {extra: history_id})).then(
+			$http($rootScope.getHttpRequestConfig("GET", "history-list", {extra: history_id})).then(
 				function successCallback(response){
 					$scope.isLoading = false;
 					var history = HistoryList.getHistory(history_id);
@@ -230,7 +231,7 @@
 				},
 				function errorCallback(response){
 					$scope.isLoading = false;
-					
+
 					debugger;
 					var message = "Failed when retrieving the details for history.";
 					$dialogs.showErrorDialog(message, {

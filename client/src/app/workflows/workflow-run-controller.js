@@ -37,7 +37,7 @@
 	/***************************************************************************/
 	/*WORKFLOW CONTROLLER*******************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunController', function($state, $scope, $http, $stateParams, $timeout, $dialogs, WorkflowList, WorkflowInvocationList, HistoryList){
+	app.controller('WorkflowRunController', function($state, $rootScope, $scope, $http, $stateParams, $timeout, $dialogs, WorkflowList, WorkflowInvocationList, HistoryList){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -49,7 +49,7 @@
 		this.retrieveWorkflowDetails  = function(workflow_id){
 			$scope.workflow = WorkflowList.getWorkflow(workflow_id);
 			if($scope.workflow !== null){
-				$http(getHttpRequestConfig("GET","workflow-info", {
+				$http($rootScope.getHttpRequestConfig("GET","workflow-info", {
 					extra: workflow_id})
 				).then(
 					function successCallback(response){
@@ -244,7 +244,7 @@
 			}
 			//SHOW STATE MESSAGE FEW SECONDS BEFORE SEND THE REQUEST
 			$timeout( function(){
-				$http(getHttpRequestConfig("POST", "workflow-run", {
+				$http($rootScope.getHttpRequestConfig("POST", "workflow-run", {
 					extra: $scope.workflow.id,
 					headers: {'Content-Type': 'application/json; charset=utf-8'},
 					data: requestData
@@ -342,7 +342,7 @@
 	/***************************************************************************/
 	/*WORKFLOW STEP CONTROLLER *************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunStepController', function($scope, $http, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, HISTORY_EVENTS){
+	app.controller('WorkflowRunStepController', function($rootScope, $scope, $http, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, HISTORY_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -396,7 +396,7 @@
 				if($scope.step.type !== "data_input"){
 					//If the tool is not an input data tool, request the info from server
 					//and store the extra info for the tool at the "extra" field
-					$http(getHttpRequestConfig("GET", "tools-info", {
+					$http($rootScope.getHttpRequestConfig("GET", "tools-info", {
 						extra: $scope.step.tool_id,
 						params: {history_id : Cookies.get("current-history")}})
 					).then(
@@ -437,7 +437,7 @@
 	/***************************************************************************/
 	/*WORKFLOW INVOCATION LIST CONTROLLER *************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowInvocationListController', function($state, $scope, $http, $interval, $dialogs, WorkflowInvocationList, AUTH_EVENTS){
+	app.controller('WorkflowInvocationListController', function($state, $rootScope, $scope, $http, $interval, $dialogs, WorkflowInvocationList, AUTH_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -476,7 +476,7 @@
 
 		this.checkInvocationState = function(invocation){
 			if(invocation.state != "error" && (invocation.state !== "success" || invocation.hasOutput !== true)){
-				$http(getHttpRequestConfig("GET", "invocation-state", {
+				$http($rootScope.getHttpRequestConfig("GET", "invocation-state", {
 					extra: [invocation.workflow_id, invocation.id]
 				})).then(
 					function successCallback(response){
@@ -548,7 +548,7 @@
 		};
 
 		this.recoverWorkflowResultStepDetails = function(invocation, step){
-			$http(getHttpRequestConfig("GET", "invocation-result", {
+			$http($rootScope.getHttpRequestConfig("GET", "invocation-result", {
 				extra: [invocation.workflow_id, invocation.id, step.id]
 			})).then(
 				function successCallback(response){
@@ -571,7 +571,7 @@
 		};
 
 		this.recoverWorkflowResultStepOutputDetails = function(invocation, step, output){
-			$http(getHttpRequestConfig("GET", "dataset-details", {
+			$http($rootScope.getHttpRequestConfig("GET", "dataset-details", {
 				extra: [output.id]
 			})).then(
 				function successCallback(response){

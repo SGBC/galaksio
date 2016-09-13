@@ -1,10 +1,13 @@
 <div class="workflow-card">
-  <div class="workflow-card-body">
-    <h2 class="workflow-card-name">{{workflow.name}}</h2>
-    <div class="workflow-card-description" ng-if="workflow.annotation === undefined">
+	<div class="workflow-card-body">
+		<a style="float: right;margin: 0px 10px;" class="removeButton" ng-click="controller.deleteWorkflowHandler(workflow);" >
+			<i class="fa fa-times"></i>
+		</a>
+		<h2 class="workflow-card-name">{{workflow.name}}</h2>
+		<div class="workflow-card-description" ng-if="workflow.annotation === undefined">
 			<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading details...
 		</div>
-    <div class="workflow-card-description" ng-if="workflow.annotation !== undefined">
+		<div class="workflow-card-description" ng-if="workflow.annotation !== undefined">
 			<div ng-if="workflow.valid === false" style="text-align: center;">
 				<span  class='text-danger'>{{workflow.annotation}}</span>
 				<span ng-if="workflow.importable">
@@ -15,13 +18,16 @@
 			</div>
 			<span ng-if="workflow.valid !== false">{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</span>
 		</div>
-    <div class="workflow-card-tags-list">
-      <i class="tag {{getTagColor(tag)}}" ng-repeat="tag in workflow.tags | orderBy">{{tag}}</i>
-    </div>
-  </div>
-  <div class="workflow-card-author">
-    Created by <span style="color:#0F8CDA;">{{workflow.owner}}</span>
-  </div>
+		<div class="workflow-card-tags-list">
+			<i class="tag {{getTagColor(tag)}}" ng-repeat="tag in workflow.tags | orderBy" style="cursor:pointer;" ng-click="controller.filterByTag(tag);">{{tag}}</i>
+		</div>
+	</div>
+	<div class="workflow-card-author" ng-if="workflow.imported !== true">
+		Created by <span style="color:#0F8CDA;">{{workflow.owner}}</span>
+	</div>
+	<div class="workflow-card-author" ng-if="workflow.imported === true">
+		<span style="color:#0F8CDA;">Imported workflow</span>
+	</div>
 	<a ng-if="workflow.valid !== false" class="btn btn-info runWorkflowButton" ui-sref="workflowDetail({id: workflow.id})"> <i class="fa fa-info-circle"></i> More details </a>
-  <a ng-if="workflow.valid === false" ng-disabled="true" class="btn btn-info runWorkflowButton"> <i class="fa fa-info-circle"></i> More details </a>
+	<a ng-if="workflow.valid === false" ng-disabled="true" class="btn btn-info runWorkflowButton"> <i class="fa fa-info-circle"></i> More details </a>
 </div>
