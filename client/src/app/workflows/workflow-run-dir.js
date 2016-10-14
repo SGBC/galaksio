@@ -115,7 +115,12 @@
 				var template = "";
 				var inputValue = "";
 				try{
-					inputValue = JSON.parse(scope.step.tool_state)[model.name].replace(/(^\"|\"$)/g,"");
+					var tool_state = JSON.parse(scope.step.tool_state);
+					if(tool_state[model.name]){
+						inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
+					}else{
+						console.error("No values for '" + model.name + "' in 'step.tool_state' at stepInput directive.");
+					}
 				}catch(err) {
 					console.error("Unable to parse 'step.tool_state' at stepInput directive.");
 				}
@@ -131,41 +136,105 @@
 				//  - color
 				//  - data_collection
 				//  - drill_down
-				//  - data_column
-				//  - integer and float
-				//  + select --> DONE
-				//  + data --> DONE
-				//  + boolean --> DONE
-				//  + text --> DONE
-				//  + repeat --> DONE
-				//  + conditional --> DONE
+				//  + data_column
+				//  + integer and float
+				//  + select
+				//  + data
+				//  + boolean
+				//  + text
+				//  + repeat
+				//  + conditional
 				try{
+					//TEXT, NUMBER... INPUTS
 					if(model.type === "text"){
 						model.value = inputValue;
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="text" name="{{input.name}}" ' +
 						'       ng-model="input.value"' +
-						'       required >';
+						'       ng-required="!(input.optional)" >';
+					}else if(model.type === "integer"){
+						model.value = Number.parseInt(inputValue);
+						template+=
+						'<label>{{input.label || input.title}}</label>' +
+						'<input type="number" name="{{input.name}}" ' +
+						'       ng-model="input.value"' +
+						'       ng-required="!(input.optional===true)" >';
+						//SELECTORS INPUTS
+					}else if(model.type === "float" ){
+						model.value = Number.parseFloat(inputValue);
+						template+=
+						'<label>{{input.label || input.title}}</label>' +
+						'<input type="number" name="{{input.name}}" ' +
+						'       ng-model="input.value"' +
+						'       ng-required="!(input.optional===true)" >';
+						//SELECTORS INPUTS
 					}else if(model.type === "select"){
 						model.value = inputValue;
 						template =
 						'<label>{{input.label || input.title}}</label>' +
 						'<select class="form-control" name="{{input.name}}"' +
+						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
 						'        ng-options="option[1] as option[0] for option in input.options"' +
-						'        required>'+
+						'        ng-required="!(input.optional===true)" >'+
 						"</select>";
+					}else if(model.type === "data_column"){
+						model.value = inputValue;
+						template =
+						'<label>{{input.label || input.title}}</label>' +
+						'<select class="form-control" name="{{input.name}}"' +
+						((model.multiple)?'        multiple':'') +
+						'        ng-model="input.value"' +
+						'        ng-options="option[1] as option[0] for option in input.options"' +
+						'        ng-required="!(input.optional===true)" >'+
+						"</select>";
+					}else if(model.type === "genomebuild"){
+						model.value = inputValue;
+						template =
+						'<label>{{input.label || input.title}}</label>' +
+						'<select class="form-control" name="{{input.name}}"' +
+						((model.multiple)?'        multiple':'') +
+						'        ng-model="input.value"' +
+						'        ng-options="option[1] as option[0] for option in input.options"' +
+						'        ng-required="!(input.optional===true)" >' +
+						"</select>";
+						//CHECKBOX AND RADIOBUTTONS
+					}else if(model.type === "conditional"){
+						try {
+							inputValue = JSON.parse(inputValue);
+							model.value = model.cases[inputValue["__current_case__"]].value;
+						} catch (e) {
+							model.value = inputValue;
+						}
+
+						template= '<label>{{input.test_param.label || input.title}}</label>';
+						//TODO: REMOVE THE NAME PROPERTY? VALUES ARE BEING REMOVED WHEN EXPANDING TOOLS
+						template+=
+						'<div ng-repeat="option in input.test_param.options">' +
+						'	<input type="radio" name="{{input.test_param.name}}"' +
+						'        ng-model="input.value" value="{{option[1]}}"'+
+						'        ng-required="!(input.optional===true)" > {{option[0]}}' +
+						'</div>';
+						template+=
+						'<div style="margin-left: 20px;" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
+						'	<step-input ng-repeat="input in option.inputs"></step-input>'+
+						'</div>';
 					}else if(model.type === "boolean"){
 						model.value = (inputValue === "true");
 						template+=
 						'<input type="checkbox" name="{{input.name}}" ng-model="input.value">' +
 						'<label>{{input.label || input.title}}</label>';
+						//DISPLAY
 					}else if(model.type === "data"){
-						if(inputValue.indexOf("RuntimeValue") > -1 || inputValue.indexOf("null") > -1 ){
+						if(inputValue.indexOf("RuntimeValue") > -1 || inputValue.indexOf("null") > -1 || inputValue === "" ){
 							template+=
 							'<label>{{input.label || input.title}}</label>' +
 							'<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[input.name].id + 1}}</b></i>';
+						}else if(inputValue === "" && scope.step.input_connections["library|" + model.name ] !== undefined){
+							template+=
+							'<label>{{input.label || input.title}}</label>' +
+							'<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[\'library|\'+ input.name].id + 1}}</b></i>';
 						}else{
 							throw 'Unknown value for data type "' + inputValue + '" : ' + JSON.stringify(model);
 						}
@@ -188,17 +257,6 @@
 								}
 							}
 						}
-					}else if(model.type === "conditional"){
-						model.value = inputValue;
-						template= '<label>{{input.test_param.label || input.title}}</label>';
-						template+=
-						'<div ng-repeat="option in input.test_param.options">' +
-						'	<input type="radio" name="{{input.test_param.name}}" ng-model="input.value" value="{{option[1]}}"> {{option[0]}}' +
-						'</div>';
-						template+=
-						'<div style="margin-left: 20px;" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
-						'	<step-input ng-repeat="input in option.inputs"></step-input>'+
-						'</div>';
 					}else if(model.type === "hidden"){
 						model.value = inputValue;
 						template+=
@@ -206,15 +264,6 @@
 					}else if(model.type === "upload_dataset"){
 						template+=
 						'<input type="file" name="{{input.name}}">';
-					}else if(model.type === "genomebuild"){
-						model.value = inputValue;
-						template =
-						'<label>{{input.label || input.title}}</label>' +
-						'<select class="form-control" name="{{input.name}}"' +
-						'        ng-model="input.value"' +
-						'        ng-options="option[1] as option[0] for option in input.options"' +
-						'        required>'+
-						"</select>";
 					}else{
 						throw 'Unknown input type ' + model.type + ' : ' + JSON.stringify(model);
 					}

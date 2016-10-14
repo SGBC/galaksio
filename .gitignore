@@ -4,3 +4,4 @@ server/log/application.log
 server/conf/serverconf.py
 *.pyc
 .idea
+server/launch_server.pid

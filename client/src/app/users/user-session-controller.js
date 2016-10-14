@@ -100,7 +100,7 @@
 						$state.go('home');
 					},
 					function errorCallback(response){
-						if([404001, 401001].indexOf(response.data.err_code) !== -1){
+						if(response.data && [404001, 401001].indexOf(response.data.err_code) !== -1){
 							$dialogs.showErrorDialog("Invalid user or password.");
 							return;
 						}

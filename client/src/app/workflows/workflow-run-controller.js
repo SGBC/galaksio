@@ -190,6 +190,16 @@
 			});
 
 			design.apply();
+			// Configure the DAG layout:
+			// sigma.layouts.dagre.configure($scope.sigma, {
+			// 		directed: true, // take edge direction into account
+			// 		rankdir: 'LR', // Direction for rank nodes. Can be TB, BT, LR, or RL,
+			// 		easing: 'quadraticInOut', // animation transition function
+			// 		duration: 800, // animation duration
+			// });
+			//
+			// // Start the DAG layout:
+			// sigma.layouts.dagre.start($scope.sigma);
 		};
 
 		//--------------------------------------------------------------------
