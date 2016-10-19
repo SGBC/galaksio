@@ -29,6 +29,7 @@
 		'common.dialogs',
 		'ui.bootstrap',
 		'ui.router',
+		'ngSanitize',
 		'workflows.services.workflow-list',
 		'workflows.services.workflow-run',
 		'workflows.directives.workflow-run',
@@ -352,7 +353,7 @@
 	/***************************************************************************/
 	/*WORKFLOW STEP CONTROLLER *************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunStepController', function($rootScope, $scope, $http, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, HISTORY_EVENTS){
+	app.controller('WorkflowRunStepController', function($rootScope, $scope, $http, $sanitize, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, HISTORY_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -398,7 +399,6 @@
 		*/
 		this.toogleCollapseHandler = function(event){
 			//Toggle collapsed (view will automatically change due to ng-hide directive)
-			//TODO: CHANGE THE ICON TO +/-
 			$scope.collapsed = !$scope.collapsed;
 			//If the remaining data for the step was not loaded yet, send the request
 			if(!$scope.loadingComplete){
@@ -433,6 +433,12 @@
 					//UPDATE VIEW
 					$scope.loadingComplete = true;
 				}
+			}
+		};
+
+		$scope.showStepHelp = function(){
+			if($scope.helpHtml === undefined){
+				$scope.helpHtml = $sanitize($scope.step.extra.help + '<a style="color: #e61669;" class="clickable" ng-click="isCollapsed=!isCollapsed;"> Hide help</a>');
 			}
 		};
 		//--------------------------------------------------------------------

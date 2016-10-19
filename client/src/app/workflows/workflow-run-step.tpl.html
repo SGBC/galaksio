@@ -4,7 +4,8 @@
   <div class="panel-heading">
     <b>Step {{step.id}} :</b> {{step.name}}
     <a class="collapseStepTool" ng-click="controller.toogleCollapseHandler($event)">
-			<i class="fa fa-plus-square-o" aria-hidden="true"></i>
+			<i ng-show="collapsed" class="fa fa-plus-square-o" aria-hidden="true"></i>
+			<i ng-show="!collapsed" class="fa fa-minus-square-o" aria-hidden="true"></i>
 		</a>
   </div>
   <div class="panel-body" ng-hide="collapsed">

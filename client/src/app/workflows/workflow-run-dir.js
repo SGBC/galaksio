@@ -57,8 +57,9 @@
 			template:
 			'<div class="panel panel-default stepBox" ng-controller="WorkflowRunStepController as controller">' +
 			'  <div class="panel-heading">'+
-			'    <a class="collapseStepTool" ng-click="controller.toogleCollapseHandler($event)"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>' +
-			'    <b>Step {{step.id + 1}} :</b> {{step.name}} ' +
+			'    <a class="clickable collapseStepTool" ng-click="controller.toogleCollapseHandler($event)"><i class="fa" ng-class="(collapsed !== false)?\'fa-plus-square-o\':\'fa-minus-square-o\'" aria-hidden="true"></i></a>' +
+			'    <b>Step {{step.id + 1}} :</b> {{step.name}} {{step.description}}' +
+			'    <i style="color: #e61669;">Expand for details</i>' +
 			'  </div>' +
 			'  <div class="panel-body" ng-hide="collapsed">'+
 			'    <span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Loading...</span>'+
@@ -66,6 +67,10 @@
 			'      <step-data-input></step-data-input>'+
 			'    </div>' +
 			'    <div ng-if="loadingComplete && step.type != \'data_input\'">'+
+			'      <div class="text-info " style="border: 1px solid #337ab7; padding: 10px 20px; border-radius: 5px;">' +
+			'        <h5>{{step.name}} {{step.extra.description}} <a style="color: #e61669;" class="clickable" ng-click="isCollapsed=!isCollapsed; showStepHelp();" ng-init="isCollapsed=true;"> {{(isCollapsed)?"Show":"Hide"}} help</a></h5>' +
+			'        <div uib-collapse="isCollapsed" ng-bind-html="helpHtml"></div>' +
+			'      </div>' +
 			'      <step-input ng-repeat="input in step.extra.inputs"></step-input>'+
 			'    </div>' +
 			'  </div>' +
@@ -152,14 +157,16 @@
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="text" name="{{input.name}}" ' +
 						'       ng-model="input.value"' +
-						'       ng-required="!(input.optional)" >';
+						'       ng-required="!(input.optional)" >'+
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "integer"){
 						model.value = Number.parseInt(inputValue);
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="number" name="{{input.name}}" ' +
 						'       ng-model="input.value"' +
-						'       ng-required="!(input.optional===true)" >';
+						'       ng-required="!(input.optional===true)" >' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//SELECTORS INPUTS
 					}else if(model.type === "float" ){
 						model.value = Number.parseFloat(inputValue);
@@ -167,12 +174,14 @@
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="number" name="{{input.name}}" ' +
 						'       ng-model="input.value"' +
-						'       ng-required="!(input.optional===true)" >';
+						'       ng-required="!(input.optional===true)" >' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//SELECTORS INPUTS
 					}else if(model.type === "select"){
 						model.value = inputValue;
 						template =
 						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<select class="form-control" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
@@ -188,7 +197,8 @@
 						'        ng-model="input.value"' +
 						'        ng-options="option[1] as option[0] for option in input.options"' +
 						'        ng-required="!(input.optional===true)" >'+
-						"</select>";
+						"</select>" +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "genomebuild"){
 						model.value = inputValue;
 						template =
@@ -198,7 +208,8 @@
 						'        ng-model="input.value"' +
 						'        ng-options="option[1] as option[0] for option in input.options"' +
 						'        ng-required="!(input.optional===true)" >' +
-						"</select>";
+						"</select>" +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
 						try {
@@ -214,7 +225,8 @@
 						'<div ng-repeat="option in input.test_param.options">' +
 						'	<input type="radio" name="{{input.test_param.name}}"' +
 						'        ng-model="input.value" value="{{option[1]}}"'+
-						'        ng-required="!(input.optional===true)" > {{option[0]}}' +
+						'        ng-required="!(input.optional===true)" > {{option[0]}}'  +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'</div>';
 						template+=
 						'<div style="margin-left: 20px;" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
@@ -224,23 +236,29 @@
 						model.value = (inputValue === "true");
 						template+=
 						'<input type="checkbox" name="{{input.name}}" ng-model="input.value">' +
-						'<label>{{input.label || input.title}}</label>';
+						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//DISPLAY
 					}else if(model.type === "data"){
 						if(inputValue.indexOf("RuntimeValue") > -1 || inputValue.indexOf("null") > -1 || inputValue === "" ){
 							template+=
 							'<label>{{input.label || input.title}}</label>' +
-							'<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[input.name].id + 1}}</b></i>';
+							'<i name="{{input.name}}">'+
+							'   Output dataset from <b>step {{step.input_connections[input.name].id + 1}}</b> '+
+							((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
+							'</i>';
 						}else if(inputValue === "" && scope.step.input_connections["library|" + model.name ] !== undefined){
 							template+=
 							'<label>{{input.label || input.title}}</label>' +
-							'<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[\'library|\'+ input.name].id + 1}}</b></i>';
+							'<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[\'library|\'+ input.name].id + 1}}</b></i>' +
+							((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						}else{
 							throw 'Unknown value for data type "' + inputValue + '" : ' + JSON.stringify(model);
 						}
 					}else if(model.type === "repeat"){
 						inputValue = JSON.parse(inputValue);
-						template = "<label>" + model.title + (inputValue.length > 1?"s":"") + "</label>";
+						template = "<label>" + model.title + (inputValue.length > 1?"s":"") + "</label>" +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 
 						var _key; //queries_0|input2, queries_1|input2, ...
 						for(var i in inputValue){ //array of objects

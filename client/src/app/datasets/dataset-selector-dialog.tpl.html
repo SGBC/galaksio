@@ -1,4 +1,4 @@
-<span ng-init="selectedDataset=[]; files= (files || []); " ng-controller="DatasetListController as controller">
+<span ng-init="selectedDataset=[]; files= (files || []); " ng-controller="DatasetListController as controller" ng-init="maxHeight=200">
 	<div class="modal-header">
 		<h3 class="modal-title">Choose the input file</h3>
 	</div>
@@ -11,7 +11,9 @@
 							<h1>Browse dataset</h1>
 						</nav>
 						<p><b>Current history name: </b>{{displayedHistory.name}}</p>
-						<dataset-list-panel ></dataset-list-panel>
+						<div ng-style="{'max-height': maxTableHeight + 'px'}" style="overflow-y: scroll;">
+							<dataset-list-panel ></dataset-list-panel>
+						</div>
 					</div>
 				</div>
 			</uib-tab>

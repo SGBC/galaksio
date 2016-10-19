@@ -129,5 +129,7 @@
 			return (item.deleted === false || $scope.showDeleted);
 		};
 
+		$scope.maxTableHeight = window.innerHeight/2;
+
 	});
 })();

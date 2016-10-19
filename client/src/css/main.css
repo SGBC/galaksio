@@ -22,7 +22,7 @@ header .navbar-default .navbar-nav>li>a:hover {
 color: #FFFFFF;
 }*/
 .navbar-default{border-radius: 0;}
-
+.clickable{cursor: pointer;}
 #header .navbar-header{background-image: url('galaxy_logo2.png'); width: 165px; background-size: cover; height: 45px;}
 
 #sidebar-wrapper {
@@ -497,6 +497,15 @@ i.tag.pink2 {background-color: #db6070; color: #fff;}
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/
+
+.stepBox > .panel-heading > i {
+    display: none;
+    font-size: 10px;
+    margin-left: 5px;
+}
+.stepBox > .panel-heading:hover > i {
+    display: inline-block;
+}
 p.description {
 	font-size: 17px;
 }
