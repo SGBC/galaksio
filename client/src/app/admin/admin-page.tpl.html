@@ -1,0 +1,137 @@
+<div ng-controller="AdminController as controller">
+	<nav class="navbar navbar-default navbar-top title-bar">
+		<h1>Administration<small>Application settings</small></h1>
+	</nav>
+	<div class="home-container">
+		<div class="col-md-12">
+			<div class="panel panel-container">
+				<form class="form-horizontal">
+					<h2>Main server settings</h2>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="SERVER_HOST_NAME">Galaksio host name:</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="SERVER_HOST_NAME" ng-model="settings.SERVER_HOST_NAME">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE IP ADDRESS FOR GALAKSIO, LEAVE 0.0.0.0 FOR LISTENING ALL REQUESTS"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="SERVER_PORT_NUMBER">Galaksio port number:  </label>
+						<div class="col-sm-9">
+							<input type="number" class="form-control" id="SERVER_PORT_NUMBER" ng-model="settings.SERVER_PORT_NUMBER">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE PORT NUMBER THAT GALAKSIO LISTENS FOR REQUESTS"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="SERVER_SUBDOMAIN">Galaksio subdomain:</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="SERVER_SUBDOMAIN" ng-model="settings.SERVER_SUBDOMAIN">
+						</div>
+						<i style="color: #31708f;" class="fa fa-question-circle" uib-tooltip="USE THIS OPTION IF GALAKSIO RUNS UNDER AN SPECIFIC SUBDOMAIN, E.G. myserver.com/galaksio (w/o proxy)"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="SERVER_MAX_CONTENT_LENGTH">Max. content size:  </label>
+						<div class="col-sm-9">
+							<input type="number" class="form-control" id="SERVER_MAX_CONTENT_LENGTH" ng-model="settings.SERVER_MAX_CONTENT_LENGTH">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE MAX SIZE FOR THE REQUESTS SENT BY THE CLIENTS, IN MB"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="ADMIN_ACCOUNTS">Admin accounts:  </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="ADMIN_ACCOUNTS" ng-model="settings.ADMIN_ACCOUNTS">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="ACCOUNTS THAT HAVE ADMINISTRATION RIGHTS, SEPARATED BY COMMAS"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="ROOT_DIRECTORY">Galaksio root directory:  </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="ROOT_DIRECTORY" ng-model="settings.ROOT_DIRECTORY">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE LOCATION FOR THE GALAKSIO FILES, LEAVE BLANK TO AUTO DETECT"></i>
+					</div>
+					<h2>Galaxy settings</h2>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="GALAXY_SERVER">Galaxy server:  </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="GALAXY_SERVER" ng-model="settings.GALAXY_SERVER">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE URL FOR THE GALAXY INSTANCE THAT WILL RECEIVE ALL THE GALAKSIO REQUESTS"></i>
+					</div>
+					<h2>Email settings</h2>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smtp_host">SMTP host:  </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="smtp_host" ng-model="settings.smtp_host">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Sets Gmail, Office... as the SMTP server"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smtp_port">SMTP port:  </label>
+						<div class="col-sm-9">
+							<input type="number" class="form-control" id="smtp_port" ng-model="settings.smtp_port">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Set the SMTP port for the GMAIL"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smtp_port">SMTP authentication:</label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label><input type="checkbox" id="use_smtp_auth" ng-model="settings.use_smtp_auth"> Enabled</i></label>
+							</div>
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Enable SMTP authentication"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smtp_port">SMTP SSL:</label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label><input type="checkbox" id="use_smtp_ssl" ng-model="settings.use_smtp_ssl"> Use SMTP SSL</label>
+							</div>
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Whether use normal SMTP or SMTP_SSL"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smtp_secure">SMTP secure:  </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="smtp_secure" ng-model="settings.smtp_secure">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Use tls, etc."></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smpt_username">Username:  </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="smpt_username" ng-model="settings.smpt_username">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE SENDER EMAIL, DEPENDS ON THE SMTP SETTINGS"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smpt_pass">Password:</label>
+						<div class="col-sm-9">
+							<input type="password" class="form-control" id="smpt_pass" ng-model="settings.smpt_pass">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE SENDER PASS IN MD5 CODIFICATION, DEPENDS ON THE SMTP SETTINGS"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smpt_sender">Sender email:</label>
+						<div class="col-sm-9">
+							<input type="email" class="form-control" id="smpt_sender" ng-model="settings.smpt_sender">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Sender email (From value at the email)"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="smpt_sender_name">Sender email:</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="smpt_sender_name" ng-model="settings.smpt_sender_name">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Sender name (the \"From\" value in the email)"></i>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-9">
+							<button  type="submit" class="btn btn-success">Update settings</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

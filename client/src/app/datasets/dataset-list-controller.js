@@ -30,7 +30,7 @@
 		'datasets.dataset-list'
 	]);
 
-	app.controller('DatasetListController', function($rootScope, $scope, $http, $dialogs, HISTORY_EVENTS) {
+	app.controller('DatasetListController', function($rootScope, $scope, $http, $dialogs, APP_EVENTS) {
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -57,7 +57,7 @@
 			if(nItem === $scope.files.length){
 				//Notify all the other controllers that history-list has changed
 				this.removeAllowed = true;
-				$rootScope.$broadcast(HISTORY_EVENTS.historyChanged);
+				$rootScope.$broadcast(APP_EVENTS.historyChanged);
 				return;
 			}
 

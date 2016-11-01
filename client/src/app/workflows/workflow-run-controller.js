@@ -353,7 +353,7 @@
 	/***************************************************************************/
 	/*WORKFLOW STEP CONTROLLER *************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunStepController', function($rootScope, $scope, $http, $sanitize, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, HISTORY_EVENTS){
+	app.controller('WorkflowRunStepController', function($rootScope, $scope, $http, $sanitize, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, APP_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -384,7 +384,7 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(HISTORY_EVENTS.historyChanged, function (event, args) {
+		$scope.$on(APP_EVENTS.historyChanged, function (event, args) {
 			$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
 		});
 		/**
@@ -453,7 +453,7 @@
 	/***************************************************************************/
 	/*WORKFLOW INVOCATION LIST CONTROLLER *************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowInvocationListController', function($state, $rootScope, $scope, $http, $interval, $dialogs, WorkflowInvocationList, AUTH_EVENTS){
+	app.controller('WorkflowInvocationListController', function($state, $rootScope, $scope, $http, $interval, $dialogs, WorkflowInvocationList, APP_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -609,7 +609,7 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
 			WorkflowInvocationList.recoverInvocations();
 		});
 

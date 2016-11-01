@@ -8,23 +8,23 @@
 		'workflows.controllers.workflow-list',
 		'workflows.controllers.workflow-run',
 		'histories.controllers.history-list',
-		'datasets.controllers.dataset-list'
+		'datasets.controllers.dataset-list',
+		'admin.controllers.setting-list'
 	]);
 
 	app.constant('myAppConfig', {
-		VERSION: '0.1',
-		GALAXY_SERVER : "/"
+		VERSION: '0.2',
+		GALAKSIO_SERVER : "/"
 	});
-	//Define the events that are fired when an user login, log out etc.
-	app.constant('AUTH_EVENTS', {
+
+	//Define the events that are fired in the APP
+	app.constant('APP_EVENTS', {
 		loginSuccess: 'auth-login-success',
 		loginFailed: 'auth-login-failed',
 		logoutSuccess: 'auth-logout-success',
 		sessionTimeout: 'auth-session-timeout',
 		notAuthenticated: 'auth-not-authenticated',
-		notAuthorized: 'auth-not-authorized'
-	});
-	app.constant('HISTORY_EVENTS', {
+		notAuthorized: 'auth-not-authorized',
 		historyChanged: 'history-changed'
 	});
 
@@ -68,12 +68,19 @@
 				url: '/histories',
 				templateUrl: "app/histories/history-page.tpl.html",
 				data: {requireLogin: true}
+			},
+			admin = {
+				name: 'admin',
+				url: '/admin',
+				templateUrl: "app/admin/admin-page.tpl.html",
+				data: {requireLogin: true}
 			};
 			$stateProvider.state(signin);
 			$stateProvider.state(home);
 			$stateProvider.state(workflows);
 			$stateProvider.state(workflowDetail);
 			$stateProvider.state(histories);
+			$stateProvider.state(admin);
 		}]
 	);
 
@@ -92,35 +99,39 @@
 			extra = (extra || "");
 			switch (service) {
 				case "user-sign-in":
-				return myAppConfig.GALAXY_SERVER + "api/authenticate/baseauth";
+				return myAppConfig.GALAKSIO_SERVER + "api/authenticate/baseauth";
 				case "user-sign-up":
-				return myAppConfig.GALAXY_SERVER + "user/create?cntrller=user";
+				return myAppConfig.GALAKSIO_SERVER + "user/create?cntrller=user";
 				case "user-info":
-				return myAppConfig.GALAXY_SERVER + "api/users/" + extra;
+				return myAppConfig.GALAKSIO_SERVER + "api/users/" + extra;
 				case "workflow-list":
-				return myAppConfig.GALAXY_SERVER + "api/workflows/";
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/";
 				case "workflow-info":
-				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra + "/download";
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra + "/download";
 				case "workflow-run":
-				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra + "/invocations";
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra + "/invocations";
 				case "workflow-import":
-				return myAppConfig.GALAXY_SERVER + "api/workflows/" + extra;
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/" + extra;
 				case "workflow-delete":
-				return myAppConfig.GALAXY_SERVER + "api/workflows/" + extra;
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/" + extra;
 				case "invocation-state":
-				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
 				case "invocation-result":
-				return myAppConfig.GALAXY_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1] + "/steps/" + extra[2];
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1] + "/steps/" + extra[2];
 				case "tools-info":
-				return myAppConfig.GALAXY_SERVER + "api/tools/" + extra + "/build";
+				return myAppConfig.GALAKSIO_SERVER + "api/tools/" + extra + "/build";
 				case "datasets-list":
-				return myAppConfig.GALAXY_SERVER + "api/histories/" + extra + "/contents";
+				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra + "/contents";
 				case "dataset-details":
-				return myAppConfig.GALAXY_SERVER + "api/datasets/" + extra[0];
+				return myAppConfig.GALAKSIO_SERVER + "api/datasets/" + extra[0];
 				case "history-list":
-				return myAppConfig.GALAXY_SERVER + "api/histories/" + extra;
+				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra;
 				case "dataset-upload":
-				return myAppConfig.GALAXY_SERVER + "api/tools/" + extra;
+				return myAppConfig.GALAKSIO_SERVER + "api/tools/" + extra;
+				case "setting-list":
+				return myAppConfig.GALAKSIO_SERVER + "admin/list-settings";
+				case "setting-update":
+				return myAppConfig.GALAKSIO_SERVER + "admin/update-settings";
 				default:
 				return "";
 			}
@@ -157,7 +168,6 @@
 
 		$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
 			var requireLogin = toState.data.requireLogin;
-
 			var galaxyuser = Cookies.get("galaxyuser");
 			var galaxysession = Cookies.get("galaxysession");
 

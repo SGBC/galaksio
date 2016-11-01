@@ -28,7 +28,7 @@
 		'ui.router',
 	]);
 
-	app.controller('UserSessionController', function ($state, $rootScope, $scope, $http, $dialogs, AUTH_EVENTS) {
+	app.controller('UserSessionController', function ($state, $rootScope, $scope, $http, $dialogs, APP_EVENTS) {
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -58,12 +58,12 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
 			debugger
 			$scope.userInfo.email = Cookies.get("galaxyuser");
 		});
 
-		$scope.$on(AUTH_EVENTS.logoutSuccess, function (event, args) {
+		$scope.$on(APP_EVENTS.logoutSuccess, function (event, args) {
 			delete $scope.userInfo.email;
 		});
 
@@ -95,7 +95,7 @@
 						delete $scope.signForm
 
 						//Notify all the other controllers that user has signed in
-						$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+						$rootScope.$broadcast(APP_EVENTS.loginSuccess);
 
 						$state.go('home');
 					},
@@ -165,7 +165,7 @@
 			$state.go('signin');
 
 			//Notify all the other controllers that user has signed in
-			$rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+			$rootScope.$broadcast(APP_EVENTS.logoutSuccess);
 		};
 
 		//--------------------------------------------------------------------
