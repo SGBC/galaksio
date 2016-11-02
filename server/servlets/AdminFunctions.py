@@ -19,19 +19,65 @@
 #     and others.
 #
 """
+from conf.serverconf import ADMIN_ACCOUNTS
+from flask import json
+
+def isAdminAccount(request, response, ROOT_DIRECTORY):
+    accounts = ADMIN_ACCOUNTS.replace(" ","").split(",")
+    found = False
+    for account in accounts:
+        if account == request.cookies.get("galaxyuser"):
+            found = True
+            break
+    response.setContent({"success": found})
+    return response
 
 def getSettingsList(request, response, ROOT_DIRECTORY):
-    #STEP 1. CHECK IF VALID USER
-
-    #STEP 2. GET THE SETTINGS LIST
     response.setContent({"success": True, "settings": readSettingsFile(ROOT_DIRECTORY)})
     return response
 
 def updateSettings(request, response, ROOT_DIRECTORY):
-    #STEP 1. CHECK IF VALID USER
+    #STEP 1. GET THE PREVIOUS SETTINGS LIST
+    previousSettings = readSettingsFile(ROOT_DIRECTORY)
+    newSettings = {}
 
-    #STEP 2. GET THE PREVIOUS SETTINGS LIST
-    previousSettings = getSettingsList(request, ROOT_DIRECTORY)
+    #STEP 2. UPDATE THE SETTINGS
+    newValues = json.loads(request.data)
+
+    for key,value in previousSettings.iteritems():
+        newSettings[key] = newValues.get(key, value)
+
+    content = ""
+    with open(ROOT_DIRECTORY + "server/conf/serverconf.py", 'r') as f:
+        for line in f:
+            if line != "" and line[0] != "#":
+                _line = line.split("=", 1)
+                if len(_line) < 2:
+                    content += line
+                    continue
+
+                setting_name = _line[0].replace(" ","")
+                setting_value = _line[1].split(" ##")[0]
+                setting_comment = _line[1].split(" ##")[1]
+
+                newValue = newSettings.get(setting_name, setting_value)
+                if newValue == None:
+                    newValue = ""
+                if setting_value.find("\"") != -1:
+                    newValue = "\"" + str(newValue) + "\""
+
+                content += _line[0] + "= " + str(newValue) + " ##" + setting_comment
+            else:
+                content += line
+    f.close()
+
+    from shutil import copyfile
+    copyfile(ROOT_DIRECTORY + "server/conf/serverconf.py", ROOT_DIRECTORY + "server/conf/serverconf.py_back")
+
+    with open(ROOT_DIRECTORY + "server/conf/serverconf.py", 'w') as f:
+        f.write(content)
+    f.close()
+
     response.setContent({"success": True})
     return response
 

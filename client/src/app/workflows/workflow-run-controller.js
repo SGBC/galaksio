@@ -50,6 +50,7 @@
 		this.retrieveWorkflowDetails  = function(workflow_id){
 			$scope.workflow = WorkflowList.getWorkflow(workflow_id);
 			if($scope.workflow !== null){
+				$scope.loadingComplete = false;
 				$http($rootScope.getHttpRequestConfig("GET","workflow-info", {
 					extra: workflow_id})
 				).then(
@@ -71,6 +72,7 @@
 							logMessage : message + " at WorkflowRunController:retrieveWorkflowDetails."
 						});
 						console.error(response.data);
+						$scope.loadingComplete = true;
 					}
 				);
 			}else {
@@ -124,29 +126,28 @@
 			return diagram;
 		};
 
-		this.updateWorkflowDiagram = function(diagram){
+		this.updateWorkflowDiagram = function(diagram, doLayout){
 			if(diagram === undefined){
 				diagram = $scope.diagram;
 			}
 
-			if($scope.sigma !== undefined){
-				debugger
-			}
+			if($scope.sigma === undefined){
 
-			$scope.sigma = new sigma({
-				graph: diagram,
-				renderer: {
-					container: document.getElementById('sigmaContainer'),
-					type: 'canvas'
-				},
-				settings: {
-					edgeColor: 'default',
-					defaultEdgeColor: '#d3d3d3',
-					// mouseEnabled: false,
-					sideMargin: 100,
-					labelAlignment: "bottom"
-				}
-			});
+				$scope.sigma = new sigma({
+					graph: diagram,
+					renderer: {
+						container: document.getElementById('sigmaContainer'),
+						type: 'canvas'
+					},
+					settings: {
+						edgeColor: 'default',
+						defaultEdgeColor: '#d3d3d3',
+						// mouseEnabled: false,
+						sideMargin: 100,
+						labelAlignment: "bottom"
+					}
+				});
+			}
 
 			// Create a custom color palette:
 			var myPalette = {
@@ -191,18 +192,27 @@
 			});
 
 			design.apply();
-			// Configure the DAG layout:
-			// sigma.layouts.dagre.configure($scope.sigma, {
-			// 		directed: true, // take edge direction into account
-			// 		rankdir: 'LR', // Direction for rank nodes. Can be TB, BT, LR, or RL,
-			// 		easing: 'quadraticInOut', // animation transition function
-			// 		duration: 800, // animation duration
-			// });
-			//
-			// // Start the DAG layout:
-			// sigma.layouts.dagre.start($scope.sigma);
+
+			if(doLayout === true){
+				// Configure the DAG layout:
+				sigma.layouts.dagre.configure($scope.sigma, {
+					directed: true, // take edge direction into account
+					rankdir: 'LR', // Direction for rank nodes. Can be TB, BT, LR, or RL,
+					easing: 'quadraticInOut', // animation transition function
+					duration: 800, // animation duration
+				});
+
+				// Start the DAG layout:
+				sigma.layouts.dagre.start($scope.sigma);
+			}
 		};
 
+		this.getDownloadLink = function(dataset_url){
+			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+			dataset_url.replace(fullpath,"");
+			dataset_url = $scope.GALAXY_SERVER_URL + dataset_url;
+			return dataset_url;
+		};
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
@@ -280,6 +290,10 @@
 			},
 			2000);
 		};
+
+		this.layoutDiagramHandler = function(){
+			this.updateWorkflowDiagram($scope.diagram, true);
+		}
 
 		//--------------------------------------------------------------------
 		// INITIALIZATION

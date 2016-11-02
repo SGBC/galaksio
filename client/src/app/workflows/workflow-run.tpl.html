@@ -27,8 +27,12 @@
 	<!-- WORKFLOW DIAGRAM -->
 	<!-- ************************************************************* -->
 	<div class="panel panel-container" ng-show="invocation.current_step != 2">
+		<a style="cursor:pointer; float: right; color:#333;" ng-click="controller.layoutDiagramHandler()"> <i class="fa fa-refresh"></i> Update diagram layout</a>
 		<h4>Workflow overview</h4>
-		<div id="sigmaContainer" style="height:250px;"></div>
+		<i ng-show="loadingComplete === false" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
+			<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflow details...
+		</i>
+		<div id="sigmaContainer" style="height:450px;"></div>
 	</div>
 	<!-- ************************************************************* -->
 	<!-- HISTORY SELECTION -->
@@ -144,7 +148,7 @@
 						<tbody ng-repeat="step in invocation.steps">
 							<tr ng-repeat="output in step.outputs">
 								<td style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
-								<td><a href="{{output.url}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
+								<td><a href="{{controller.getDownloadLink(output.url)}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
 							</tr>
 						</tbody>
 					</table>

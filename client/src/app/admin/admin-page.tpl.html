@@ -10,52 +10,59 @@
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="SERVER_HOST_NAME">Galaksio host name:</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="SERVER_HOST_NAME" ng-model="settings.SERVER_HOST_NAME">
+							<input type="text" class="form-control" id="SERVER_HOST_NAME" ng-model="settings.SERVER_HOST_NAME" ng-required="true">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE IP ADDRESS FOR GALAKSIO, LEAVE 0.0.0.0 FOR LISTENING ALL REQUESTS"></i>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="SERVER_PORT_NUMBER">Galaksio port number:  </label>
 						<div class="col-sm-9">
-							<input type="number" class="form-control" id="SERVER_PORT_NUMBER" ng-model="settings.SERVER_PORT_NUMBER">
+							<input type="number" class="form-control" id="SERVER_PORT_NUMBER" ng-model="settings.SERVER_PORT_NUMBER" ng-required="true">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE PORT NUMBER THAT GALAKSIO LISTENS FOR REQUESTS"></i>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="SERVER_SUBDOMAIN">Galaksio subdomain:</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="SERVER_SUBDOMAIN" ng-model="settings.SERVER_SUBDOMAIN">
+							<input type="text" class="form-control" placeholder="None" id="SERVER_SUBDOMAIN" ng-model="settings.SERVER_SUBDOMAIN">
 						</div>
 						<i style="color: #31708f;" class="fa fa-question-circle" uib-tooltip="USE THIS OPTION IF GALAKSIO RUNS UNDER AN SPECIFIC SUBDOMAIN, E.G. myserver.com/galaksio (w/o proxy)"></i>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="SERVER_MAX_CONTENT_LENGTH">Max. content size:  </label>
 						<div class="col-sm-9">
-							<input type="number" class="form-control" id="SERVER_MAX_CONTENT_LENGTH" ng-model="settings.SERVER_MAX_CONTENT_LENGTH">
+							<input type="number" class="form-control" id="SERVER_MAX_CONTENT_LENGTH" ng-model="settings.SERVER_MAX_CONTENT_LENGTH" ng-required="true">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE MAX SIZE FOR THE REQUESTS SENT BY THE CLIENTS, IN MB"></i>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="ADMIN_ACCOUNTS">Admin accounts:  </label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="ADMIN_ACCOUNTS" ng-model="settings.ADMIN_ACCOUNTS">
+							<input type="text" class="form-control" id="ADMIN_ACCOUNTS" ng-model="settings.ADMIN_ACCOUNTS" ng-required="true">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="ACCOUNTS THAT HAVE ADMINISTRATION RIGHTS, SEPARATED BY COMMAS"></i>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="ROOT_DIRECTORY">Galaksio root directory:  </label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="ROOT_DIRECTORY" ng-model="settings.ROOT_DIRECTORY">
+							<input type="text" class="form-control" id="ROOT_DIRECTORY" ng-model="settings.ROOT_DIRECTORY" placeholder="Leave empty to auto-detect">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE LOCATION FOR THE GALAKSIO FILES, LEAVE BLANK TO AUTO DETECT"></i>
 					</div>
 					<h2>Galaxy settings</h2>
 					<div class="form-group">
-						<label class="control-label col-sm-2" for="GALAXY_SERVER">Galaxy server:  </label>
+						<label class="control-label col-sm-2" for="GALAXY_SERVER">Galaxy server (internal):  </label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="GALAXY_SERVER" ng-model="settings.GALAXY_SERVER">
+							<input type="text" class="form-control" id="GALAXY_SERVER" ng-model="settings.GALAXY_SERVER" ng-required="true">
 						</div>
-						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE URL FOR THE GALAXY INSTANCE THAT WILL RECEIVE ALL THE GALAKSIO REQUESTS"></i>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE INTERNAL URL OR IP FOR THE GALAXY INSTANCE THAT WILL RECEIVE ALL THE GALAKSIO REQUESTS"></i>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="GALAXY_SERVER_URL">Galaxy server URL:  </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="GALAXY_SERVER_URL" ng-model="settings.GALAXY_SERVER_URL">
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE EXTERNAL URL FOR THE GALAXY INSTANCE, LEAVE EMPTY IF IT IS THE SAME THAN GALAXY_SERVER"></i>
 					</div>
 					<h2>Email settings</h2>
 					<div class="form-group">
@@ -126,8 +133,8 @@
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Sender name (the \"From\" value in the email)"></i>
 					</div>
 					<div class="form-group">
-						<div class="col-sm-offset-2 col-sm-9">
-							<button  type="submit" class="btn btn-success">Update settings</button>
+						<div style=" text-align: center; ">
+							<a class="btn btn-success btn-lg" ng-click="controller.updateSettingsHandler()">Update settings</a>
 						</div>
 					</div>
 				</form>

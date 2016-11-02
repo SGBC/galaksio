@@ -26,7 +26,7 @@ import requests
 import re
 
 import servlets.AdminFunctions as AdminFunctions
-from flask import Flask, request, send_from_directory, request, jsonify
+from flask import Flask, request, send_from_directory, request, jsonify, json
 from flask import Response as flask_response
 
 from conf.serverconf import *
@@ -80,7 +80,7 @@ class Application(object):
         #
         #******************************************************************************************
         @self.app.route(SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE'])
-        def forward_request(service):
+        def forward_request(service, method = None):
             # STEP 1. Read requests auth params
             auth = None
             if request.authorization is not None and len(request.authorization) > 0:
@@ -88,9 +88,12 @@ class Application(object):
                 for i in request.authorization:
                     auth = auth + (request.authorization[i],)
 
+            if method == None:
+                method = request.method
+
             # STEP 2. Generate the new requests
             resp = requests.request(
-                method=request.method,
+                method= method,
                 url= GALAXY_SERVER + '/api/' + service,
                 # headers={key: value for (key, value) in request.headers if key != 'Host'},
                 params= dict(request.args),
@@ -114,13 +117,40 @@ class Application(object):
         #   /_/    \_\_____/|_|  |_|_____|_| \_|
         #
         #******************************************************************************************
+        @self.app.route(SERVER_SUBDOMAIN + '/admin/local-galaxy-url', methods=['OPTIONS', 'GET'])
+        def get_local_galaxy_url():
+            if GALAXY_SERVER_URL == "":
+                return Response().setContent({"GALAXY_SERVER_URL": GALAXY_SERVER}).getResponse()
+            else:
+                return Response().setContent({"GALAXY_SERVER_URL": GALAXY_SERVER_URL}).getResponse()
+
+        @self.app.route(SERVER_SUBDOMAIN + '/admin/is-admin', methods=['OPTIONS', 'GET'])
+        def is_admin():
+            #1. First check if the session is valid
+            response = forward_request("users", "GET")
+            if response.status_code == 200:
+                account_email = json.loads(response.data)[0].get("email")
+                if account_email == request.cookies.get("galaxyuser"):
+                    return AdminFunctions.isAdminAccount(request, Response(), self.ROOT_DIRECTORY).getResponse()
+            return Response().setContent({"success": False}).getResponse()
+
         @self.app.route(SERVER_SUBDOMAIN + '/admin/list-settings', methods=['OPTIONS', 'GET'])
         def list_settings():
-            return AdminFunctions.getSettingsList(request, Response(), self.ROOT_DIRECTORY).getResponse()
+            #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
+            isAdmin = is_admin()
+            isAdmin = json.loads(isAdmin[0].data).get("success")
+            if isAdmin:
+                return AdminFunctions.getSettingsList(request, Response(), self.ROOT_DIRECTORY).getResponse()
+            return Response().setContent({"success": False}).setStatus(401).getResponse()
 
         @self.app.route(SERVER_SUBDOMAIN + '/admin/update-settings', methods=['OPTIONS', 'POST'])
         def update_settings():
-            return AdminFunctions.updateSettings(request, Response(), self.ROOT_DIRECTORY).getResponse()
+            #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
+            isAdmin = is_admin()
+            isAdmin = json.loads(isAdmin[0].data).get("success")
+            if isAdmin:
+                return AdminFunctions.updateSettings(request, Response(), self.ROOT_DIRECTORY).getResponse()
+            return Response().setContent({"success": False}).setStatus(401).getResponse()
 
     def iterform(self, multidict):
         for key in multidict.keys():

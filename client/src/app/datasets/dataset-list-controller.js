@@ -120,6 +120,13 @@
 			$scope.$dismiss('cancel');
 		};
 
+		this.getDownloadLink = function(dataset_url){
+			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+			dataset_url.replace(fullpath,"");
+			dataset_url = $scope.GALAXY_SERVER_URL + dataset_url;
+			return dataset_url + '/display';
+		};
+
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------

@@ -33,6 +33,10 @@
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
 		this.getCurrentUserDetails = function(){
+			if(!Cookies.get("galaxyuser")){
+				return;
+			}
+
 			$http($rootScope.getHttpRequestConfig("GET", "user-info", {
 				headers: {'Content-Type': 'application/json; charset=utf-8'},
 				extra: "current"
@@ -44,7 +48,7 @@
 					Cookies.remove("galaxyusername", {path: window.location.pathname});
 					Cookies.set("galaxyusername", $scope.userInfo.username, {expires : 1, path: window.location.pathname});
 					Cookies.remove("galaxyuser", {path: window.location.pathname});
-					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});
+					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});				
 				},
 				function errorCallback(response){
 					debugger;
