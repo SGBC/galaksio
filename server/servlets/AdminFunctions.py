@@ -19,7 +19,7 @@
 #     and others.
 #
 """
-from conf.serverconf import ADMIN_ACCOUNTS
+from server.conf.serverconf import ADMIN_ACCOUNTS
 from flask import json
 
 def isAdminAccount(request, response, ROOT_DIRECTORY):
