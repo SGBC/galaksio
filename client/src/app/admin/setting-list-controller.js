@@ -77,6 +77,7 @@
 						logMessage : message + " at AdminController:retrieveSettings."
 					});
 					console.error(response.data);
+                    document.location.replace("/");
 				}
 			);
 			return this;
@@ -108,6 +109,7 @@
 						logMessage : "Settings updated at AdminController:retrieveHistoryData."
 					});
 					$scope.isLoading = false;
+					document.location.replace("/");
 				},
 				function errorCallback(response){
 					$scope.isLoading = false;

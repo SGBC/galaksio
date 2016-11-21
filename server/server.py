@@ -29,14 +29,14 @@ import servlets.AdminFunctions as AdminFunctions
 from flask import Flask, request, send_from_directory, request, jsonify, json
 from flask import Response as flask_response
 
-from conf.serverconf import *
-
 HTML_REGEX = re.compile(r'((?:src|action|href)=["\'])/')
 JQUERY_REGEX = re.compile(r'(\$\.(?:get|post)\(["\'])/')
 JS_LOCATION_REGEX = re.compile(r'((?:window|document)\.location.*=.*["\'])/')
 CSS_REGEX = re.compile(r'(url\(["\']?)/')
 
 REGEXES = [HTML_REGEX, JQUERY_REGEX, JS_LOCATION_REGEX, CSS_REGEX]
+
+from conf.serverconf import *
 
 class Application(object):
     #******************************************************************************************************************
@@ -47,7 +47,7 @@ class Application(object):
         #* SERVLET DEFINITION
         #*******************************************************************************************
         self.app = Flask(__name__)
-
+        self.isFirstLaunch = False
         self.readConfigurationFile()
 
         #******************************************************************************************
@@ -62,7 +62,10 @@ class Application(object):
         #*******************************************************************************************
         @self.app.route(SERVER_SUBDOMAIN + '/')
         def main():
-            return send_from_directory(self.ROOT_DIRECTORY + 'client/src/', 'index.html')
+            if self.isFirstLaunch:
+                return send_from_directory(self.ROOT_DIRECTORY + 'client/src/', 'install.html')
+            else:
+                return send_from_directory(self.ROOT_DIRECTORY + 'client/src/', 'index.html')
         ##*******************************************************************************************
         ##* GET FILE
         ##*******************************************************************************************
@@ -137,8 +140,11 @@ class Application(object):
         @self.app.route(SERVER_SUBDOMAIN + '/admin/list-settings', methods=['OPTIONS', 'GET'])
         def list_settings():
             #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
-            isAdmin = is_admin()
-            isAdmin = json.loads(isAdmin[0].data).get("success")
+            if not self.isFirstLaunch:
+                isAdmin = is_admin()
+                isAdmin = json.loads(isAdmin[0].data).get("success")
+            else:
+                isAdmin=True
             if isAdmin:
                 return AdminFunctions.getSettingsList(request, Response(), self.ROOT_DIRECTORY).getResponse()
             return Response().setContent({"success": False}).setStatus(401).getResponse()
@@ -146,10 +152,18 @@ class Application(object):
         @self.app.route(SERVER_SUBDOMAIN + '/admin/update-settings', methods=['OPTIONS', 'POST'])
         def update_settings():
             #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
-            isAdmin = is_admin()
-            isAdmin = json.loads(isAdmin[0].data).get("success")
+            if not self.isFirstLaunch:
+                isAdmin = is_admin()
+                isAdmin = json.loads(isAdmin[0].data).get("success")
+            else:
+                isAdmin=True
+
             if isAdmin:
-                return AdminFunctions.updateSettings(request, Response(), self.ROOT_DIRECTORY).getResponse()
+                self.isFirstLaunch = False
+                response = AdminFunctions.updateSettings(request, Response(), self.ROOT_DIRECTORY).getResponse()
+                #TODO: RELOAD SETTINGS
+                self.readConfigurationFile()
+                return response
             return Response().setContent({"success": False}).setStatus(401).getResponse()
 
     def iterform(self, multidict):
