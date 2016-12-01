@@ -1,6 +1,8 @@
 server/venv
 server/.idea
 server/log/application.log
+server/conf/__init__.py
+server/conf/logging.cfg
 server/conf/serverconf.py
 server/conf/serverconf.py_back
 *.pyc
