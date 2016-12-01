@@ -34,7 +34,7 @@
 	/***************************************************************************/
 	/*CONTROLLERS **************************************************************/
 	/***************************************************************************/
-	app.controller('HistoryListController', function($state, $rootScope, $scope, $http, $uibModal, $dialogs, HistoryList, HISTORY_EVENTS){
+	app.controller('HistoryListController', function($state, $rootScope, $scope, $http, $uibModal, $dialogs, HistoryList, APP_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -245,7 +245,7 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(HISTORY_EVENTS.historyChanged, function (event, args) {
+		$scope.$on(APP_EVENTS.historyChanged, function (event, args) {
 			me.setDisplayedHistory($scope.currentHistory, true);
 		});
 

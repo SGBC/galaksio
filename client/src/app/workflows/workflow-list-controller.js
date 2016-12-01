@@ -110,6 +110,9 @@
 					for (var attrname in response.data) {
 						workflow[attrname] = response.data[attrname];
 					}
+					if(workflow["imported"]){
+						workflow["name"] = "imported: " + workflow["name"];
+					}
 					workflow.steps = Object.values(workflow.steps);
 				},
 				function errorCallback(response){

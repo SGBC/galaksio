@@ -2,5 +2,7 @@ server/venv
 server/.idea
 server/log/application.log
 server/conf/serverconf.py
+server/conf/serverconf.py_back
 *.pyc
 .idea
+server/launch_server.pid

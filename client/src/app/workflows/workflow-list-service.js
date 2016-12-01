@@ -38,6 +38,12 @@
 			},
 			setWorkflows: function(_workflows) {
 				workflows = _workflows;
+				for(var i in _workflows){
+					if(_workflows[i].name.indexOf('imported: ') !== -1){
+						_workflows[i].imported = true;
+					}
+				}
+
 				old = new Date();
 				return this;
 			},
@@ -46,7 +52,7 @@
 				for(var i in newWorkflows){
 					found= false;
 					if(newWorkflows[i].name.indexOf('imported: ') !== -1){
-						newWorkflows[i].name = newWorkflows[i].name.replace('imported: ','');
+						// newWorkflows[i].name = newWorkflows[i].name.replace('imported: ','');
 						newWorkflows[i].imported = true;
 					}
 

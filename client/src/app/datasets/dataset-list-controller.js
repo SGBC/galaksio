@@ -30,7 +30,7 @@
 		'datasets.dataset-list'
 	]);
 
-	app.controller('DatasetListController', function($rootScope, $scope, $http, $dialogs, HISTORY_EVENTS) {
+	app.controller('DatasetListController', function($rootScope, $scope, $http, $dialogs, APP_EVENTS) {
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -57,7 +57,7 @@
 			if(nItem === $scope.files.length){
 				//Notify all the other controllers that history-list has changed
 				this.removeAllowed = true;
-				$rootScope.$broadcast(HISTORY_EVENTS.historyChanged);
+				$rootScope.$broadcast(APP_EVENTS.historyChanged);
 				return;
 			}
 
@@ -120,6 +120,13 @@
 			$scope.$dismiss('cancel');
 		};
 
+		this.getDownloadLink = function(dataset_url){
+			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+			dataset_url.replace(fullpath,"");
+			dataset_url = $scope.GALAXY_SERVER_URL + dataset_url;
+			return dataset_url + '/display';
+		};
+
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------
@@ -128,6 +135,8 @@
 		$scope.filterDatasets = function (item) {
 			return (item.deleted === false || $scope.showDeleted);
 		};
+
+		$scope.maxTableHeight = window.innerHeight/2;
 
 	});
 })();

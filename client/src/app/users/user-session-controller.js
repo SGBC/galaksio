@@ -28,11 +28,15 @@
 		'ui.router',
 	]);
 
-	app.controller('UserSessionController', function ($state, $rootScope, $scope, $http, $dialogs, AUTH_EVENTS) {
+	app.controller('UserSessionController', function ($state, $rootScope, $scope, $http, $dialogs, APP_EVENTS) {
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
 		this.getCurrentUserDetails = function(){
+			if(!Cookies.get("galaxyuser")){
+				return;
+			}
+
 			$http($rootScope.getHttpRequestConfig("GET", "user-info", {
 				headers: {'Content-Type': 'application/json; charset=utf-8'},
 				extra: "current"
@@ -44,7 +48,7 @@
 					Cookies.remove("galaxyusername", {path: window.location.pathname});
 					Cookies.set("galaxyusername", $scope.userInfo.username, {expires : 1, path: window.location.pathname});
 					Cookies.remove("galaxyuser", {path: window.location.pathname});
-					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});
+					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});				
 				},
 				function errorCallback(response){
 					debugger;
@@ -58,12 +62,12 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
 			debugger
 			$scope.userInfo.email = Cookies.get("galaxyuser");
 		});
 
-		$scope.$on(AUTH_EVENTS.logoutSuccess, function (event, args) {
+		$scope.$on(APP_EVENTS.logoutSuccess, function (event, args) {
 			delete $scope.userInfo.email;
 		});
 
@@ -95,12 +99,12 @@
 						delete $scope.signForm
 
 						//Notify all the other controllers that user has signed in
-						$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+						$rootScope.$broadcast(APP_EVENTS.loginSuccess);
 
 						$state.go('home');
 					},
 					function errorCallback(response){
-						if([404001, 401001].indexOf(response.data.err_code) !== -1){
+						if(response.data && [404001, 401001].indexOf(response.data.err_code) !== -1){
 							$dialogs.showErrorDialog("Invalid user or password.");
 							return;
 						}
@@ -165,7 +169,7 @@
 			$state.go('signin');
 
 			//Notify all the other controllers that user has signed in
-			$rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+			$rootScope.$broadcast(APP_EVENTS.logoutSuccess);
 		};
 
 		//--------------------------------------------------------------------

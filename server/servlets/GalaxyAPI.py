@@ -22,8 +22,6 @@
 import logging
 import logging.config
 
-from conf.serverconf import CLIENT_TMP_DIR
-
 def passRequestToAPI(service, request):
     olga = request
     return {}

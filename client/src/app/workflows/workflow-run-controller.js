@@ -29,6 +29,7 @@
 		'common.dialogs',
 		'ui.bootstrap',
 		'ui.router',
+		'ngSanitize',
 		'workflows.services.workflow-list',
 		'workflows.services.workflow-run',
 		'workflows.directives.workflow-run',
@@ -49,6 +50,7 @@
 		this.retrieveWorkflowDetails  = function(workflow_id){
 			$scope.workflow = WorkflowList.getWorkflow(workflow_id);
 			if($scope.workflow !== null){
+				$scope.loadingComplete = false;
 				$http($rootScope.getHttpRequestConfig("GET","workflow-info", {
 					extra: workflow_id})
 				).then(
@@ -70,6 +72,7 @@
 							logMessage : message + " at WorkflowRunController:retrieveWorkflowDetails."
 						});
 						console.error(response.data);
+						$scope.loadingComplete = true;
 					}
 				);
 			}else {
@@ -123,29 +126,28 @@
 			return diagram;
 		};
 
-		this.updateWorkflowDiagram = function(diagram){
+		this.updateWorkflowDiagram = function(diagram, doLayout){
 			if(diagram === undefined){
 				diagram = $scope.diagram;
 			}
 
-			if($scope.sigma !== undefined){
-				debugger
-			}
+			if($scope.sigma === undefined){
 
-			$scope.sigma = new sigma({
-				graph: diagram,
-				renderer: {
-					container: document.getElementById('sigmaContainer'),
-					type: 'canvas'
-				},
-				settings: {
-					edgeColor: 'default',
-					defaultEdgeColor: '#d3d3d3',
-					// mouseEnabled: false,
-					sideMargin: 100,
-					labelAlignment: "bottom"
-				}
-			});
+				$scope.sigma = new sigma({
+					graph: diagram,
+					renderer: {
+						container: document.getElementById('sigmaContainer'),
+						type: 'canvas'
+					},
+					settings: {
+						edgeColor: 'default',
+						defaultEdgeColor: '#d3d3d3',
+						// mouseEnabled: false,
+						sideMargin: 100,
+						labelAlignment: "bottom"
+					}
+				});
+			}
 
 			// Create a custom color palette:
 			var myPalette = {
@@ -190,8 +192,27 @@
 			});
 
 			design.apply();
+
+			if(doLayout === true){
+				// Configure the DAG layout:
+				sigma.layouts.dagre.configure($scope.sigma, {
+					directed: true, // take edge direction into account
+					rankdir: 'LR', // Direction for rank nodes. Can be TB, BT, LR, or RL,
+					easing: 'quadraticInOut', // animation transition function
+					duration: 800, // animation duration
+				});
+
+				// Start the DAG layout:
+				sigma.layouts.dagre.start($scope.sigma);
+			}
 		};
 
+		this.getDownloadLink = function(dataset_url){
+			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+			dataset_url.replace(fullpath,"");
+			dataset_url = $scope.GALAXY_SERVER_URL + dataset_url;
+			return dataset_url;
+		};
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
@@ -270,6 +291,10 @@
 			2000);
 		};
 
+		this.layoutDiagramHandler = function(){
+			this.updateWorkflowDiagram($scope.diagram, true);
+		}
+
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------
@@ -342,7 +367,7 @@
 	/***************************************************************************/
 	/*WORKFLOW STEP CONTROLLER *************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunStepController', function($rootScope, $scope, $http, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, HISTORY_EVENTS){
+	app.controller('WorkflowRunStepController', function($rootScope, $scope, $http, $sanitize, $uibModal, $stateParams, $dialogs, WorkflowList, HistoryList, APP_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -373,7 +398,7 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(HISTORY_EVENTS.historyChanged, function (event, args) {
+		$scope.$on(APP_EVENTS.historyChanged, function (event, args) {
 			$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
 		});
 		/**
@@ -388,7 +413,6 @@
 		*/
 		this.toogleCollapseHandler = function(event){
 			//Toggle collapsed (view will automatically change due to ng-hide directive)
-			//TODO: CHANGE THE ICON TO +/-
 			$scope.collapsed = !$scope.collapsed;
 			//If the remaining data for the step was not loaded yet, send the request
 			if(!$scope.loadingComplete){
@@ -425,6 +449,12 @@
 				}
 			}
 		};
+
+		$scope.showStepHelp = function(){
+			if($scope.helpHtml === undefined){
+				$scope.helpHtml = $sanitize($scope.step.extra.help + '<a style="color: #e61669;" class="clickable" ng-click="isCollapsed=!isCollapsed;"> Hide help</a>');
+			}
+		};
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------
@@ -437,7 +467,7 @@
 	/***************************************************************************/
 	/*WORKFLOW INVOCATION LIST CONTROLLER *************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowInvocationListController', function($state, $rootScope, $scope, $http, $interval, $dialogs, WorkflowInvocationList, AUTH_EVENTS){
+	app.controller('WorkflowInvocationListController', function($state, $rootScope, $scope, $http, $interval, $dialogs, WorkflowInvocationList, APP_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -593,7 +623,7 @@
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(AUTH_EVENTS.loginSuccess, function (event, args) {
+		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
 			WorkflowInvocationList.recoverInvocations();
 		});
 

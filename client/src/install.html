@@ -35,8 +35,7 @@
 	<script type="text/javascript" src="lib/dagre.min.js"></script>
 </head>
 
-<body ng-controller="MainController as controller" ng-init="controller.showHomePanel();">
-	<span ng-controller="HistoryListController"></span>  <!-- Dummy component that starts the history -->
+<body ng-controller="MainController as controller" ng-init="controller.showInstallForm();">
 	<div id="wrapper">
 		<nav id ="header" class="navbar navbar-default navbar-fixed-top topbar-nav">
 			<div class="navbar-header"></div>
@@ -47,27 +46,9 @@
 						<i class="fa fa-bars" aria-hidden="true"></i> Menu
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style=" font-size: 20px; cursor: pointer; ">
-						<li ng-repeat="page in controller.pages">
-							<a ng-click="controller.setPage(page.name)">
-								<i class="fa menuIcon" ng-class="'fa-' + page.icon" aria-hidden="true"></i>{{page.title}}
-							</a>
-						</li>
-					</ul>
 				</li>
 			</ul>
-			<workflow-invocation-toolbar></workflow-invocation-toolbar>
-			<session-toolbar class="nav navbar-nav navbar-right"></session-toolbar>
 		</nav>
-		<div id="sidebar-wrapper">
-			<ul class="sidebar-nav">
-				<li ng-repeat="page in controller.pages"  ng-class="(page.name===currentPage)?'currentPage':''">
-					<a ng-click="controller.setPage(page.name)">
-						<i class="fa" ng-class="'fa-' + page.icon" aria-hidden="true"></i>{{page.title}}
-					</a>
-				</li>
-			</ul>
-		</div>
 		<div id="page-content-wrapper" >
 			<div class="container-fluid">
 				<div ui-view></div>

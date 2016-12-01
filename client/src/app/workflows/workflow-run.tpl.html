@@ -27,8 +27,12 @@
 	<!-- WORKFLOW DIAGRAM -->
 	<!-- ************************************************************* -->
 	<div class="panel panel-container" ng-show="invocation.current_step != 2">
+		<a style="cursor:pointer; float: right; color:#333;" ng-click="controller.layoutDiagramHandler()"> <i class="fa fa-refresh"></i> Update diagram layout</a>
 		<h4>Workflow overview</h4>
-		<div id="sigmaContainer" style="height:250px;"></div>
+		<i ng-show="loadingComplete === false" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
+			<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflow details...
+		</i>
+		<div id="sigmaContainer" style="height:450px;"></div>
 	</div>
 	<!-- ************************************************************* -->
 	<!-- HISTORY SELECTION -->
@@ -65,7 +69,7 @@
 			<h3>Other steps:</h3>
 			<p class="description">
 				<b>We are almost done! In this step you can customize the execution of all the steps in the workflow.</b><br>
-				Workflow can be reused over and over and for that reason, all the steps in the process have default values for execution. Note that these default values were considered as optimal by the creator of the workflow. Nevertheless, feel free to customize the settings for each step at your convenience. <b>Remember that this is a optional step!</b>
+				Workflow can be reused over and over and for that reason, all the steps in the process have default values for execution. Note that these default values were considered as optimal by the creator of the workflow. Nevertheless, feel free to customize the settings for each step at your convenience. <b>Remember that this is an optional step!</b>
 			</p>
 			<p class="invalidFormMessage" ng-show="!(invocation.valid= !step2form.$invalid)">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
 			<div ng-show="loadingComplete" >
@@ -144,7 +148,7 @@
 						<tbody ng-repeat="step in invocation.steps">
 							<tr ng-repeat="output in step.outputs">
 								<td style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
-								<td><a href="{{output.url}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
+								<td><a href="{{controller.getDownloadLink(output.url)}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
 							</tr>
 						</tbody>
 					</table>
