@@ -77,6 +77,7 @@
 						logMessage : message + " at AdminController:retrieveSettings."
 					});
 					console.error(response.data);
+					document.location.replace("/index.html");
 				}
 			);
 			return this;

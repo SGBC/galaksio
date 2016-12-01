@@ -34,7 +34,7 @@
 		'$urlRouterProvider',
 		function ($stateProvider, $urlRouterProvider) {
 			// For any unmatched url, redirect to /login
-			$urlRouterProvider.otherwise("/");
+			//$urlRouterProvider.otherwise("/");
 			var signin = {
 				name: 'signin',
 				url: '/signin',
@@ -73,7 +73,7 @@
 				name: 'admin',
 				url: '/admin',
 				templateUrl: "app/admin/admin-page.tpl.html",
-				data: {requireLogin: true}
+				data: {requireLogin: false}
 			};
 			$stateProvider.state(signin);
 			$stateProvider.state(home);
@@ -194,6 +194,14 @@
 			}
 		});
 
+		this.showInstallForm = function(){
+            this.setPage("admin")
+		};
+
+		this.showHomePanel = function(){
+            this.setPage("home")
+		};
+
 		this.setPage = function (page) {
 			$state.transitionTo(page);
 			$scope.currentPage = page;
@@ -264,7 +272,8 @@
 		******************************************************************************/
 		var me = this;
 		$rootScope.myAppConfig = myAppConfig;
-		$scope.currentPage = 'home';
+
+        $scope.currentPage = 'home';
 
 		this.pages = [
 			{name: 'home', title: 'Home', icon : 'home'},

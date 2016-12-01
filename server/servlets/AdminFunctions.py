@@ -36,7 +36,7 @@ def getSettingsList(request, response, ROOT_DIRECTORY):
     response.setContent({"success": True, "settings": readSettingsFile(ROOT_DIRECTORY)})
     return response
 
-def updateSettings(request, response, ROOT_DIRECTORY):
+def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     #STEP 1. GET THE PREVIOUS SETTINGS LIST
     previousSettings = readSettingsFile(ROOT_DIRECTORY)
     newSettings = {}
@@ -78,7 +78,7 @@ def updateSettings(request, response, ROOT_DIRECTORY):
         f.write(content)
     f.close()
 
-    response.setContent({"success": True})
+    response.setContent({"success": True, "isFirstLaunch" : isFirstLaunch})
     return response
 
 def readSettingsFile(ROOT_DIRECTORY):
