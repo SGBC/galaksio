@@ -12,7 +12,10 @@ if not os.path.isfile(os.path.dirname(os.path.realpath(__file__)) + "/conf/serve
     shutil.copyfile(conf_dir + "example_serverconf.py", conf_dir + "serverconf.py")
     isFirstLaunch = True
 
-from server.server import Application
+try:
+    from server import Application
+except Exception as ex:
+    from server.server import Application
 
 application = Application()
 application.isFirstLaunch = isFirstLaunch
