@@ -1,7 +1,7 @@
-B3Galaxy was developed as part of the B3Africa Project (http://www.b3africa.org/), which has received funding from the European Union’s Horizon 2020 research and innovation programme. The project’s 
+Galaksio was developed as part of the B3Africa Project (http://www.b3africa.org/), which has received funding from the European Union’s Horizon 2020 research and innovation programme. The project’s
 consortium consists of 11 European and African partners.
 
-B3Galaxy is a web application which simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.org/).
+Galaksio is a web application which simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.org/).
 
 - SVERIGES LANTBRUKSUNIVERSITET (SLU); Sweden
 - BIOBANKING AND BIOMOLECULAR RESOURCES RESEARCH INFRASTRUCTURE CONSORTIUM (BBMRI-ERIC); Austria
@@ -15,14 +15,13 @@ B3Galaxy is a web application which simplifies the usage of the Galaxy bioinform
 - UNIVERSITY OF THE WESTERN CAPE (UWT); South Africa
 - UPPSALA UNIVERSITY (UU); Sweden
 
-Contributors: 
+Contributors:
 
  - Dr. Erik Bongcam-Rudloff (SLU), Project coordinator.
  - Tomas Klingström (SLU), coordinator for WP-4 [Bioinformatics].
  - Rafael Hernández (SLU), main developer for WP-4.
- 
+
 Other contributors:
  - Gerrit Botha (UCT); South Africa
  - Zipho Mashologu (SANBI); South Africa
  - Peter van Heusden (SANBI); South Africa
-
