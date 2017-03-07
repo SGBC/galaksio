@@ -94,16 +94,31 @@ class Application(object):
             if method == None:
                 method = request.method
 
-            # STEP 2. Generate the new requests
-            resp = requests.request(
-                method= method,
-                url= GALAXY_SERVER + '/api/' + service,
-                # headers={key: value for (key, value) in request.headers if key != 'Host'},
-                params= dict(request.args),
-                data=request.get_data(),
-                auth=auth,
-                cookies=request.cookies,
-                allow_redirects=False)
+            if service == "upload/":
+                service = "/api/tools"
+
+                data = dict(request.form)
+                # STEP 2. Generate the new requests
+                resp = requests.request(
+                    method=method,
+                    url=GALAXY_SERVER + service,
+                    data=data,
+                    files=request.files,
+                    auth=auth,
+                    cookies=request.cookies,
+                    allow_redirects=False)
+            else:
+                service = "/api/" + service
+
+                # STEP 2. Generate the new requests
+                resp = requests.request(
+                    method= method,
+                    url= GALAXY_SERVER + service,
+                    params= dict(request.args),
+                    data=request.get_data(),
+                    auth=auth,
+                    cookies=request.cookies,
+                    allow_redirects=False)
 
             headers = []
             excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']

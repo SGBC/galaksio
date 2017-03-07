@@ -13,7 +13,7 @@
 	]);
 
 	app.constant('myAppConfig', {
-		VERSION: '0.2.1',
+		VERSION: '0.2.2',
 		GALAKSIO_SERVER : "/"
 	});
 
@@ -138,7 +138,7 @@
 				case "history-list":
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra;
 				case "dataset-upload":
-				return myAppConfig.GALAKSIO_SERVER + "api/tools/" + extra;
+				return myAppConfig.GALAKSIO_SERVER + "api/upload/";
 				case "setting-list":
 				return myAppConfig.GALAKSIO_SERVER + "admin/list-settings";
 				case "setting-update":
@@ -170,7 +170,7 @@
 			var requestData = {
 				method: method,
 				headers: options.headers,
-				url: this.getRequestPath(service, options.extra),
+				url: $rootScope.getRequestPath(service, options.extra),
 				params: options.params,
 				data: options.data
 			};
