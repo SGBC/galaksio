@@ -130,9 +130,9 @@ class Application(object):
         @self.app.route(SERVER_SUBDOMAIN + '/admin/is-admin', methods=['OPTIONS', 'GET'])
         def is_admin():
             #1. First check if the session is valid
-            response = forward_request("users", "GET")
+            response = forward_request("users/current", "GET")
             if response.status_code == 200:
-                account_email = json.loads(response.data)[0].get("email")
+                account_email = json.loads(response.data).get("email")
                 if account_email == request.cookies.get("galaxyuser"):
                     return AdminFunctions.isAdminAccount(request, Response(), self.ROOT_DIRECTORY).getResponse()
             return Response().setContent({"success": False}).getResponse()
