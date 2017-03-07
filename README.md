@@ -10,7 +10,8 @@ Galaksio has been developed as part of the B3Africa Project (http://www.b3africa
 Comming soon...
 
 ##Docker for Galaksio
-Comming soon...
+The Galaksio Docker Image is an easy distributable full-fledged Galaksio installation. 
+The docker image for Galaksio can be found in the [docker hub](https://hub.docker.com/r/fikipollo/galaksio/). However, you can download the Dockerfile and other files from the [Github repository](https://github.com/fikipollo/galaksio-docker) 
 
 ##Application overview
 Comming soon...

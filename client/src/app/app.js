@@ -13,7 +13,7 @@
 	]);
 
 	app.constant('myAppConfig', {
-		VERSION: '0.2',
+		VERSION: '0.2.1',
 		GALAKSIO_SERVER : "/"
 	});
 
