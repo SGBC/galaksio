@@ -70,7 +70,7 @@
 			}
 
 			var formData = new FormData();
-			formData.append('key', window.atob(Cookies.get("galaxysession")));
+			formData.append('key', window.atob(Cookies.get("galaksiosession")));
 			formData.append('inputs', '{"dbkey":"?","file_type":"auto","files_0|type":"upload_dataset","files_0|space_to_tab":null,"files_0|to_posix_lines":"Yes","files_0|NAME":"' + file.name + '"}');
 			formData.append('files_0|file_data', file);
 			formData.append('tool_id', 'upload1');

@@ -155,8 +155,8 @@
 		$rootScope.getHttpRequestConfig = function(method, service, options){
 			options = (options || {});
 			options.params = (options.params || {});
-			if(Cookies.get("galaxysession")){
-				options.params = angular.merge(options.params, {"key" : window.atob(Cookies.get("galaxysession"))});
+			if(Cookies.get("galaksiosession")){
+				options.params = angular.merge(options.params, {"key" : window.atob(Cookies.get("galaksiosession"))});
 			}
 			if(options.urlEncodedRequest === true){
 				//CONVERT TO URL ENCODE DATA
@@ -184,12 +184,12 @@
 		$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
 			var requireLogin = toState.data.requireLogin;
 			var galaxyuser = Cookies.get("galaxyuser");
-			var galaxysession = Cookies.get("galaxysession");
+			var galaksiosession = Cookies.get("galaksiosession");
 
 			//Check if the user is logged in, redirect to signin panel
-			if (requireLogin && (galaxyuser === undefined || galaxysession === undefined)) {
+			if (requireLogin && (galaxyuser === undefined || galaksiosession === undefined)) {
 				event.preventDefault();
-				Cookies.remove("galaxysession");
+				Cookies.remove("galaksiosession");
 				$state.go('signin');
 			}
 		});

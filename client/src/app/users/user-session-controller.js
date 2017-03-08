@@ -87,12 +87,12 @@
 					function successCallback(response){
 						//CLEAN PREVIOUS COOKIES
 						Cookies.remove("galaxyuser", {path: window.location.pathname});
-						Cookies.remove("galaxysession", {path: window.location.pathname});
+						Cookies.remove("galaksiosession", {path: window.location.pathname});
 						Cookies.remove("current-history", {path: window.location.pathname});
 
 						//SET THE COOKIES
 						Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});
-						Cookies.set("galaxysession", btoa(response.data.api_key), {expires : 1, path: window.location.pathname});
+						Cookies.set("galaksiosession", btoa(response.data.api_key), {expires : 1, path: window.location.pathname});
 
 						$scope.userInfo.email = Cookies.get("galaxyuser");
 						delete $scope.userInfo.password
@@ -161,7 +161,7 @@
 
 		this.signOutButtonHandler = function () {
 			Cookies.remove("galaxyuser", {path: window.location.pathname});
-			Cookies.remove("galaxysession", {path: window.location.pathname});
+			Cookies.remove("galaksiosession", {path: window.location.pathname});
 			Cookies.remove("current-history", {path: window.location.pathname});
 			Cookies.remove("galaxyusername", {path: window.location.pathname});
 			sessionStorage.removeItem("workflow_invocations");
