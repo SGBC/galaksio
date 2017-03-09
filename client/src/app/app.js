@@ -112,7 +112,7 @@
 				case "user-sign-in":
 				return myAppConfig.GALAKSIO_SERVER + "api/authenticate/baseauth";
 				case "user-sign-up":
-				return myAppConfig.GALAKSIO_SERVER + "user/create?cntrller=user";
+				return myAppConfig.GALAKSIO_SERVER + "api/signup/";
 				case "user-info":
 				return myAppConfig.GALAKSIO_SERVER + "api/users/" + extra;
 				case "workflow-list":

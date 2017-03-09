@@ -94,8 +94,8 @@
 		* @return {Object} the controller.
 		*/
 		this.showUploadDatasetsDialog = function(){
-			$scope.active= 1;
-			$scope.hiddenTabs=[0];
+			$scope.active= 2;
+			$scope.hiddenTabs=[0,1];
 			$scope.files= $scope.files || [];
 
 			var modalInstance = $uibModal.open({

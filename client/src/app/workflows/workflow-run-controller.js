@@ -304,7 +304,7 @@
 		$scope.loadingComplete = false;
 		$scope.workflow = null;
 		$scope.filterInputSteps = function (item) {
-			return item.type === 'data_input' || (item.type === 'tool' && (item.tool_id === 'upload_workflows' || item.tool_id === 'irods_pull'));
+			return item.type === 'data_input' || item.type === "data_collection_input" || (item.type === 'tool' && (item.tool_id === 'upload_workflows' || item.tool_id === 'irods_pull'));
 		};
 		$scope.filterNotInputSteps = function (item) {
 			return !$scope.filterInputSteps(item);
@@ -378,8 +378,16 @@
 		* @chainable
 		* @return {Object} the controller.
 		*/
-		this.showDatasetSelectorDialog = function(stepInstance, isUpload){
-			$scope.active=(isUpload?1:0);
+		this.showDatasetSelectorDialog = function(stepInstance, isUpload, hiddenTabs, dataType, dataSubtype){
+			$scope.dataType=(dataType?dataType:'file');
+			$scope.dataSubtype=dataSubtype;
+			if($scope.dataType === 'file'){
+				$scope.active=(isUpload?2:0);
+			}else {
+				$scope.active=(isUpload?3:1);
+			}
+			$scope.hiddenTabs=(hiddenTabs?hiddenTabs:[]);
+
 			var modalInstance = $uibModal.open({
 				templateUrl: 'app/datasets/dataset-selector-dialog.tpl.html',
 				scope: $scope,
@@ -417,7 +425,7 @@
 			//If the remaining data for the step was not loaded yet, send the request
 			if(!$scope.loadingComplete){
 				//If not an input field
-				if($scope.step.type !== "data_input"){
+				if($scope.step.type !== "data_input" && $scope.step.type !== "data_collection_input"){
 					//If the tool is not an input data tool, request the info from server
 					//and store the extra info for the tool at the "extra" field
 					$http($rootScope.getHttpRequestConfig("GET", "tools-info", {

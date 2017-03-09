@@ -652,3 +652,24 @@ tr.deletedDataset {
 tr.selectedDataset {
 	background-color: #d9edf7;
 }
+
+
+.collection-table span {
+    width: 40%;
+    display: inline-block;
+	padding: 10px 0px;
+	text-align: center;
+}
+.collection-table .collection-table-header {
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+}
+.collection-table .collection-table-body div {
+	border-bottom: 1px solid #ddd;
+}
+.collection-table span:nth-child(1), .collection-table span:nth-child(2) {
+    width: 25px;
+}
+.collection-table span:nth-child(1){
+    color: #9a9a9a;
+}

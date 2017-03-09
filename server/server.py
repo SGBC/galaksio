@@ -107,6 +107,20 @@ class Application(object):
                     auth=auth,
                     cookies=request.cookies,
                     allow_redirects=False)
+            elif service == "signup/":
+                service = "user/create?cntrller=user"
+
+                data = dict(request.form)
+                # STEP 2. Generate the new requests
+                resp = requests.request(
+                    method=method,
+                    url=GALAXY_SERVER + service,
+                    params= dict(request.args),
+                    headers={u'content-type': u'application/x-www-form-urlencoded'},
+                    data=data,
+                    auth=auth,
+                    cookies=request.cookies,
+                    allow_redirects=False)
             else:
                 service = "/api/" + service
 
@@ -126,6 +140,7 @@ class Application(object):
 
             response = flask_response(resp.content, resp.status_code, headers)
             return response
+
         #******************************************************************************************
         #             _____  __  __ _____ _   _
         #       /\   |  __ \|  \/  |_   _| \ | |

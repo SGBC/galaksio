@@ -66,7 +66,10 @@
 			'    <div ng-if="loadingComplete && step.type == \'data_input\'">'+
 			'      <step-data-input></step-data-input>'+
 			'    </div>' +
-			'    <div ng-if="loadingComplete && step.type != \'data_input\'">'+
+			'    <div ng-if="loadingComplete && step.type == \'data_collection_input\'">'+
+			'      <step-data-collection-input></step-data-collection-input>'+
+			'    </div>' +
+			'    <div ng-if="loadingComplete && step.type != \'data_input\'  && step.type != \'data_collection_input\'">'+
 			'      <div class="text-info " style="border: 1px solid #337ab7; padding: 10px 20px; border-radius: 5px;">' +
 			'        <h5>{{step.name}} {{step.extra.description}} <a style="color: #e61669;" class="clickable" ng-click="isCollapsed=!isCollapsed; showStepHelp();" ng-init="isCollapsed=true;"> {{(isCollapsed)?"Show":"Hide"}} help</a></h5>' +
 			'        <div uib-collapse="isCollapsed" ng-bind-html="helpHtml"></div>' +
@@ -75,10 +78,10 @@
 			'    </div>' +
 			'  </div>' +
 			'</div>',
-			link: function(scope, elm, attrs) {
+			link: function($scope, elm, attrs) {
 				$timeout(function () {
 					//DOM has finished rendering
-					if(scope.step.type === "data_input"){
+					if($scope.step.type === "data_input" || $scope.step.type === "data_collection_input"){
 						angular.element($(elm).find(".collapseStepTool")).triggerHandler('click');
 					}
 				});
@@ -90,24 +93,54 @@
 		return {
 			restrict: 'E',
 			replace: true,
-			link: function(scope, element){
-				var model = scope.step;
+			link: function($scope, element){
+				var model = $scope.step;
 
 				model.label = JSON.parse(model.tool_state).name;
 
 				var template =
 				'<label>{{step.label}}</label>' +
 				'<dataset-list-input></dataset-list-input>' +
-				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step);">' +
+				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, false, [1,3]);">' +
 				'	<i class="fa fa-search"></i> Browse file' +
 				'</a>'+
-				'<a type="button" class="btn btn-default btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, true);">' +
+				'<a type="button" class="btn btn-default btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, true, [1,3]);">' +
 				'	<i class="fa fa-upload"></i> Upload file' +
 				'</a>';
 
 				//Form Validation and fields added with $compile
 				//Based on http://stackoverflow.com/questions/19882506/form-validation-and-fields-added-with-compile
-				$compile($(template).appendTo(element))(scope);
+				$compile($(template).appendTo(element))($scope);
+			}
+		};
+	});
+
+
+	app.directive("stepDataCollectionInput", function($compile) {
+		return {
+			restrict: 'E',
+			replace: true,
+			link: function($scope, element){
+				var model = $scope.step;
+				var tool_state = JSON.parse(model.tool_state);
+
+				model.label = tool_state.name;
+				$scope.dataType = "collection";
+				$scope.dataSubtype = tool_state.collection_type;
+
+				var template =
+				'<label>{{step.label}}</label>' +
+				'<dataset-collection-list-input></dataset-collection-list-input>' +
+				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, false, [0,2,4], \'' + $scope.dataType + '\', \'' + $scope.dataSubtype + '\');">' +
+				'	<i class="fa fa-search"></i> Browse colletions' +
+				'</a>'+
+				'<a type="button" class="btn btn-default btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, true, [0,2,4], \'' + $scope.dataType + '\', \'' + $scope.dataSubtype + '\');">' +
+				'	<i class="fa fa-upload"></i> Create new collection' +
+				'</a>';
+
+				//Form Validation and fields added with $compile
+				//Based on http://stackoverflow.com/questions/19882506/form-validation-and-fields-added-with-compile
+				$compile($(template).appendTo(element))($scope);
 			}
 		};
 	});
@@ -115,12 +148,12 @@
 	app.directive("stepInput", ['$compile', '$dialogs', function($compile, $dialogs) {
 		return {
 			restrict: 'E',
-			link: function(scope, element){
-				var model = scope.input;
+			link: function($scope, element){
+				var model = $scope.input;
 				var template = "";
 				var inputValue = "";
 				try{
-					var tool_state = JSON.parse(scope.step.tool_state);
+					var tool_state = JSON.parse($scope.step.tool_state);
 					if(tool_state[model.name]){
 						inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
 					}else{
@@ -247,7 +280,7 @@
 							'   Output dataset from <b>step {{step.input_connections[input.name].id + 1}}</b> '+
 							((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 							'</i>';
-						}else if(inputValue === "" && scope.step.input_connections["library|" + model.name ] !== undefined){
+						}else if(inputValue === "" && $scope.step.input_connections["library|" + model.name ] !== undefined){
 							template+=
 							'<label>{{input.label || input.title}}</label>' +
 							'<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[\'library|\'+ input.name].id + 1}}</b></i>' +
@@ -255,6 +288,17 @@
 						}else{
 							throw 'Unknown value for data type "' + inputValue + '" : ' + JSON.stringify(model);
 						}
+					}else if(model.type === "data_collection"){
+						debugger;
+						// model.value = inputValue;
+						// template =
+						// '<label>{{input.label || input.title}}</label>' +
+						// '<select class="form-control" name="{{input.name}}"' +
+						// '        ng-model="input.value"' +
+						// '        ng-options="option[1] as option[0] for option in input.options.hda"' +
+						// '        ng-required="!(input.optional===true)" >'+
+						// "</select>" +
+						// ((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "repeat"){
 						inputValue = JSON.parse(inputValue);
 						template = "<label>" + model.title + (inputValue.length > 1?"s":"") + "</label>" +
@@ -265,11 +309,11 @@
 							for(var j in inputValue[i]){
 								//{"input2" : Object, "__index__": 0}
 								_key = model.name + "_" + inputValue[i]["__index__"] + "|" + j;
-								if(scope.step.input_connections[_key] !== undefined){
+								if($scope.step.input_connections[_key] !== undefined){
 									template+=
 									'<div class="inputRepeatItem">'+
 									'  <label>{{input.title}}' + (i+1) + "</label>" +
-									'  <i name="{{input.name}}" >Output dataset from step ' + (scope.step.input_connections[_key].id + 1) + '</i>' +
+									'  <i name="{{input.name}}" >Output dataset from step ' + ($scope.step.input_connections[_key].id + 1) + '</i>' +
 									'</div>'
 									;
 								}
@@ -296,15 +340,15 @@
 							// Show error message
 							debugger;
 							// Collapse the tool
-							scope.loadingComplete = false;
-							scope.collapsed = true;
+							$scope.loadingComplete = false;
+							$scope.collapsed = true;
 							// Remove extra information from step
-							delete scope.step.extra;
+							delete $scope.step.extra;
 						}
 					});
 				}
 
-				$compile($(template).appendTo(element))(scope);
+				$compile($(template).appendTo(element))($scope);
 			}
 		};
 	}]);

@@ -129,14 +129,28 @@
 			return dataset_url + '/display';
 		};
 
+		$scope.getCollectionType = function(collection){
+			if(collection.collection_type === "list"){
+				return "List of datasets";
+			} else if(collection.collection_type === "paired"){
+				return "Pair of datasets";
+			} else if(collection.collection_type === "list:paired"){
+				return "List of paired datasets";
+			} else {
+				return "Unknown collection type."
+			}
+		};
+
+		$scope.filterDatasets = function (item) {
+			return (item.deleted === false || $scope.showDeleted) && ($scope.dataType === item.type) && ($scope.dataType !== "collection" || $scope.dataSubtype === undefined || $scope.dataSubtype === item.collection_type);
+		};
+
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------
 		var me = this;
 
-		$scope.filterDatasets = function (item) {
-			return (item.deleted === false || $scope.showDeleted);
-		};
+		$scope.dataType=($scope.dataType?$scope.dataType:'file');
 
 		$scope.maxTableHeight = window.innerHeight/2;
 
