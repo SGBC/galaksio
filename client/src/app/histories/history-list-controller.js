@@ -93,8 +93,8 @@
 		* @chainable
 		* @return {Object} the controller.
 		*/
-		this.showUploadDatasetsDialog = function(){
-			$scope.active= 2;
+		this.showUploadDatasetsDialog = function(active_tab){
+			$scope.active_tab= (active_tab?active_tab:2);
 			$scope.hiddenTabs=[0,1];
 			$scope.files= $scope.files || [];
 

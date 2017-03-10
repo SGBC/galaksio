@@ -382,9 +382,9 @@
 			$scope.dataType=(dataType?dataType:'file');
 			$scope.dataSubtype=dataSubtype;
 			if($scope.dataType === 'file'){
-				$scope.active=(isUpload?2:0);
+				$scope.active_tab=(isUpload?2:0);
 			}else {
-				$scope.active=(isUpload?3:1);
+				$scope.active_tab=(isUpload?3:1);
 			}
 			$scope.hiddenTabs=(hiddenTabs?hiddenTabs:[]);
 

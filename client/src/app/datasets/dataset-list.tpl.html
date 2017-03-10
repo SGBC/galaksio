@@ -16,7 +16,7 @@
 		<tr ng-if="(displayedHistory.content !== undefined && displayedHistory.content.length === 0)">
 			<td colspan="4" style="text-align:center;"><i>No data</i></td>
 		</tr>
-		<tr ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets) | orderBy:'-' | limitTo:maxDatasets"
+		<tr class="clickable" ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets) | orderBy:'-' | limitTo:maxDatasets"
 		ng-class="{'deletedDataset' : dataset.deleted, 'hiddenDataset': !dataset.visible, 'selectedDataset': (dataset.id === selectedDataset[0].id)}"
 		ng-click="controller.setSelectedDatasetHandler(this);">
 		<td style="text-align:center;">{{$index + 1}}</td>

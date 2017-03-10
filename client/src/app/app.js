@@ -135,6 +135,8 @@
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra + "/contents";
 				case "dataset-details":
 				return myAppConfig.GALAKSIO_SERVER + "api/datasets/" + extra[0];
+				case "dataset-collection-details":
+				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra[0] + "/contents/dataset_collections/" + extra[1];
 				case "history-list":
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra;
 				case "dataset-upload":
@@ -195,11 +197,11 @@
 		});
 
 		this.showInstallForm = function(){
-            this.setPage("admin")
+			this.setPage("admin")
 		};
 
 		this.showHomePanel = function(){
-            this.setPage("home")
+			this.setPage("home")
 		};
 
 		this.setPage = function (page) {
@@ -273,7 +275,7 @@
 		var me = this;
 		$rootScope.myAppConfig = myAppConfig;
 
-        $scope.currentPage = 'home';
+		$scope.currentPage = 'home';
 
 		this.pages = [
 			{name: 'home', title: 'Home', icon : 'home'},

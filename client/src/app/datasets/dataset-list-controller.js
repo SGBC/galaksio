@@ -35,6 +35,7 @@
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
 
+
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
@@ -98,6 +99,30 @@
 			);
 		};
 
+		this.getDatasetCollectionDetailsHandler = function(dataset){
+			$scope.isLoading = true;
+			this.setSelectedDatasetHandler(dataset);
+
+			$http($rootScope.getHttpRequestConfig("GET", "dataset-collection-details", {
+				extra: [$scope.currentHistory.id, dataset.id]})
+			).then(
+				function successCallback(response){
+					$scope.isLoading = false;
+					dataset.elements = response.data.elements;
+				},
+				function errorCallback(response){
+					$scope.isLoading = false;
+
+					debugger;
+					var message = "Failed while retrieving the dataset collection details.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at DatasetListController:getDatasetCollectionDetailsHandler."
+					});
+					console.error(response.data);
+				}
+			);
+		};
+
 		this.deleteToUploadDatasetHandler = function(selectedItem){
 			$('#uploadDatasetSelector').val("");
 			for(var i in $scope.files){
@@ -112,13 +137,19 @@
 			if(!$scope.selectedDataset){
 				$scope.selectedDataset = [];
 			}
-			$scope.selectedDataset[0] = selectedItem.dataset;
+			if(selectedItem.type === "collection" ){
+				$scope.selectedDataset[0] = selectedItem;
+			}else{
+				$scope.selectedDataset[0] = selectedItem.dataset;
+			}
 		};
 
 		this.datasetSelectorAcceptButtonHandler = function(){
+			delete $scope.active_tab;
 			$scope.$close($scope.selectedDataset);
 		};
 		this.datasetSelectorCancelButtonHandler = function(){
+			delete $scope.active_tab;
 			$scope.$dismiss('cancel');
 		};
 
