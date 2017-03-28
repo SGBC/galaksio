@@ -5,24 +5,10 @@ src: url('fonts/OpenSans-Light.ttf');
 html{background-color: #F5F5F5;}
 body{font-family: 'Open Sans', sans-serif; font-weight: lighter;  }
 
-/*header {
-margin-bottom: 10px;
-background-color: #2B3143;
-height: 55px;
-}
-header .navbar-default{
-background: #2B3143;
-}
-header .navbar-default .navbar-nav>li>a {
-line-height: 40px;
-font-size: 25px;
-color: #AFAFAF;
-}
-header .navbar-default .navbar-nav>li>a:hover {
-color: #FFFFFF;
-}*/
 .navbar-default{border-radius: 0;}
 .clickable{cursor: pointer;}
+.well-danger{background-color: #f2dede;border-color: #f7acac;}
+.well-success{background-color: #dff0d8;border-color: #addc8b;}
 #header .navbar-header{background-image: url('galaxy_logo2.png'); width: 165px; background-size: cover; height: 45px;}
 
 #sidebar-wrapper {
@@ -674,8 +660,16 @@ tr.selectedDataset {
 	color: #9a9a9a;
 }
 .collection-table .collection-row.selectedDataset {
-     background-color: #d9edf7; 
+	background-color: #d9edf7;
 }
+.collection-table .collection-row.hiddenDataset span{
+	color: #a7a7a7;
+}
+.collection-table .collection-row.deletedDataset span{
+	color: #a7a7a7;
+	text-decoration: line-through;
+}
+
 .collection-table .collection-content {
 	padding-left: 20px;
 	background-color: #f7f7f7;
@@ -685,4 +679,11 @@ tr.selectedDataset {
 	color: #333;
 	width: auto;
 	text-align: left;
+}
+.collection-pair-box{
+	width: 95%;
+	display: block;
+	border: 1px solid #dedede;
+	margin: 10px auto;
+	padding: 10px;
 }

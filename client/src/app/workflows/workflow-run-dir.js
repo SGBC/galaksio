@@ -124,15 +124,23 @@
 				var model = $scope.step;
 				var tool_state = JSON.parse(model.tool_state);
 
-				model.label = tool_state.name;
 				$scope.dataType = "collection";
 				$scope.dataSubtype = tool_state.collection_type;
+				if($scope.dataSubtype === "list"){
+					model.label = "List of datasets";
+				} else if($scope.dataSubtype === "paired"){
+					model.label = "Pair of datasets";
+				}else  if($scope.dataSubtype === "list:paired"){
+					model.label = "List of paired datasets";
+				}else{
+					model.label = tool_state.name;
+				}
 
 				var template =
 				'<label>{{step.label}}</label>' +
 				'<dataset-collection-list-input></dataset-collection-list-input>' +
 				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, false, [0,2,4], \'' + $scope.dataType + '\', \'' + $scope.dataSubtype + '\');">' +
-				'	<i class="fa fa-search"></i> Browse colletions' +
+				'	<i class="fa fa-search"></i> Browse collections' +
 				'</a>'+
 				'<a type="button" class="btn btn-default btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, true, [0,2,4], \'' + $scope.dataType + '\', \'' + $scope.dataSubtype + '\');">' +
 				'	<i class="fa fa-upload"></i> Create new collection' +

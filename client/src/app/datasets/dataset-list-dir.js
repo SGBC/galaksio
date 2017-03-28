@@ -39,6 +39,13 @@
 		};
 	});
 
+	app.directive("datasetCollectionCreatePanel", function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/datasets/dataset-collection-create-panel.tpl.html'
+		};
+	});
+
 	app.directive("datasetListInput", function() {
 		return {
 			restrict: 'E',

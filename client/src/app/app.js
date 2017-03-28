@@ -12,9 +12,15 @@
 		'admin.controllers.setting-list'
 	]);
 
+	var pathname = window.location.pathname.split("/");
+	if(pathname.length > 1 && pathname[1] !== "" && pathname[1].indexOf(".html") === -1){
+			pathname = pathname[1] + "/";
+	}else{
+			pathname = "";
+	}
 	app.constant('myAppConfig', {
-		VERSION: '0.2.2',
-		GALAKSIO_SERVER : "/"
+		VERSION: '0.2.3',
+		GALAKSIO_SERVER : "/"  + pathname
 	});
 
 	//Define the events that are fired in the APP
@@ -135,6 +141,8 @@
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra + "/contents";
 				case "dataset-details":
 				return myAppConfig.GALAKSIO_SERVER + "api/datasets/" + extra[0];
+				case "dataset-collection-create":
+				return myAppConfig.GALAKSIO_SERVER + "api/dataset_collections/" + extra;
 				case "dataset-collection-details":
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra[0] + "/contents/dataset_collections/" + extra[1];
 				case "history-list":

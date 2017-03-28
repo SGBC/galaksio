@@ -11,8 +11,8 @@
 				<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading collections...
 			</span>
 		</span>
-		<span ng-if="(displayedHistory.content !== undefined && displayedHistory.content.length === 0)">
-			<span style="width:100%; text-align:center;"><i>No data</i></span>
+		<span ng-if="(displayedHistory.content !== undefined && displayedHistory.content.length === 0)" style="width:100%; text-align:center;">
+			<i>No data</i>
 		</span>
 		<div class="clickable collection-row" ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets) | orderBy:'-' | limitTo:maxDatasets"
 		ng-class="{'deletedDataset' : dataset.deleted, 'hiddenDataset': !dataset.visible, 'selectedDataset': (dataset.id === selectedDataset[0].id)}"
@@ -44,7 +44,7 @@
 	</div>
 </div>
 
-<p>Found {{filtered.length}} collections</p>
+<p style=" text-align: center; ">Found {{filtered.length}} collections</p>
 <div style="text-align: center; padding: 10px;" ng-show="displayedHistory.content.length > maxDatasets">
 	<a class="btn btn-default" ui-sref="histories()">
 		<i class="fa fa-sign-out fa-fw"></i> Show {{displayedHistory.content.length - maxDatasets}} more datasets.

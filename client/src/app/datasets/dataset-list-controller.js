@@ -27,7 +27,8 @@
 	var app = angular.module('datasets.controllers.dataset-list', [
 		'ui.bootstrap',
 		'common.dialogs',
-		'datasets.dataset-list'
+		'datasets.dataset-list',
+		'ang-drag-drop'
 	]);
 
 	app.controller('DatasetListController', function($rootScope, $scope, $http, $dialogs, APP_EVENTS) {
@@ -186,4 +187,170 @@
 		$scope.maxTableHeight = window.innerHeight/2;
 
 	});
+
+	app.controller('DatasetCollectionController', function($rootScope, $scope, $http, $dialogs, APP_EVENTS) {
+		//--------------------------------------------------------------------
+		// CONTROLLER FUNCTIONS
+		//--------------------------------------------------------------------
+		$scope.filterSelectedDatasets = function(item){
+			return ($scope.selectedDatasets.indexOf(item) === -1);
+		}
+
+		this.setPairComponent= function(pair, component, dataset){
+			pair[component] = dataset;
+		}
+		this.removePairComponent= function(pair, component){
+			delete pair[component];
+		}
+
+		this.removePair= function(pair){
+			var pos = $scope.pairs.indexOf(pair);
+			if(pos !== -1){
+				$scope.pairs.splice(pos, 1);
+			}
+		}
+
+		$scope.filterDatasets = function (item) {
+			return (item.deleted === false) && (item.type !== "collection");
+		};
+		//--------------------------------------------------------------------
+		// EVENT HANDLERS
+		//--------------------------------------------------------------------
+		this.addSelectedDatasetHandler = function(dataset){
+			$scope.selectedDatasets.push(dataset);
+			$scope.selectedDatasets = arrayUnique($scope.selectedDatasets);
+		};
+
+		this.removeSelectedDatasetHandler = function(dataset){
+			var pos = $scope.selectedDatasets.indexOf(dataset);
+			if(pos !== -1){
+				$scope.selectedDatasets.splice(pos, 1);
+			}
+		};
+
+		this.addNewPairToCollectionHandler = function(){
+			$scope.pairs = ($scope.pairs?$scope.pairs:[]);
+			$scope.pairs.push({name:""});
+		};
+
+
+		this.validateCollectionContent = function(){
+			if(!$scope.collection_name || $scope.collection_name === ""){
+				return "Collection name cannot be null.";
+			}
+			if($scope.collection_type === "list" && $scope.selectedDatasets.length === 0){
+				return "Collection is empty! List of datasets must contain at least one dataset.";
+			}else if($scope.collection_type === "paired" || $scope.collection_type === "list:paired"){
+				if(!$scope.pairs || $scope.pairs.length === 0){
+					return "Collection is empty! Create new pairs and try again.";
+				}
+				var pairNames = {};
+				for(var i in $scope.pairs){
+					if(!$scope.pairs[i].name || $scope.pairs[i].name === ""){
+						return "Please set the name for all the pairs and try again.";
+					}
+					if(pairNames[$scope.pairs[i].name]){
+						return "Duplicated name for pair " + $scope.pairs[i].name + ". Please use a different name for this pair.";
+					}
+					pairNames[$scope.pairs[i].name] = true;
+
+					if(!$scope.pairs[i].forward || !$scope.pairs[i].reverse){
+						return "Incomplete information for pairs. Please set the forward and the reverse component for all the pairs.";
+					}
+				}
+			}
+			return true;
+		};
+
+		this.sendDatasetCollectionCreationRequest = function(i, datalist, error){
+			if(i === datalist.length){
+				if(error !== undefined){
+
+				}else{
+					$dialogs.showSuccessDialog("All collections were succesfully created.");
+				}
+				$rootScope.$broadcast(APP_EVENTS.historyChanged);
+				delete $scope.collection_type;
+				delete $scope.collection_name;
+				$scope.pairs  = [];
+				$scope.selectedDatasets = [];
+				$scope.step = 0;
+				return;
+			}
+			var name = $scope.collection_name;
+			if($scope.collection_type === 'paired'){
+					name = datalist[i][0].name;
+			}
+			$http($rootScope.getHttpRequestConfig("POST", "dataset-collection-create", {
+				data: {
+					collection_type : $scope.collection_type,
+					instance_type : 'history',
+					history_id : $scope.currentHistory.id,
+					name : name,
+					element_identifiers : datalist[i]
+				}
+			})).then(
+				function successCallback(response){
+					me.sendDatasetCollectionCreationRequest(i+1, datalist, error);
+				},
+				function errorCallback(response){
+					error = (error||[]);
+					error.push(response.data);
+					me.sendDatasetCollectionCreationRequest(i+1, datalist, error);
+				}
+			);
+		}
+
+		this.createNewCollectionHandler = function(){
+			var errors = this.validateCollectionContent();
+			if(errors !== true){
+				$dialogs.showErrorDialog("Some errors were detected. Please check the form and try again. Error: " + errors, {title: "Invalid form."});
+				return;
+			}
+
+			var element_identifiers = this.generateElementIdentifiersParam();
+			this.sendDatasetCollectionCreationRequest(0, element_identifiers);
+		};
+
+		this.generateElementIdentifiersParam = function(){
+			var data = [];
+			if($scope.collection_type === "list"){
+				data.push($scope.selectedDatasets);
+			}else if($scope.collection_type === "paired"){
+				for(var i in $scope.pairs){
+					data.push([{
+						name: $scope.pairs[i].name,
+						src: "new_collection",
+						collection_type : "",
+						element_identifiers : [
+							{"name": "forward", "src": $scope.pairs[i].forward.src, "id" : $scope.pairs[i].forward.id},
+							{"name": "reverse", "src": $scope.pairs[i].reverse.src, "id" : $scope.pairs[i].reverse.id}
+						]
+					}]);
+				}
+			}else if($scope.collection_type === "list:paired"){
+				for(var i in $scope.pairs){
+					data.push({
+						name: $scope.pairs[i].name,
+						src: "new_collection",
+						collection_type : "paired",
+						element_identifiers : [
+							{"name": "forward", "src": $scope.pairs[i].forward.src, "id" : $scope.pairs[i].forward.id},
+							{"name": "reverse", "src": $scope.pairs[i].reverse.src, "id" : $scope.pairs[i].reverse.id}
+						]
+					});
+				}
+				data = [data];
+			}
+			return data;
+		};
+
+
+		//--------------------------------------------------------------------
+		// INITIALIZATION
+		//--------------------------------------------------------------------
+		var me = this;
+		$scope.selectedDatasets = ($scope.selectedDatasets?$scope.selectedDatasets:[]);
+	});
+
 })();

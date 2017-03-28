@@ -52,7 +52,7 @@
 				return;
 			}
 
-			if(history.content === undefined || force === true){
+			if(history !== null && (history.content === undefined || force === true)){
 				//GET THE EXTRA INFORMATION FOR THE HISTORY (datasets)
 				$http($rootScope.getHttpRequestConfig("GET", "datasets-list", {extra: history.id})).then(
 					function successCallback(response){

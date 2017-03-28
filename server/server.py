@@ -101,20 +101,20 @@ class Application(object):
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method=method,
-                    url=GALAXY_SERVER + service,
+                    url=self.GALAXY_SERVER + service,
                     data=data,
                     files=request.files,
                     auth=auth,
                     cookies=request.cookies,
                     allow_redirects=False)
             elif service == "signup/":
-                service = "user/create?cntrller=user"
+                service = "/user/create?cntrller=user"
 
                 data = dict(request.form)
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method=method,
-                    url=GALAXY_SERVER + service,
+                    url=self.GALAXY_SERVER + service,
                     params= dict(request.args),
                     headers={u'content-type': u'application/x-www-form-urlencoded'},
                     data=data,
@@ -127,7 +127,7 @@ class Application(object):
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method= method,
-                    url= GALAXY_SERVER + service,
+                    url= self.GALAXY_SERVER + service,
                     params= dict(request.args),
                     data=request.get_data(),
                     auth=auth,
@@ -153,7 +153,7 @@ class Application(object):
         @self.app.route(SERVER_SUBDOMAIN + '/admin/local-galaxy-url', methods=['OPTIONS', 'GET'])
         def get_local_galaxy_url():
             if GALAXY_SERVER_URL == "":
-                return Response().setContent({"GALAXY_SERVER_URL": GALAXY_SERVER}).getResponse()
+                return Response().setContent({"GALAXY_SERVER_URL": self.GALAXY_SERVER}).getResponse()
             else:
                 return Response().setContent({"GALAXY_SERVER_URL": GALAXY_SERVER_URL}).getResponse()
 
@@ -205,6 +205,8 @@ class Application(object):
         self.app.run(host=SERVER_HOST_NAME, port=SERVER_PORT_NUMBER,  debug=SERVER_ALLOW_DEBUG, threaded=True)
 
     def readConfigurationFile(self):
+        self.GALAXY_SERVER = GALAXY_SERVER.rstrip("/")
+
         self.ROOT_DIRECTORY = ROOT_DIRECTORY
         import os
         if self.ROOT_DIRECTORY == "":
