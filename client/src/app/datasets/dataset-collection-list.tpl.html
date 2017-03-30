@@ -1,0 +1,53 @@
+<div class="table collection-table" ng-controller="DatasetListController as controller" ng-init="dataType='collection'">
+	<div class="collection-table-header">
+		<span></span>
+		<span></span>
+		<span>Collection name</span>
+		<span>Type</span>
+	</div>
+	<div class="collection-table-body">
+		<span ng-if="isLoading === true || displayedHistory.content === undefined">
+			<span style="width:100%; text-align:center;">
+				<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading collections...
+			</span>
+		</span>
+		<span ng-if="(displayedHistory.content !== undefined && displayedHistory.content.length === 0)" style="width:100%; text-align:center;">
+			<i>No data</i>
+		</span>
+		<div class="clickable collection-row" ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets) | orderBy:'-' | limitTo:maxDatasets"
+		ng-class="{'deletedDataset' : dataset.deleted, 'hiddenDataset': !dataset.visible, 'selectedDataset': (dataset.id === selectedDataset[0].id)}"
+		ng-click="controller.getDatasetCollectionDetailsHandler(dataset); collapsed=!(collapsed===true);">
+		<span style="text-align:center;">{{$index + 1}}</span>
+		<span><i ng-class="(collapsed?'fa fa-caret-down':'fa fa-caret-right')"></i></span>
+		<span style="text-align:left; word-wrap: break-word;">{{dataset.name}}</span>
+		<span>{{getCollectionType(dataset)}}</span>
+		<div class="collection-content" ng-show="collapsed">
+			<span ng-if="isLoading === true || dataset.elements === undefined">
+				<span style="width:100%; text-align:center;">
+					<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading collections...
+				</span>
+			</span>
+			<div ng-repeat="element in dataset.elements">
+				<span ng-if="dataset.collection_type !== 'list:paired'">
+					<b ng-if="dataset.collection_type === 'paired'">{{element.element_identifier}}:</b>
+					<b ng-if="dataset.collection_type === 'list'">{{element.element_index + 1}}.</b>
+					{{element.object.name}}
+				</span>
+				<span ng-if="dataset.collection_type === 'list:paired'">
+					<b>Pair {{element.element_identifier}}</b>:
+					<div style="padding-left:10px;border: none;" ng-repeat="subelement in element.object.elements">
+						<b> {{subelement.element_identifier}}: </b>{{subelement.object.name}}
+					</div>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<p style=" text-align: center; ">Found {{filtered.length}} collections</p>
+<div style="text-align: center; padding: 10px;" ng-show="displayedHistory.content.length > maxDatasets">
+	<a class="btn btn-default" ui-sref="histories()">
+		<i class="fa fa-sign-out fa-fw"></i> Show {{displayedHistory.content.length - maxDatasets}} more datasets.
+	</a>
+</div>
+</div>

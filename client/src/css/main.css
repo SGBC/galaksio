@@ -5,24 +5,10 @@ src: url('fonts/OpenSans-Light.ttf');
 html{background-color: #F5F5F5;}
 body{font-family: 'Open Sans', sans-serif; font-weight: lighter;  }
 
-/*header {
-margin-bottom: 10px;
-background-color: #2B3143;
-height: 55px;
-}
-header .navbar-default{
-background: #2B3143;
-}
-header .navbar-default .navbar-nav>li>a {
-line-height: 40px;
-font-size: 25px;
-color: #AFAFAF;
-}
-header .navbar-default .navbar-nav>li>a:hover {
-color: #FFFFFF;
-}*/
 .navbar-default{border-radius: 0;}
 .clickable{cursor: pointer;}
+.well-danger{background-color: #f2dede;border-color: #f7acac;}
+.well-success{background-color: #dff0d8;border-color: #addc8b;}
 #header .navbar-header{background-image: url('galaxy_logo2.png'); width: 165px; background-size: cover; height: 45px;}
 
 #sidebar-wrapper {
@@ -499,12 +485,12 @@ i.tag.pink2 {background-color: #db6070; color: #fff;}
 /*------------------------------------------------------*/
 
 .stepBox > .panel-heading > i {
-    display: none;
-    font-size: 10px;
-    margin-left: 5px;
+	display: none;
+	font-size: 10px;
+	margin-left: 5px;
 }
 .stepBox > .panel-heading:hover > i {
-    display: inline-block;
+	display: inline-block;
 }
 p.description {
 	font-size: 17px;
@@ -607,6 +593,10 @@ table.workflow-summary-step th {
 	color: #fff;
 }
 
+table.table td.job-status-cat {
+    text-align: left;
+}
+
 .job-status-cat .job-number{
 	position: absolute;
 	margin-left: -11px;
@@ -646,9 +636,61 @@ table.datasetsTable>tbody>tr>td:nth-child(1) {color: #9a9a9a;}
 tr.deletedDataset,tr.hiddenDataset {
 	color: #a7a7a7;
 }
-tr.deletedDataset {
+tr.deletedDataset td{
 	text-decoration: line-through;
+}
+tr.deletedDataset td:nth-child(4) {
+	text-decoration: none;
 }
 tr.selectedDataset {
 	background-color: #d9edf7;
+}
+
+
+.collection-table span {
+	width: 40%;
+	display: inline-block;
+	padding: 10px 0px;
+	text-align: center;
+}
+.collection-table .collection-table-header {
+	font-weight: bold;
+	border-bottom: 2px solid #ddd;
+}
+.collection-table .collection-table-body div {
+	border-bottom: 1px solid #ddd;
+}
+.collection-table span:nth-child(1), .collection-table span:nth-child(2) {
+	width: 25px;
+}
+.collection-table span:nth-child(1){
+	color: #9a9a9a;
+}
+.collection-table .collection-row.selectedDataset {
+	background-color: #d9edf7;
+}
+.collection-table .collection-row.hiddenDataset span{
+	color: #a7a7a7;
+}
+.collection-table .collection-row.deletedDataset span{
+	color: #a7a7a7;
+	text-decoration: line-through;
+}
+
+.collection-table .collection-content {
+	padding-left: 20px;
+	background-color: #f7f7f7;
+	width:100%;
+}
+.collection-table .collection-content span{
+	color: #333;
+	width: auto;
+	text-align: left;
+}
+.collection-pair-box{
+	width: 95%;
+	display: block;
+	border: 1px solid #dedede;
+	margin: 10px auto;
+	padding: 10px;
 }

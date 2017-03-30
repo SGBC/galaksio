@@ -304,7 +304,7 @@
 		$scope.loadingComplete = false;
 		$scope.workflow = null;
 		$scope.filterInputSteps = function (item) {
-			return item.type === 'data_input' || (item.type === 'tool' && (item.tool_id === 'upload_workflows' || item.tool_id === 'irods_pull'));
+			return item.type === 'data_input' || item.type === "data_collection_input" || (item.type === 'tool' && (item.tool_id === 'upload_workflows' || item.tool_id === 'irods_pull'));
 		};
 		$scope.filterNotInputSteps = function (item) {
 			return !$scope.filterInputSteps(item);
@@ -378,8 +378,16 @@
 		* @chainable
 		* @return {Object} the controller.
 		*/
-		this.showDatasetSelectorDialog = function(stepInstance, isUpload){
-			$scope.active=(isUpload?1:0);
+		this.showDatasetSelectorDialog = function(stepInstance, isUpload, hiddenTabs, dataType, dataSubtype){
+			$scope.dataType=(dataType?dataType:'file');
+			$scope.dataSubtype=dataSubtype;
+			if($scope.dataType === 'file'){
+				$scope.active_tab=(isUpload?2:0);
+			}else {
+				$scope.active_tab=(isUpload?3:1);
+			}
+			$scope.hiddenTabs=(hiddenTabs?hiddenTabs:[]);
+
 			var modalInstance = $uibModal.open({
 				templateUrl: 'app/datasets/dataset-selector-dialog.tpl.html',
 				scope: $scope,
@@ -417,7 +425,7 @@
 			//If the remaining data for the step was not loaded yet, send the request
 			if(!$scope.loadingComplete){
 				//If not an input field
-				if($scope.step.type !== "data_input"){
+				if($scope.step.type !== "data_input" && $scope.step.type !== "data_collection_input"){
 					//If the tool is not an input data tool, request the info from server
 					//and store the extra info for the tool at the "extra" field
 					$http($rootScope.getHttpRequestConfig("GET", "tools-info", {
@@ -474,7 +482,7 @@
 		this.checkInvocationsState = function(){
 			// debugger
 			var invocations = WorkflowInvocationList.getInvocations();
-			var running = 0, erroneous = 0, done = 0;
+			var running = 0, erroneous = 0, done = 0, waiting=0;
 			for(var i in invocations){
 				if(invocations[i].state == "working"){
 					running++;
@@ -484,6 +492,8 @@
 					done++;
 				}else if(invocations[i].state == "error"){
 					erroneous++;
+				}else if(invocations[i].state == "waiting"){
+					waiting++;
 				}else if(invocations[i].state == "failed"){
 					erroneous++;
 				}else{
@@ -495,6 +505,7 @@
 			$scope.running = running;
 			$scope.done = done;
 			$scope.erroneous = erroneous;
+			$scope.waiting = waiting;
 
 			if($scope.checkInterval === true){
 				for(var i in invocations){
@@ -515,6 +526,7 @@
 						var runningSteps = 0;
 						var doneSteps = 0;
 						var queuedSteps = 0;
+						var pausedSteps = 0;
 
 						delete response.data.state
 						delete response.data.workflow_id
@@ -528,26 +540,32 @@
 								doneSteps++;
 							}else if(invocation.steps[i].state === 'queued'){
 								queuedSteps++;
-							}else if(invocation.steps[i].state === 'new'){
+							}else if(invocation.steps[i].state === 'new' || invocation.steps[i].state === 'waiting'){
 								waitingSteps++;
 							}else if(invocation.steps[i].state === 'running'){
 								runningSteps++;
 							}else if(invocation.steps[i].state === 'error'){
 								erroneousSteps++;
+							}else if(invocation.steps[i].state === 'paused'){
+								pausedSteps++;
 							}else{
 								debugger;
 								erroneousSteps++;
 							}
 						}
 
-						if(runningSteps > 0 || waitingSteps > 0 || queuedSteps > 0){
+						if(runningSteps > 0){
 							invocation.state = "working";
 							invocation.state_text = "Running your workflow...";
+						}else if(waitingSteps > 0 || queuedSteps > 0){
+								invocation.state = "waiting";
+								invocation.state_text = "Running your workflow...";
 						}else if(erroneousSteps > 0){
 							//TODO: show summary of results
 							invocation.state = "error";
 							invocation.state_text = "Failed...";
-						}else if(invocation.state !== "sending"){
+							me.recoverWorkflowResults(invocation);
+						}else if(invocation.steps && invocation.steps.length === doneSteps){
 							invocation.state_text = "Done!!";
 							invocation.state = "success";
 							//Generate the summary of results
@@ -567,6 +585,15 @@
 				'id' : invocation.workflow_id,
 				'invocation_id': invocation.id
 			});
+		};
+
+
+		this.removeWorkflowInvocation = function(invocation){
+			var pos = $scope.invocations.indexOf(invocation);
+			if(pos !== -1){
+				$scope.invocations.splice(pos,1);
+				WorkflowInvocationList.saveInvocations();
+			}
 		};
 
 		this.recoverWorkflowResults = function(invocation){

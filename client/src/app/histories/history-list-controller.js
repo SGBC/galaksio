@@ -52,7 +52,7 @@
 				return;
 			}
 
-			if(history.content === undefined || force === true){
+			if(history !== null && (history.content === undefined || force === true)){
 				//GET THE EXTRA INFORMATION FOR THE HISTORY (datasets)
 				$http($rootScope.getHttpRequestConfig("GET", "datasets-list", {extra: history.id})).then(
 					function successCallback(response){
@@ -93,9 +93,9 @@
 		* @chainable
 		* @return {Object} the controller.
 		*/
-		this.showUploadDatasetsDialog = function(){
-			$scope.active= 1;
-			$scope.hiddenTabs=[0];
+		this.showUploadDatasetsDialog = function(active_tab){
+			$scope.active_tab= (active_tab?active_tab:2);
+			$scope.hiddenTabs=[0,1];
 			$scope.files= $scope.files || [];
 
 			var modalInstance = $uibModal.open({

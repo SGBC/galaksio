@@ -32,7 +32,36 @@
 		};
 	});
 
+	app.directive("datasetCollectionListPanel", function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/datasets/dataset-collection-list.tpl.html'
+		};
+	});
+
+	app.directive("datasetCollectionCreatePanel", function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/datasets/dataset-collection-create-panel.tpl.html'
+		};
+	});
+
 	app.directive("datasetListInput", function() {
+		return {
+			restrict: 'E',
+			replace: true,
+			controller: 'DatasetListController',
+			template:
+			'<select class="form-control" name="input_{{step.id}}" style=" max-width: 350px; display: inline-block; margin-left: 10px; "' +
+			'        ng-model="step.inputs[0].value" ng-init="step.inputs[0].value = null"' +
+			'        ng-options="dataset.id as dataset.name for dataset in filtered = (displayedHistory.content | filter:filterDatasets) "' +
+			'        required>'+
+			'  <option disabled value=""> -- Choose a file </option>' +
+			'</select>'
+		};
+	});
+
+	app.directive("datasetCollectionListInput", function() {
 		return {
 			restrict: 'E',
 			replace: true,

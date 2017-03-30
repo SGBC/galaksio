@@ -101,6 +101,7 @@
 		<div class="progressStep" ng-if="invocation.current_step == 6">
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'sending')?'currentState':''" > <img src="css/startup.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'working')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>
+			<h1 class="workflow-state-title" ng-class="(invocation.state === 'waiting')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'success')?'currentState':''" > <img src="css/success.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'error')?'currentState':''" > <img src="css/error.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<!-- #################### -->
@@ -126,7 +127,24 @@
 				<!--  TODO: show running step-->
 				<!-- <span ng-repeat="step in invocation.steps"><b>{{step.name}}</b><b>{{step.state}}</b></span> -->
 				<p>
-					<b>Tired of waiting? </b><b>Run your workflows in background!!</b><br>
+					<b>Tired of waiting? </b><b>You can run workflows in background!!</b><br>
+					You can run several workflows in background.<br>
+					Use the tools on the topbar to check the state of your workflows and recover them.<br>
+					You will be notified as soon as your workflows finish.
+				</p>
+				<a class="btn btn-info " ui-sref="workflows()">
+					<i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
+				</a>
+			</div>
+			<!-- #################### -->
+			<!-- WAITING WORKFLOW     -->
+			<!-- #################### -->
+			<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocation.state === 'waiting'">
+				<h3>Your workflow is waiting for other steps. Please be patient...</h3>
+				<!--  TODO: show running step-->
+				<!-- <span ng-repeat="step in invocation.steps"><b>{{step.name}}</b><b>{{step.state}}</b></span> -->
+				<p>
+					<b>Tired of waiting? </b><b>You can run workflows in background!!</b><br>
 					You can run several workflows in background.<br>
 					Use the tools on the topbar to check the state of your workflows and recover them.<br>
 					You will be notified as soon as your workflows finish.

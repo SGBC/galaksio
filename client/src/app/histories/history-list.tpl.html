@@ -52,18 +52,28 @@
 			<a class="btn btn-success btn-sm navbar-right" ng-hide="displayedHistory === currentHistory" ng-click="controller.setCurrentHistory(displayedHistory)">
 				<i class="fa fa-exchange fa-fw" ></i> Switch to this history
 			</a>
-			<a class="btn btn-primary btn-sm navbar-right" ng-hide="displayedHistory !== currentHistory" ng-click="controller.showUploadDatasetsDialog();">
+			<a class="btn btn-primary btn-sm navbar-right" ng-hide="displayedHistory !== currentHistory || active !== 0" ng-click="controller.showUploadDatasetsDialog();">
 				<i class="fa fa-upload fa-fw" ></i> Upload new files
 			</a>
+			<a class="btn btn-primary btn-sm navbar-right" ng-hide="displayedHistory !== currentHistory || active !== 1" ng-click="controller.showUploadDatasetsDialog(3);">
+				<i class="fa fa-upload fa-fw" ></i> Manage collections
+			</a>
 			<p><b>History name: </b>{{displayedHistory.name}}</p>
-			<p><input type="checkbox" ng-model="showDeleted"</input> Show hidden and deleted datasets</p>
-			<dataset-list-panel></dataset-list-panel>
+			<uib-tabset active="active">
+				<uib-tab index="0" heading="Datasets" >
+					<p style="margin: 10px 15px;"><input type="checkbox" ng-model="showDeleted"</input> Show hidden and deleted datasets</p>
+					<dataset-list-panel></dataset-list-panel>
+				</uib-tab>
+				<uib-tab index="1" heading="Collections" >
+					<p style="margin: 10px 15px;"><input type="checkbox" ng-model="showDeleted"</input> Show hidden and deleted collections</p>
+					<dataset-collection-list-panel ></dataset-collection-list-panel>
+				</uib-tab>
+			</div>
 		</div>
+		<!-- child of the body tag -->
+		<span id="top-link-block" class="hidden">
+			<a href="#top" class="well well-sm" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
+				<i class="glyphicon glyphicon-chevron-up"></i> Back to Top
+			</a>
+		</span><!-- /top-link-block -->
 	</div>
-	<!-- child of the body tag -->
-	<span id="top-link-block" class="hidden">
-		<a href="#top" class="well well-sm" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
-			<i class="glyphicon glyphicon-chevron-up"></i> Back to Top
-		</a>
-	</span><!-- /top-link-block -->
-</div>

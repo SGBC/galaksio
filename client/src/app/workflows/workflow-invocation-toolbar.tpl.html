@@ -16,6 +16,14 @@
 			<span class="job-number">{{done}}</span>
 			<span class="job-status-cat-title">Done</span>
 		</span>
+		<span class="job-status-cat" ng-show="waiting > 0">
+			<span class="fa-stack" style="font-size: 12px;">
+				<i class="fa fa-square fa-stack-2x" style="color:#666666;"></i>
+				<i class="fa fa-pause fa-fw fa-stack-1x fa-inverse"></i>
+			</span>
+			<span class="job-number">{{waiting}}</span>
+			<span class="job-status-cat-title">Waiting</span>
+		</span>
 		<span class="job-status-cat" ng-show="erroneous > 0">
 			<span class="fa-stack" style="font-size: 12px;">
 				<i class="fa fa-square fa-stack-2x" style="color:#de2b2b;"></i>
@@ -36,6 +44,7 @@
 					<span ng-if="invocation.state === 'working'" class="label label-primary">{{invocation.state}}</span>
 					<span ng-if="invocation.state === 'success'" class="label label-success">{{invocation.state}}</span>
 					<span ng-if="invocation.state === 'error'" class="label label-danger">{{invocation.state}}</span>
+					<span ng-if="invocation.state === 'waiting'" class="label label-default">{{invocation.state}}</span>
 				</td>
 				<td>
 					<a style="font-size:12px; cursor:pointer" ng-click="controller.recoverWorkflowInvocation(invocation)">

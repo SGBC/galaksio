@@ -1,0 +1,189 @@
+<div class="" ng-controller="DatasetCollectionController as controller" ng-init="step=0">
+	<div>
+		<div class="row">
+			<div ng-show="step === 0" class="col-sm-12">
+				<div class="well">
+					<b><i class="fa fa-info-circle"></i> About dataset collections</b>
+					<p>When you have just a few samples - clicking through them is easy. But once you've got hundreds - it becomes very annoying. Galaxy includes <b>Dataset collections</b> that allow you to combine numerous datasets in a single entity that can be easily manipulated.</p>
+					<p>In order to create a new dataset collection, choose the type and a name for the new collection, and follow the steps.
+				</div>
+				<div class="form-group"  style="width: 600px;">
+					<label class="col-sm-5 control-label"  style="text-align:right;">Collection type: </label>
+					<div class="col-sm-7">
+						<select class="form-control" ng-model="collection_type">
+							<option value="list">Dataset list</option>
+							<option value="paired">Dataset pair</option>
+							<option value="list:paired">List of Dataset pairs</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group" style="width: 600px;">
+					<label class="col-sm-5 control-label" style="text-align:right;">Name for the collection: </label>
+					<div class="col-sm-7">
+						<input ng-model="collection_name" class="form-control" type="text" required>
+					</div>
+				</div>
+			</div>
+			<div ng-show="step === 1" class="col-sm-6" >
+				<h3 style="text-align: center;">Step 1. Select datasets</h3>
+				<div style="height:420px;overflow:auto;">
+					<table style="width:100%;">
+						<tbody>
+							<tr>
+								<td style="padding-right: 10px;">
+									<table class="table datasetsTable" style="margin-bottom: 0;">
+										<tbody>
+											<tr>
+												<th style="width:30px;"></th>
+												<th>File name</th>
+												<th style="width:150px;">Extension</th>
+											</tr>
+										</tbody></table>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div style="height:370px;overflow:auto;">
+											<table class="table datasetsTable">
+												<tbody>
+													<tr ng-if="(displayedHistory.content !== undefined && displayedHistory.content.length === 0)">
+														<td colspan="4" style="text-align:center;"><i>No data</i></td>
+													</tr>
+													<tr ng-repeat="dataset in filtered = (displayedHistory.content | filter:filterDatasets | filter:filterSelectedDatasets) | orderBy:'-' ">
+														<td class="clickable" ng-click="controller.addSelectedDatasetHandler(dataset);" style="width:30px; text-align:center;">
+															<i class="fa fa-plus" aria-hidden="true"></i>
+														</td>
+														<td style="text-align:left; max-width:250px;word-wrap: break-word;">{{dataset.name}}</td>
+														<td style="width:150px;">{{dataset.extension}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div ng-show="step === 1 || step === 2 || (step === 4 && collection_type==='list')" class="col-sm-6">
+					<h3 style="text-align: center;">Step 2. Confirm selection</h3>
+					<div style="height:420px;overflow:auto;">
+						<table style="width:100%;">
+							<tbody>
+								<tr>
+									<td style="padding-right: 10px;">
+										<table class="table datasetsTable" style="margin-bottom: 0;">
+											<tbody>
+												<tr>
+													<th style="width:30px;"></th>
+													<th>File name</th>
+													<th style="width:150px;">Extension</th>
+												</tr>
+											</tbody></table>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div style="height:370px;overflow:auto;">
+												<table class="table datasetsTable">
+													<tbody>
+														<tr ng-if="(selectedDatasets === undefined || selectedDatasets.length === 0)">
+															<td colspan="4" style="text-align:center;"><i>No data</i></td>
+														</tr>
+														<tr ng-repeat="dataset in selectedDatasets| orderBy:'-'">
+															<td class="clickable" ng-click="controller.removeSelectedDatasetHandler(dataset);" style="width:30px; text-align:center;">
+																<i class="fa fa-times" aria-hidden="true"></i>
+															</td>
+															<td ui-draggable="true" drag="dataset" style="text-align:left; max-width:250px;word-wrap: break-word;">{{dataset.name}}</td>
+															<td style="width:150px;">{{dataset.extension}}</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div ng-show="step === 2 || (step === 4 && collection_type!=='list')" class="col-sm-6" >
+						<h3 style="text-align: center;">Step 3. Create the pairs</h3>
+						<div style="height:420px;overflow:auto;text-align:center;">
+							<a ng-show="step === 2" class="btn btn-primary btn-lg clickable" ng-click="controller.addNewPairToCollectionHandler();">
+								<i class="fa fa-plus" aria-hidden="true"></i> Add new pair
+							</a>
+							<div ng-repeat="pair in pairs | orderBy:'-'" class="collection-pair-box">
+								<div class="row">
+									<div style="height: 30px;text-align: right;padding-right: 18px;">
+										<i class="fa fa-times text-danger clickable" ng-click="controller.removePair(pair)" aria-hidden="true"></i>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-5 control-label" style="line-height: 30px;">Name for the pair: </label>
+										<div class="col-sm-7">
+											<input ng-model="pair.name" class="form-control" type="text" required>
+										</div>
+									</div>
+								</div>
+								<div class="row" style=" margin-top: 10px; ">
+									<div class="col-sm-6">
+										<b>Forward</b>
+										<div class="well" style="margin-top: 6px;font-size: 10px;overflow: hidden;" ng-class="pair.forward?'well-success':'well-danger'" ui-on-Drop="controller.setPairComponent(pair, 'forward', $data)" >
+											<span ng-show="pair.forward === undefined">Drag here a dataset</span>
+											<div ng-show="pair.forward !== undefined">
+												<i class="fa fa-trash text-danger clickable" ng-click="controller.removePairComponent(pair, 'forward')" aria-hidden="true"></i> {{pair.forward.name}}
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<b>Reverse:</b>
+										<div class="well" style="margin-top: 6px;font-size: 10px;overflow: hidden;" ng-class="pair.reverse?'well-success':'well-danger'" ui-on-Drop="controller.setPairComponent(pair, 'reverse', $data)">
+											<span ng-show="pair.reverse === undefined">Drag here a dataset</span>
+											<div ng-show="pair.reverse !== undefined">
+												<i class="fa fa-trash text-danger clickable" ng-click="controller.removePairComponent(pair, 'reverse')" aria-hidden="true"></i> {{pair.reverse.name}}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div ng-show="step === 4" class="col-sm-6" >
+						<h3 style="text-align: center;">Confirm creation</h3>
+						<div style="height:420px;overflow:auto;text-align:center;">
+							<div ng-show="collection_type==='list'">
+								<b>Please, confirm that you want to create a new list of datasets with the title <i>"{{collection_name}}"</i></b>
+								<p>The list contains {{selectedDatasets.length}} datasets</p>
+							</div>
+							<div ng-show="collection_type==='paired'">
+								<b>Please, confirm that you want to create {{pairs.length}} separated pairs of datasets.</b>
+							</div>
+							<div ng-show="collection_type==='list:paired'">
+								<b>Please, confirm that you want to create a new list of paired datasets with the title <i>"{{collection_name}}</i>.</b>
+								<p>The list will contain {{pairs.length}} pairs of datasets</p>
+							</div>
+							<div>
+								<a class="btn btn-success btn-lg clickable" ng-click="controller.createNewCollectionHandler()">
+									<i class="fa fa-check" aria-hidden="true"></i> Yes, create the collection!
+								</a>
+							</div>
+							<div style="margin-top: 10px;">
+								<a class="btn btn-default clickable" ng-click="step=(collection_type==='list'?1:2)">
+									<i class="fa fa-angle-left" aria-hidden="true"></i> Go back
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12" style="text-align:center; margin-top: 20px;" >
+						<a ng-show="step > 0 && step < 4" class="btn btn-default clickable" ng-click="step=step - 1">
+							<i class="fa fa-angle-left" aria-hidden="true"></i> Go back
+						</a>
+						<a ng-show="(step === 0 && collection_type !== undefined && collection_name !==undefined) || (step === 1 && collection_type!=='list')" class="btn btn-primary clickable" ng-click="step=step + 1">
+							<i class="fa fa-check" aria-hidden="true" ng-disabled="selectedDatasets.length === 0"></i> Go to next step
+						</a>
+						<a ng-show="(step === 1 && collection_type==='list' || step === 2)" class="btn btn-success clickable" ng-click="step=4">
+							<i class="fa fa-check" aria-hidden="true"></i> Create the collection
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
