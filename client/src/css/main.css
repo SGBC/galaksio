@@ -593,6 +593,10 @@ table.workflow-summary-step th {
 	color: #fff;
 }
 
+table.table td.job-status-cat {
+    text-align: left;
+}
+
 .job-status-cat .job-number{
 	position: absolute;
 	margin-left: -11px;
@@ -632,8 +636,11 @@ table.datasetsTable>tbody>tr>td:nth-child(1) {color: #9a9a9a;}
 tr.deletedDataset,tr.hiddenDataset {
 	color: #a7a7a7;
 }
-tr.deletedDataset {
+tr.deletedDataset td{
 	text-decoration: line-through;
+}
+tr.deletedDataset td:nth-child(4) {
+	text-decoration: none;
 }
 tr.selectedDataset {
 	background-color: #d9edf7;

@@ -155,10 +155,13 @@
 		};
 
 		this.getDownloadLink = function(dataset_url){
-			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
-			dataset_url.replace(fullpath,"");
-			dataset_url = $scope.GALAXY_SERVER_URL + dataset_url;
-			return dataset_url + '/display';
+			if(dataset_url !== undefined){
+				var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+				dataset_url.replace(fullpath,"");
+				dataset_url = $scope.GALAXY_SERVER_URL + dataset_url;
+				return dataset_url + '/display';
+			}
+			return "javascript:void(0)";
 		};
 
 		$scope.getCollectionType = function(collection){
@@ -279,7 +282,7 @@
 			}
 			var name = $scope.collection_name;
 			if($scope.collection_type === 'paired'){
-					name = datalist[i][0].name;
+				name = datalist[i][0].name;
 			}
 			$http($rootScope.getHttpRequestConfig("POST", "dataset-collection-create", {
 				data: {
