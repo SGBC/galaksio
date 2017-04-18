@@ -24,7 +24,7 @@
 */
 (function(){
 	var app = angular.module('workflows.controllers.workflow-list', [
-		'common.dialogs',
+		'ang-dialogs',
 		'angular.backtop',
 		'workflows.services.workflow-list',
 		'workflows.directives.workflow-card'

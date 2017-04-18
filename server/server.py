@@ -82,7 +82,7 @@ class Application(object):
         #    \_____/_/    \_\______/_/    \_\/_/ \_\   |_|    /_/    \_\_|   |_____|
         #
         #******************************************************************************************
-        @self.app.route(SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE'])
+        @self.app.route(SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE', 'PUT'])
         def forward_request(service, method = None):
             # STEP 1. Read requests auth params
             auth = None

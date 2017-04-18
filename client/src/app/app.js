@@ -1,7 +1,7 @@
 (function() {
 
 	var app = angular.module('b3galaxyApp', [
-		'common.dialogs',
+		'ang-dialogs',
 		'ui.router',
 		'angular-toArrayFilter',
 		'users.directives.user-session',
@@ -12,15 +12,9 @@
 		'admin.controllers.setting-list'
 	]);
 
-	var pathname = window.location.pathname.split("/");
-	if(pathname.length > 1 && pathname[1] !== "" && pathname[1].indexOf(".html") === -1){
-			pathname = pathname[1] + "/";
-	}else{
-			pathname = "";
-	}
 	app.constant('myAppConfig', {
 		VERSION: '0.2.3',
-		GALAKSIO_SERVER : "/"  + pathname
+		GALAKSIO_SERVER : "/"  + getPathname()
 	});
 
 	//Define the events that are fired in the APP
@@ -139,8 +133,10 @@
 				return myAppConfig.GALAKSIO_SERVER + "api/tools/" + extra + "/build";
 				case "datasets-list":
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra + "/contents";
+				// case "dataset-details":
+				// return myAppConfig.GALAKSIO_SERVER + "api/datasets/" + extra[0];
 				case "dataset-details":
-				return myAppConfig.GALAKSIO_SERVER + "api/datasets/" + extra[0];
+				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra[0] + "/contents/" + extra[1];
 				case "dataset-collection-create":
 				return myAppConfig.GALAKSIO_SERVER + "api/dataset_collections/" + extra;
 				case "dataset-collection-details":
@@ -182,7 +178,8 @@
 				headers: options.headers,
 				url: $rootScope.getRequestPath(service, options.extra),
 				params: options.params,
-				data: options.data
+				data: options.data,
+				withCredentials : (options.withCredentials === true)
 			};
 			if(options.transformRequest !== undefined){
 				requestData.transformRequest = options.transformRequest;
@@ -218,6 +215,7 @@
 		};
 
 		this.getPageTitle  = function(page){
+			debugger
 			return
 		};
 
@@ -252,8 +250,9 @@
 		*
 		******************************************************************************/
 		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
+			debugger
 			$http($rootScope.getHttpRequestConfig("GET", "check-is-admin", {
-				headers: {'Content-Type': 'application/json; charset=utf-8'}
+				headers: {'Content-Type': 'application/json; charset=utf-8'},
 			})).then(
 				function successCallback(response){
 					if(response.data.success){

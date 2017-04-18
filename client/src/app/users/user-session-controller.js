@@ -24,7 +24,7 @@
 */
 (function(){
 	var app = angular.module('users.controllers.user-session', [
-		'common.dialogs',
+		'ang-dialogs',
 		'ui.router',
 	]);
 
@@ -45,10 +45,10 @@
 					$scope.userInfo.email = response.data.email;
 					$scope.userInfo.username = response.data.username;
 					$scope.userInfo.disk_usage = response.data.nice_total_disk_usage;
-					Cookies.remove("galaxyusername", {path: window.location.pathname});
-					Cookies.set("galaxyusername", $scope.userInfo.username, {expires : 1, path: window.location.pathname});
-					Cookies.remove("galaxyuser", {path: window.location.pathname});
-					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});				
+					Cookies.remove("galaxyusername", {path: getPathname()});
+					Cookies.set("galaxyusername", $scope.userInfo.username, {expires : 1, path: getPathname()});
+					Cookies.remove("galaxyuser", {path: getPathname()});
+					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: getPathname()});
 				},
 				function errorCallback(response){
 					debugger;
@@ -63,7 +63,6 @@
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
 		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
-			debugger
 			$scope.userInfo.email = Cookies.get("galaxyuser");
 		});
 
@@ -86,13 +85,13 @@
 				)).then(
 					function successCallback(response){
 						//CLEAN PREVIOUS COOKIES
-						Cookies.remove("galaxyuser", {path: window.location.pathname});
-						Cookies.remove("galaksiosession", {path: window.location.pathname});
-						Cookies.remove("current-history", {path: window.location.pathname});
+						Cookies.remove("galaxyuser", {path: getPathname()});
+						Cookies.remove("galaksiosession", {path: getPathname()});
+						Cookies.remove("current-history", {path: getPathname()});
 
 						//SET THE COOKIES
-						Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: window.location.pathname});
-						Cookies.set("galaksiosession", btoa(response.data.api_key), {expires : 1, path: window.location.pathname});
+						Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: getPathname()});
+						Cookies.set("galaksiosession", btoa(response.data.api_key), {expires : 1, path: getPathname()});
 
 						$scope.userInfo.email = Cookies.get("galaxyuser");
 						delete $scope.userInfo.password
@@ -160,10 +159,10 @@
 		};
 
 		this.signOutButtonHandler = function () {
-			Cookies.remove("galaxyuser", {path: window.location.pathname});
-			Cookies.remove("galaksiosession", {path: window.location.pathname});
-			Cookies.remove("current-history", {path: window.location.pathname});
-			Cookies.remove("galaxyusername", {path: window.location.pathname});
+			Cookies.remove("galaxyuser", {path: getPathname()});
+			Cookies.remove("galaksiosession", {path: getPathname()});
+			Cookies.remove("current-history", {path: getPathname()});
+			Cookies.remove("galaxyusername", {path: getPathname()});
 			sessionStorage.removeItem("workflow_invocations");
 			delete $scope.userInfo.email;
 			$state.go('signin');

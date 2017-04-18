@@ -38,17 +38,18 @@
 		</div>
 		<div class="col-md-6" ng-controller="WorkflowInvocationListController as controller">
 			<div class="panel panel-container">
-				<h4>Workflow queue</h4>
+				<h4>Workflow invocations</h4>
 				<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocations.length === 0">
 					<h5><i>Whoops! Looks like there are no workflows in the queue.</i></h5>
 					<button class="btn btn-info " ui-sref="workflows()">
 						<i class="fa fa-sign-out fa-fw"></i>Let's run some workflows!
 					</button>
 				</div>
-				<table class="table" style="width:100%" ng-show="invocations.length > 0">
-					<tr><th>Workflow name</th><th style="width:80px">State</th><th style="width:110px;">Tools</th></tr>
-					<tr ng-repeat="invocation in invocations track by $index" >
+				<table class="table" style="width:100%" ng-show="invocations.length > 0" ng-init="maxInvocations=2">
+					<tr><th>Workflow name</th><th style="width:90px">Date</th><th style="width:90px">State</th><th style="width:110px;">Tools</th></tr>
+					<tr ng-repeat="invocation in invocations | limitTo:maxInvocations track by $index " >
 						<td>{{invocation.workflow_title}}</td>
+						<td style=" font-size: 10px; ">{{adaptInvocationDate(invocation.update_time)}}</td>
 						<td class="job-status-cat"  ng-if="invocation.state === 'success'">
 							<span class="fa-stack" style="font-size: 12px;">
 								<i class="fa fa-square fa-stack-2x" style="color:#00b353;"></i>
@@ -84,6 +85,13 @@
 							</span>
 							<span class="job-status-cat-title">Failed</span>
 						</td>
+						<td  class="job-status-cat" ng-if="['error', 'waiting', 'working', 'sending', 'success'].indexOf(invocation.state) === -1">
+							<span class="fa-stack" style="font-size: 12px;">
+								<i class="fa fa-square fa-stack-2x" style="color:#dedede;"></i>
+								<i class="fa fa-question fa-fw fa-stack-1x fa-inverse"></i>
+							</span>
+							<span class="job-status-cat-title">Unknown</span>
+						</td>
 						<td style="font-size:10px; vertical-align:middle;">
 							<a class="clickable" ng-click="controller.recoverWorkflowInvocation(invocation)">
 								<i class="fa fa-undo" aria-hidden="true"></i> Recover
@@ -95,6 +103,9 @@
 					</tr>
 				</table>
 				<div style="text-align: center; padding: 10px;" ng-show="invocations.length > 0">
+					<button ng-show="invocations.length > maxInvocations" class="btn btn-default" ng-click="maxInvocations = maxInvocations + 5;">
+						<i class="fa fa-plus fa-fw"></i>Show more invocations
+					</button>
 					<button class="btn btn-info " ui-sref="workflows()">
 						<i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
 					</button>

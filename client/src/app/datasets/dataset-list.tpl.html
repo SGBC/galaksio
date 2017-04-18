@@ -23,13 +23,13 @@
 		<td style="text-align:left; max-width:250px;word-wrap: break-word;">{{dataset.name}}</td>
 		<td>{{dataset.extension}}</td>
 		<td style="vertical-align:middle; text-align:center; font-size:10px;">
-			<a href="{{controller.getDownloadLink(dataset.url)}}" target="_blank" download="{{dataset.name + '.' + dataset.extension}}">
+			<a href="{{controller.getDownloadLink(dataset.url) + '?to_ext=' + dataset.extension}}">
 				<i class="fa fa-download"></i> Download
 			</a>
-			<a class="clickable text-danger" style="margin-left:10px" ng-show="dataset.deleted === false" ng-click="controller.removeSelectedDatasetHandler(invocation)">
+			<a class="clickable text-danger" style="margin-left:10px" ng-show="dataset.deleted === false" ng-click="controller.deleteSelectedDatasetHandler(dataset)">
 				<i class="fa fa-trash" aria-hidden="true"></i> Delete
 			</a>
-			<a class="clickable text-info" style="margin-left:10px" ng-show="dataset.deleted === true" ng-click="controller.removeSelectedDatasetHandler(invocation)">
+			<a class="clickable text-info" style="margin-left:10px" ng-show="dataset.deleted === true" ng-click="controller.undeleteSelectedDatasetHandler(dataset)">
 				<i class="fa fa-undo" aria-hidden="true"></i> Undelete
 			</a>
 		</td>

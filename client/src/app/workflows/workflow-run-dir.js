@@ -29,7 +29,7 @@
 */
 (function(){
 	var app = angular.module('workflows.directives.workflow-run', [
-		'common.dialogs'
+		'ang-dialogs'
 	]);
 
 	/***************************************************************************/

@@ -56,7 +56,7 @@
       '          </button>' +
       '          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">' +
       '            <li class="dropdown-header">Signed in as <b>{{userInfo.email}}</b></li>' +
-      '            <li><a ng-click="controller.signOutButtonHandler()">Sign out</a></li>' +
+      '            <li><a class="clickable" ng-click="controller.signOutButtonHandler()">Sign out</a></li>' +
       // '            <li role="separator" class="divider"></li>' +
       // '            <li><a href="' + GALAXY_SERVER_URL + '" target="_blank">Go to Galaxy site</a></li>' +
       '          </ul>' +

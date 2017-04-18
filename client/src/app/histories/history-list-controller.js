@@ -25,7 +25,7 @@
 (function(){
 	var app = angular.module('histories.controllers.history-list', [
 		'ui.bootstrap',
-		'common.dialogs',
+		'ang-dialogs',
 		'ui.router',
 		'histories.services.history-list',
 		'histories.directives.history-list'
@@ -81,9 +81,9 @@
 		*/
 		this.setCurrentHistory = function(history){
 			$scope.currentHistory = history;
-			Cookies.remove("current-history", {path: window.location.pathname});
+			Cookies.remove("current-history", {path: getPathname()});
 			//GET THE COOKIE
-			Cookies.set("current-history", history.id, {expires : 1, path: window.location.pathname});
+			Cookies.set("current-history", history.id, {expires : 1, path: getPathname()});
 			return this;
 		};
 

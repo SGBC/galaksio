@@ -26,7 +26,7 @@
 (function(){
 	var app = angular.module('datasets.controllers.dataset-list', [
 		'ui.bootstrap',
-		'common.dialogs',
+		'ang-dialogs',
 		'datasets.dataset-list',
 		'ang-drag-drop'
 	]);
@@ -100,6 +100,54 @@
 			);
 		};
 
+		this.deleteSelectedDatasetHandler = function(dataset){
+			$scope.isLoading = true;
+			$http($rootScope.getHttpRequestConfig("DELETE", "dataset-details", {
+				extra: [$scope.currentHistory.id, dataset.id]})
+			).then(
+				function successCallback(response){
+					$scope.isLoading = false;
+					$rootScope.$broadcast(APP_EVENTS.historyChanged);
+				},
+				function errorCallback(response){
+					$scope.isLoading = false;
+
+					debugger;
+					var message = "Failed while deleting the dataset.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at DatasetListController:deleteSelectedDatasetHandler."
+					});
+					console.error(response.data);
+				}
+			);
+		};
+
+
+		this.undeleteSelectedDatasetHandler = function(dataset){
+			$scope.isLoading = true;
+			dataset.deleted=false;
+			$http($rootScope.getHttpRequestConfig("PUT", "dataset-details", {
+				extra: [$scope.currentHistory.id, dataset.id],
+				data: {deleted:false}
+			})).then(
+				function successCallback(response){
+					$scope.isLoading = false;
+					$rootScope.$broadcast(APP_EVENTS.historyChanged);
+				},
+				function errorCallback(response){
+					$scope.isLoading = false;
+
+					debugger;
+					var message = "Failed while undeleting the dataset.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at DatasetListController:undeleteSelectedDatasetHandler."
+					});
+					console.error(response.data);
+				}
+			);
+		};
+
+
 		this.getDatasetCollectionDetailsHandler = function(dataset){
 			$scope.isLoading = true;
 			this.setSelectedDatasetHandler(dataset);
@@ -149,6 +197,7 @@
 			delete $scope.active_tab;
 			$scope.$close($scope.selectedDataset);
 		};
+
 		this.datasetSelectorCancelButtonHandler = function(){
 			delete $scope.active_tab;
 			$scope.$dismiss('cancel');

@@ -25,7 +25,7 @@
 (function(){
 	var app = angular.module('admin.controllers.setting-list', [
 		'ui.bootstrap',
-		'common.dialogs',
+		'ang-dialogs',
 		'ui.router'
 	]);
 

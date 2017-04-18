@@ -26,7 +26,7 @@
 */
 (function(){
 	var app = angular.module('workflows.controllers.workflow-run', [
-		'common.dialogs',
+		'ang-dialogs',
 		'ui.bootstrap',
 		'ui.router',
 		'ngSanitize',
@@ -479,10 +479,64 @@
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
+		this.getInvocationsHandler = function(){
+
+			var recoverInvocations = function(i, workflows, _invocations){
+				_invocations = _invocations || [];
+
+				if(i === workflows.length){
+					WorkflowInvocationList.setInvocations(_invocations).saveInvocations();
+					$scope.invocations = WorkflowInvocationList.recoverInvocations().getInvocations();
+					$scope.isLoading = false;
+					return;
+				}
+
+				$http($rootScope.getHttpRequestConfig("GET", "workflow-run",{
+					extra: workflows[i].id
+				})).then(
+					function successCallback(response){
+						for(var k in response.data){
+							response.data[k].workflow_title = workflows[i].name;
+							_invocations.push(response.data[k]);
+						}
+						recoverInvocations(i+1, workflows, _invocations);
+					},
+					function errorCallback(response){
+						$scope.isLoading = false;
+
+						debugger;
+						var message = "Failed while retrieving the workflows list.";
+						$dialogs.showErrorDialog(message, {
+							logMessage : message + " at DatasetListController:getInvocationsHandler."
+						});
+						console.error(response.data);
+					}
+				);
+			};
+
+			$scope.isLoading = true;
+			$http($rootScope.getHttpRequestConfig("GET", "workflow-list")).then(
+				function successCallback(response){
+					var workflows = response.data;
+					WorkflowInvocationList.clearInvocations();
+					recoverInvocations(0, workflows);
+				},
+				function errorCallback(response){
+					$scope.isLoading = false;
+					debugger;
+					var message = "Failed while retrieving the workflows list.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at DatasetListController:getInvocationsHandler."
+					});
+					console.error(response.data);
+				}
+			);
+		};
+
 		this.checkInvocationsState = function(){
 			// debugger
 			var invocations = WorkflowInvocationList.getInvocations();
-			var running = 0, erroneous = 0, done = 0, waiting=0;
+			var running = 0, erroneous = 0, done = 0, waiting=0; unknown = 0;
 			for(var i in invocations){
 				if(invocations[i].state == "working"){
 					running++;
@@ -496,8 +550,6 @@
 					waiting++;
 				}else if(invocations[i].state == "failed"){
 					erroneous++;
-				}else{
-					debugger;
 				}
 			}
 
@@ -558,8 +610,8 @@
 							invocation.state = "working";
 							invocation.state_text = "Running your workflow...";
 						}else if(waitingSteps > 0 || queuedSteps > 0){
-								invocation.state = "waiting";
-								invocation.state_text = "Running your workflow...";
+							invocation.state = "waiting";
+							invocation.state_text = "Running your workflow...";
 						}else if(erroneousSteps > 0){
 							//TODO: show summary of results
 							invocation.state = "error";
@@ -586,7 +638,6 @@
 				'invocation_id': invocation.id
 			});
 		};
-
 
 		this.removeWorkflowInvocation = function(invocation){
 			var pos = $scope.invocations.indexOf(invocation);
@@ -628,8 +679,9 @@
 		};
 
 		this.recoverWorkflowResultStepOutputDetails = function(invocation, step, output){
+			debugger
 			$http($rootScope.getHttpRequestConfig("GET", "dataset-details", {
-				extra: [output.id]
+				extra: [invocation.history_id, output.id]
 			})).then(
 				function successCallback(response){
 					output.name = response.data.name;
@@ -647,19 +699,20 @@
 			);
 		};
 
+		$scope.adaptInvocationDate = function(date){
+			return date.substring(0,10) + " " + date.substring(11,16);
+		};
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
-		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
-			WorkflowInvocationList.recoverInvocations();
+		$scope.$on(APP_EVENTS.logoutSuccess, function (event, args) {
+			WorkflowInvocationList.clearInvocations();
 		});
 
 		$scope.$on('$destroy', function () {
 			console.log("Removing interval");
 			$interval.cancel(me.checkInvocationInterval);
 		});
-
-
 
 		//--------------------------------------------------------------------
 		// INITIALIZATION
@@ -670,6 +723,9 @@
 		//and update its content after the http response
 
 		$scope.invocations = WorkflowInvocationList.recoverInvocations().getInvocations();
+		if($scope.invocations.length === 0){
+			me.getInvocationsHandler();
+		}
 		$scope.running = 0;
 		$scope.done = 0;
 		$scope.erroneous = 0;
@@ -679,5 +735,6 @@
 		me.checkInvocationsState();
 		//Start the interval that checks the state of the invocation
 		me.checkInvocationInterval = $interval(me.checkInvocationsState, 5000);
+
 	});
 })();

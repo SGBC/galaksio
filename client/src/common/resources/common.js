@@ -18,3 +18,13 @@ Object.values = function (o) {
         return o[k];
     });
 };
+
+function getPathname(){
+	var pathname = window.location.pathname.split("/");
+	if(pathname.length > 1 && pathname[1] !== "" && pathname[1].indexOf(".html") === -1){
+			pathname = pathname[1] + "/";
+	}else{
+			pathname = "";
+	}
+	return pathname;
+}

@@ -36,8 +36,8 @@
 	<div class="panel" ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-show="showPanel === true">
 		<table style="width:100%">
 			<tr><th>Workflow name</th><th>State</th><th style="width:75px;">Recover</th></tr>
-			<tr ng-show="invocations.length === 0"><td colspan="2">No data</td></tr>
-			<tr ng-repeat="invocation in invocations track by $index" >
+			<tr ng-show="invocations.length === 0"><td colspan="3">No data</td></tr>
+			<tr ng-repeat="invocation in invocations | limitTo:5 track by $index " >
 				<td>{{invocation.workflow_title}}</td>
 				<td>
 					<span ng-if="invocation.state === 'sending'" class="label label-default">{{invocation.state}}</span>
@@ -52,6 +52,7 @@
 					</a>
 				</td>
 			</tr>
+			<tr ng-show="invocations.length > 5"><td colspan="3"  style="padding-top:10px;text-align: center;"><a ui-sref="home()">Show more invocations</a></td></tr>
 		</table>
 	</div>
 </div>

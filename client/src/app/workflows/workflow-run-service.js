@@ -23,62 +23,65 @@
 *
 */
 (function(){
-  var app = angular.module('workflows.services.workflow-run', []);
+	var app = angular.module('workflows.services.workflow-run', []);
 
-  app.factory("WorkflowInvocationList", function() {
-    var invocations = [];
+	app.factory("WorkflowInvocationList", function() {
+		var invocations = [];
 
-    return {
-      getInvocations: function() {
-        return invocations;
-      },
-      setInvocations: function(_invocations) {
-        invocations = _invocations;
-        return this;
-      },
-      saveInvocations: function() {
-        sessionStorage.workflow_invocations = JSON.stringify(invocations);
-        return this;
-      },
-      recoverInvocations: function() {
-        try {
-          invocations = JSON.parse(sessionStorage.workflow_invocations);
-        } catch (e) {
-          invocations = [];
-        }
+		return {
+			getInvocations: function() {
+				return invocations;
+			},
+			setInvocations: function(_invocations) {
+				invocations = _invocations;
+				return this;
+			},
+			saveInvocations: function() {
+				sessionStorage.workflow_invocations = JSON.stringify(invocations);
+				return this;
+			},
+			recoverInvocations: function() {
+				try {
+					invocations = JSON.parse(sessionStorage.workflow_invocations);
+				} catch (e) {
+					invocations = [];
+				}
 
-        return this;
-      },
-      addInvocation: function(_invocation) {
-        debugger
-        invocations.push(_invocation);
-        return this;
-      },
-      updateInvocation: function(_invocation) {
-        for(var i in invocations){
-          if(invocations[i].id === _invocation.id){
-            invocations[i] = _invocation;
-            break;
-          }
-        }
-        return this;
-      },
-      getInvocation: function(invocation_id) {
-        for(var i in invocations){
-          if(invocations[i].id === invocation_id){
-            return invocations[i];
-          }
-        }
-        return null;
-      },
-      getNewInvocation: function() {
-        return {
-          id: '',
-          workflow_id: '',
-          workflow_title: '',
-          current_step : 1
-        };
-      },
-    };
-  });
+				return this;
+			},
+			clearInvocations: function() {
+				invocations = [];
+				return this;
+			},
+			addInvocation: function(_invocation) {
+				invocations.push(_invocation);
+				return this;
+			},
+			updateInvocation: function(_invocation) {
+				for(var i in invocations){
+					if(invocations[i].id === _invocation.id){
+						invocations[i] = _invocation;
+						break;
+					}
+				}
+				return this;
+			},
+			getInvocation: function(invocation_id) {
+				for(var i in invocations){
+					if(invocations[i].id === invocation_id){
+						return invocations[i];
+					}
+				}
+				return null;
+			},
+			getNewInvocation: function() {
+				return {
+					id: '',
+					workflow_id: '',
+					workflow_title: '',
+					current_step : 1
+				};
+			},
+		};
+	});
 })();
