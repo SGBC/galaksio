@@ -1,4 +1,4 @@
-#Galaksio
+# Galaksio
 > An easy to use GUI for running Galaxy workflows.
 
 Galaksio is a web application that simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.org/).
