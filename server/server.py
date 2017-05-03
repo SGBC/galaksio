@@ -176,7 +176,7 @@ class Application(object):
             else:
                 isAdmin=True
             if isAdmin:
-                return AdminFunctions.getSettingsList(request, Response(), self.ROOT_DIRECTORY).getResponse()
+                return AdminFunctions.getSettingsList(request, Response(), self.ROOT_DIRECTORY, self.isFirstLaunch).getResponse()
             return Response().setContent({"success": False}).setStatus(401).getResponse()
 
         @self.app.route(SERVER_SUBDOMAIN + '/admin/update-settings', methods=['OPTIONS', 'POST'])

@@ -18,7 +18,7 @@
 	<!-- ************************************************************* -->
 	<!-- WORKFLOW DESCRIPTION -->
 	<!-- ************************************************************* -->
-	<div class="panel panel-container" ng-if="invocation.current_step == 1">
+	<div class="panel panel-container" ng-show="invocation.current_step == 1">
 		<h4>Details</h4>
 		<p><b>Author: </b>{{workflow.owner}}</p>
 		<p><b>Description: </b>{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</p>
@@ -37,7 +37,7 @@
 	<!-- ************************************************************* -->
 	<!-- HISTORY SELECTION -->
 	<!-- ************************************************************* -->
-	<div ng-if="invocation.current_step == 2" ng-show="invocation.valid= true">
+	<div ng-show="invocation.current_step == 2" ng-show="invocation.valid= true">
 		<div class="panel panel-container" >
 			<h3>History selection</h3>
 			<p class="description">
@@ -50,7 +50,7 @@
 		<!-- ************************************************************* -->
 		<!-- INPUT DATA SELECTION -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-if="invocation.current_step == 3" ng-form="step1form" >
+		<div class="progressStep" ng-show="invocation.current_step == 3" ng-form="step1form" >
 			<h3>Input data:</h3>
 			<p class="description">
 				<b>Now, choose the input file for each input step.</b> Use the diagram above to identify each step in the process.<br>
@@ -65,7 +65,7 @@
 		<!-- ************************************************************* -->
 		<!-- OTHER STEPS CUSTOMIZATION -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-if="invocation.current_step == 4" ng-form="step2form" ng-init="invocation.valid=!step2form.$invalid">
+		<div class="progressStep" ng-show="invocation.current_step == 4" ng-form="step2form" ng-init="invocation.valid=!step2form.$invalid">
 			<h3>Other steps:</h3>
 			<p class="description">
 				<b>We are almost done! In this step you can customize the execution of all the steps in the workflow.</b><br>
@@ -79,9 +79,9 @@
 		<!-- ************************************************************* -->
 		<!-- PRE-RUN WORKFLOW SUMMARY -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-if="invocation.current_step == 5">
+		<div class="progressStep" ng-show="invocation.current_step == 5">
 			<h1 class="workflow-state-title">{{invocation.state_text}}</h1>
-			<h1 style=" text-align: center; font-size: 70px; color: #009CDE; "></h1>
+			<h1 style=" text-align: center; font-size: 70px; color: #009CDE;"></h1>
 			<div class="description" style="text-align: center;">
 				<h3>Ready for launch!</h3>
 				<h4>This is a summary of the input data and the custom values that you chose for this workflow.</h4>
@@ -98,7 +98,7 @@
 		<!-- ************************************************************* -->
 		<!-- RUNNING WORKFLOW SUMMARY -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-if="invocation.current_step == 6">
+		<div class="progressStep" ng-show="invocation.current_step == 6">
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'sending')?'currentState':''" > <img src="css/startup.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'working')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>
 			<h1 class="workflow-state-title" ng-class="(invocation.state === 'waiting')?'currentState':''" > <img src="css/working.png" style="height: 70px;">{{invocation.state_text}}</h1>

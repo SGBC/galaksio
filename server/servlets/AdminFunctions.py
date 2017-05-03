@@ -32,8 +32,8 @@ def isAdminAccount(request, response, ROOT_DIRECTORY):
     response.setContent({"success": found})
     return response
 
-def getSettingsList(request, response, ROOT_DIRECTORY):
-    response.setContent({"success": True, "settings": readSettingsFile(ROOT_DIRECTORY)})
+def getSettingsList(request, response, ROOT_DIRECTORY, isFirstLaunch=False):
+    response.setContent({"success": True, "settings": readSettingsFile(ROOT_DIRECTORY, isFirstLaunch)})
     return response
 
 def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
@@ -81,7 +81,7 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     response.setContent({"success": True, "isFirstLaunch" : isFirstLaunch})
     return response
 
-def readSettingsFile(ROOT_DIRECTORY):
+def readSettingsFile(ROOT_DIRECTORY, isFirstLaunch=False):
     settings = {}
     with open(ROOT_DIRECTORY + "server/conf/serverconf.py") as f:
         for line in f:
@@ -97,4 +97,11 @@ def readSettingsFile(ROOT_DIRECTORY):
                 else:
                     setting_value = setting_value.replace(" ","")
                 settings[setting_name] = setting_value
+    if isFirstLaunch:
+        try:
+            import os
+            settings["IS_DOCKER"] = (os.environ["IS_DOCKER"] == '1')
+        except Exception as ex:
+            settings["IS_DOCKER"] = False
+
     return settings

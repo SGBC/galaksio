@@ -373,7 +373,8 @@
 			'  </thead>'+
 			'  <tbody>'+
 			'    <tr ng-if="step.type === \'data_input\'"><td>{{step.inputs[0].name}}</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
-			'    <tr ng-if="step.type !== \'data_input\' && step.extra === undefined"><td colspan="2">Using default values</td></tr>' +
+			'    <tr ng-if="step.type === \'data_collection_input\'"><td>{{step.inputs[0].name}}</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
+			'    <tr ng-if="[\'data_input\', \'data_collection_input\'].indexOf(step.type) === -1  && step.extra === undefined"><td colspan="2">Using default values</td></tr>' +
 			'    <tr ng-if="step.extra !== undefined" ng-repeat="input in step.extra.inputs">' +
 			'       <td>{{input.label || input.title}}</td>' +
 			'       <td>{{adjustValueString(input)}}</td>' +

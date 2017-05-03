@@ -255,6 +255,8 @@
 			for(var i in steps){
 				if(steps[i].type === "data_input"){
 					requestData.ds_map[steps[i].id] = {"src" : "hda", "id" : steps[i].inputs[0].value};
+				} else if(steps[i].type === "data_collection_input"){
+					requestData.ds_map[steps[i].id] = {"src" : "hdca", "id" : steps[i].inputs[0].value};
 				}else if(steps[i].extra !== undefined){ //the step was uncollapsed
 					var params = requestData.parameters[steps[i].id] = {};
 					var inputs = steps[i].extra.inputs
@@ -480,6 +482,9 @@
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
 		this.getInvocationsHandler = function(){
+			if(Cookies.get("galaksiosession") === undefined){
+				return;
+			}
 
 			var recoverInvocations = function(i, workflows, _invocations){
 				_invocations = _invocations || [];
@@ -679,7 +684,6 @@
 		};
 
 		this.recoverWorkflowResultStepOutputDetails = function(invocation, step, output){
-			debugger
 			$http($rootScope.getHttpRequestConfig("GET", "dataset-details", {
 				extra: [invocation.history_id, output.id]
 			})).then(
@@ -700,6 +704,9 @@
 		};
 
 		$scope.adaptInvocationDate = function(date){
+			if(!date){
+				return "-";
+			}
 			return date.substring(0,10) + " " + date.substring(11,16);
 		};
 		//--------------------------------------------------------------------

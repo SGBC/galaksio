@@ -61,13 +61,19 @@
 			$http($rootScope.getHttpRequestConfig("GET", "setting-list")).then(
 				function successCallback(response){
 					$scope.settings = response.data.settings;
+					var regInteger = /^\d+$/;
+
 					for(var i in $scope.settings){
 						//TRY TO PARSE AS A NUMBER
-						if(!isNaN($scope.settings[i])){
+						if(regInteger.test($scope.settings[i])){
 							$scope.settings[i] = Number.parseInt($scope.settings[i]);
-						}else if($scope.settings[i].toLowerCase() === "true" || $scope.settings[i].toLowerCase() === "false" ){
+						}else if($scope.settings[i].toLowerCase && ($scope.settings[i].toLowerCase() === "true" || $scope.settings[i].toLowerCase() === "false")){
 							$scope.settings[i] = $scope.settings[i].toLowerCase() === "true";
 						}
+					}
+
+					if($scope.settings["IS_DOCKER"]){
+						$scope.settings["GALAXY_SERVER"] = "http://galaxy_machine";
 					}
 				},
 				function errorCallback(response){
@@ -77,7 +83,7 @@
 						logMessage : message + " at AdminController:retrieveSettings."
 					});
 					console.error(response.data);
-					document.location.replace("/index.html");
+					document.location.replace("/");
 				}
 			);
 			return this;

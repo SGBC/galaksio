@@ -45,9 +45,9 @@
 						<i class="fa fa-sign-out fa-fw"></i>Let's run some workflows!
 					</button>
 				</div>
-				<table class="table" style="width:100%" ng-show="invocations.length > 0" ng-init="maxInvocations=2">
+				<table class="table" style="width:100%" ng-show="invocations.length > 0" ng-init="maxInvocations=5">
 					<tr><th>Workflow name</th><th style="width:90px">Date</th><th style="width:90px">State</th><th style="width:110px;">Tools</th></tr>
-					<tr ng-repeat="invocation in invocations | limitTo:maxInvocations track by $index " >
+					<tr ng-repeat="invocation in invocations | orderBy:'-update_time' | limitTo:maxInvocations track by $index " >
 						<td>{{invocation.workflow_title}}</td>
 						<td style=" font-size: 10px; ">{{adaptInvocationDate(invocation.update_time)}}</td>
 						<td class="job-status-cat"  ng-if="invocation.state === 'success'">
