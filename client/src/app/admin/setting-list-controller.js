@@ -108,7 +108,7 @@
 		*/
 		this.updateSettingsHandler = function(){
 			$scope.isLoading = true;
-			if(! $scope.settings.ADMIN_ACCOUNTS instanceof Array){
+			if(!($scope.settings.ADMIN_ACCOUNTS instanceof Array)){
 				$scope.settings.ADMIN_ACCOUNTS = $scope.settings.ADMIN_ACCOUNTS.replace(/ /g, "").split(",");
 			}
 
@@ -117,7 +117,7 @@
 					$dialogs.showSuccessDialog("Settings successfully updated. You may need to restart the server to apply the changes.", {
 						logMessage : "Settings updated at AdminController:retrieveHistoryData.",
 						callback : function(){
-							location.replace("/");
+							location.reload(true);
 						}
 					});
 					$scope.isLoading = false;

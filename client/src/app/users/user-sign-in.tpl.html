@@ -1,6 +1,6 @@
 <div ng-controller="UserSessionController as controller" ng-init="isLogin=true;">
 	<form name="signForm" class="form-signin" novalidate ng-submit="controller.signFormSubmitHandler()">
-		<h3 class="form-signin-heading">{{(isLogin)?"Welcome Back! Please Sign In":"Create your Galaxy account"}}</h3>
+		<h3 class="form-signin-heading">{{(isLogin)?"Welcome back! Please Sign In":"Create your Galaxy account"}}</h3>
 		<hr class="colorgraph"><br>
 		<input name="email" type="email" class="form-control" ng-model="userInfo.email" placeholder="Email" required="" autofocus="" />
 		<span>
