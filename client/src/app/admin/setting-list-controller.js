@@ -73,7 +73,7 @@
 					}
 
 					if($scope.settings["IS_DOCKER"]){
-						$scope.settings["GALAXY_SERVER"] = "http://galaxy_machine";
+						me.updateSettingsHandler();
 					}
 				},
 				function errorCallback(response){
@@ -108,11 +108,17 @@
 		*/
 		this.updateSettingsHandler = function(){
 			$scope.isLoading = true;
+			if(! $scope.settings.ADMIN_ACCOUNTS instanceof Array){
+				$scope.settings.ADMIN_ACCOUNTS = $scope.settings.ADMIN_ACCOUNTS.replace(/ /g, "").split(",");
+			}
 
 			$http($rootScope.getHttpRequestConfig("POST", "setting-update", {data: $scope.settings})).then(
 				function successCallback(response){
-					$dialogs.showSuccessDialog("Settings successfully updated. Restart the server to apply the changes.", {
-						logMessage : "Settings updated at AdminController:retrieveHistoryData."
+					$dialogs.showSuccessDialog("Settings successfully updated. You may need to restart the server to apply the changes.", {
+						logMessage : "Settings updated at AdminController:retrieveHistoryData.",
+						callback : function(){
+							location.replace("/");
+						}
 					});
 					$scope.isLoading = false;
 				},
@@ -138,8 +144,10 @@
 		*
 		******************************************************************************/
 		var me = this;
+		setTimeout(function(){
+			me.retrieveSettings();
+		},4000);
 
-		this.retrieveSettings();
 
 	});//end controller
 })();//end wrapper

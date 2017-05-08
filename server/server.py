@@ -20,8 +20,6 @@
 #
 """
 
-import logging
-import logging.config
 import requests
 import re
 
@@ -36,8 +34,6 @@ CSS_REGEX = re.compile(r'(url\(["\']?)/')
 
 REGEXES = [HTML_REGEX, JQUERY_REGEX, JS_LOCATION_REGEX, CSS_REGEX]
 
-from conf.serverconf import *
-
 class Application(object):
     #******************************************************************************************************************
     # CONSTRUCTORS
@@ -48,8 +44,8 @@ class Application(object):
         #*******************************************************************************************
         self.app = Flask(__name__)
         self.isFirstLaunch = False
-        self.readConfigurationFile()
-
+        self.settings = AdminFunctions.readConfigurationFile()
+        self.app.config['MAX_CONTENT_LENGTH'] = self.settings.MAX_CONTENT_LENGTH * pow(1024, 2)
         #******************************************************************************************
         #     ______ _____ _      ______  _____
         #   |  ____|_   _| |    |  ____|/ ____|
@@ -60,18 +56,18 @@ class Application(object):
         #
         #  COMMON STEPS HANDLERS
         #*******************************************************************************************
-        @self.app.route(SERVER_SUBDOMAIN + '/')
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/')
         def main():
             if self.isFirstLaunch:
-                return send_from_directory(self.ROOT_DIRECTORY + 'client/src/', 'install.html')
+                return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', 'install.html')
             else:
-                return send_from_directory(self.ROOT_DIRECTORY + 'client/src/', 'index.html')
+                return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', 'index.html')
         ##*******************************************************************************************
         ##* GET FILE
         ##*******************************************************************************************
-        @self.app.route(SERVER_SUBDOMAIN + '/<path:filename>')
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/<path:filename>')
         def get_static(filename):
-            return send_from_directory(self.ROOT_DIRECTORY + 'client/src/', filename)
+            return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', filename)
 
         #******************************************************************************************
         #     _____          _               __   ____     __           _____ _____
@@ -82,7 +78,7 @@ class Application(object):
         #    \_____/_/    \_\______/_/    \_\/_/ \_\   |_|    /_/    \_\_|   |_____|
         #
         #******************************************************************************************
-        @self.app.route(SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE', 'PUT'])
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE', 'PUT'])
         def forward_request(service, method = None):
             # STEP 1. Read requests auth params
             auth = None
@@ -101,7 +97,7 @@ class Application(object):
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method=method,
-                    url=self.GALAXY_SERVER + service,
+                    url=self.settings.GALAXY_SERVER + service,
                     data=data,
                     files=request.files,
                     auth=auth,
@@ -114,7 +110,7 @@ class Application(object):
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method=method,
-                    url=self.GALAXY_SERVER + service,
+                    url=self.settings.GALAXY_SERVER + service,
                     params= dict(request.args),
                     headers={u'content-type': u'application/x-www-form-urlencoded'},
                     data=data,
@@ -127,7 +123,7 @@ class Application(object):
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method= method,
-                    url= self.GALAXY_SERVER + service,
+                    url= self.settings.GALAXY_SERVER + service,
                     params= dict(request.args),
                     data=request.get_data(),
                     auth=auth,
@@ -150,24 +146,24 @@ class Application(object):
         #   /_/    \_\_____/|_|  |_|_____|_| \_|
         #
         #******************************************************************************************
-        @self.app.route(SERVER_SUBDOMAIN + '/admin/local-galaxy-url', methods=['OPTIONS', 'GET'])
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/local-galaxy-url', methods=['OPTIONS', 'GET'])
         def get_local_galaxy_url():
-            if GALAXY_SERVER_URL == "":
-                return Response().setContent({"GALAXY_SERVER_URL": self.GALAXY_SERVER}).getResponse()
+            if self.settings.GALAXY_SERVER_URL == "":
+                return Response().setContent({"GALAXY_SERVER_URL": self.settings.GALAXY_SERVER}).getResponse()
             else:
-                return Response().setContent({"GALAXY_SERVER_URL": GALAXY_SERVER_URL}).getResponse()
+                return Response().setContent({"GALAXY_SERVER_URL": self.settings.GALAXY_SERVER_URL}).getResponse()
 
-        @self.app.route(SERVER_SUBDOMAIN + '/admin/is-admin', methods=['OPTIONS', 'GET'])
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/is-admin', methods=['OPTIONS', 'GET'])
         def is_admin():
             #1. First check if the session is valid
             response = forward_request("users/current", "GET")
             if response.status_code == 200:
                 account_email = json.loads(response.data).get("email")
                 if account_email == request.cookies.get("galaxyuser"):
-                    return AdminFunctions.isAdminAccount(request, Response(), self.ROOT_DIRECTORY).getResponse()
+                    return AdminFunctions.isAdminAccount(request, Response(), self.settings.ROOT_DIRECTORY).getResponse()
             return Response().setContent({"success": False}).getResponse()
 
-        @self.app.route(SERVER_SUBDOMAIN + '/admin/list-settings', methods=['OPTIONS', 'GET'])
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/list-settings', methods=['OPTIONS', 'GET'])
         def list_settings():
             #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
             if not self.isFirstLaunch:
@@ -176,10 +172,10 @@ class Application(object):
             else:
                 isAdmin=True
             if isAdmin:
-                return AdminFunctions.getSettingsList(request, Response(), self.ROOT_DIRECTORY, self.isFirstLaunch).getResponse()
+                return AdminFunctions.getSettingsList(request, Response(), self.settings.ROOT_DIRECTORY, self.isFirstLaunch).getResponse()
             return Response().setContent({"success": False}).setStatus(401).getResponse()
 
-        @self.app.route(SERVER_SUBDOMAIN + '/admin/update-settings', methods=['OPTIONS', 'POST'])
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/update-settings', methods=['OPTIONS', 'POST'])
         def update_settings():
             #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
             if not self.isFirstLaunch:
@@ -189,7 +185,11 @@ class Application(object):
                 isAdmin=True
 
             if isAdmin:
-                response = AdminFunctions.updateSettings(request, Response(), self.ROOT_DIRECTORY, self.isFirstLaunch).getResponse()
+                response = AdminFunctions.updateSettings(request, Response(), self.settings.ROOT_DIRECTORY, self.isFirstLaunch).getResponse()
+                #Read again settings
+                self.isFirstLaunch = False
+                self.settings = AdminFunctions.readConfigurationFile()
+                self.app.config['MAX_CONTENT_LENGTH'] = self.settings.MAX_CONTENT_LENGTH * pow(1024, 2)
                 return response
             return Response().setContent({"success": False}).setStatus(401).getResponse()
 
@@ -202,23 +202,8 @@ class Application(object):
         ##*******************************************************************************************
         ##* LAUNCH APPLICATION
         ##*******************************************************************************************
-        self.app.run(host=SERVER_HOST_NAME, port=SERVER_PORT_NUMBER,  debug=SERVER_ALLOW_DEBUG, threaded=True)
+        self.app.run(host=self.settings.SERVER_HOST_NAME, port=self.settings.SERVER_PORT_NUMBER,  debug=self.settings.SERVER_ALLOW_DEBUG, threaded=True)
 
-    def readConfigurationFile(self):
-        self.GALAXY_SERVER = GALAXY_SERVER.rstrip("/")
-
-        self.ROOT_DIRECTORY = ROOT_DIRECTORY
-        import os
-        if self.ROOT_DIRECTORY == "":
-            self.ROOT_DIRECTORY = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/../") + "/"
-        else:
-            self.ROOT_DIRECTORY = os.path.abspath(self.ROOT_DIRECTORY) + "/"
-
-        #PREPARE LOGGING
-        logging.config.fileConfig(self.ROOT_DIRECTORY + 'server/conf/logging.cfg')
-
-        self.app.config['MAX_CONTENT_LENGTH'] =  SERVER_MAX_CONTENT_LENGTH * pow(1024,2)
-        self.ADMIN_ACCOUNTS = ADMIN_ACCOUNTS.split(",")
 
 class Response(object):
     """This class is used to specify the custom response object"""

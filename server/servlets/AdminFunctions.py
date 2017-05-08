@@ -19,89 +19,89 @@
 #     and others.
 #
 """
-from server.conf.serverconf import ADMIN_ACCOUNTS
-from flask import json
+from flask import json, jsonify
+import logging
+from logging import config as loggingConfig
 
 def isAdminAccount(request, response, ROOT_DIRECTORY):
-    accounts = ADMIN_ACCOUNTS.replace(" ","").split(",")
-    found = False
-    for account in accounts:
-        if account == request.cookies.get("galaxyuser"):
-            found = True
-            break
-    response.setContent({"success": found})
+    settings = readConfigurationFile()
+    accounts = settings.ADMIN_ACCOUNTS
+    response.setContent({"success": (request.cookies.get("galaxyuser") in accounts)})
     return response
 
 def getSettingsList(request, response, ROOT_DIRECTORY, isFirstLaunch=False):
-    response.setContent({"success": True, "settings": readSettingsFile(ROOT_DIRECTORY, isFirstLaunch)})
+    response.setContent({"success": True, "settings": readConfigurationFile(isFirstLaunch).__dict__})
     return response
 
 def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
-    #STEP 1. GET THE PREVIOUS SETTINGS LIST
-    previousSettings = readSettingsFile(ROOT_DIRECTORY)
-    newSettings = {}
+    #STEP 1. BACKUP SETTINGS
+    from shutil import copyfile
+    copyfile(ROOT_DIRECTORY + "server/conf/server.cfg", ROOT_DIRECTORY + "server/conf/server.cfg_back")
 
-    #STEP 2. UPDATE THE SETTINGS
+    #STEP 2. READ NEW SETTINGS
     newValues = json.loads(request.data)
 
-    for key,value in previousSettings.iteritems():
-        newSettings[key] = newValues.get(key, value)
+    import ConfigParser
+    config = ConfigParser.RawConfigParser()
 
-    content = ""
-    with open(ROOT_DIRECTORY + "server/conf/serverconf.py", 'r') as f:
-        for line in f:
-            if line != "" and line[0] != "#":
-                _line = line.split("=", 1)
-                if len(_line) < 2:
-                    content += line
-                    continue
+    config.add_section('server_settings')
+    config.set('server_settings', 'SERVER_HOST_NAME', newValues.get("SERVER_HOST_NAME"))
+    config.set('server_settings', 'SERVER_SUBDOMAIN', newValues.get("SERVER_SUBDOMAIN"))
+    config.set('server_settings', 'SERVER_PORT_NUMBER', str(newValues.get("SERVER_PORT_NUMBER")))
+    config.set('server_settings', 'SERVER_ALLOW_DEBUG', str(newValues.get("SERVER_ALLOW_DEBUG")))
+    config.set('server_settings', 'MAX_CONTENT_LENGTH', str(newValues.get("MAX_CONTENT_LENGTH")))
+    config.set('server_settings', 'ROOT_DIRECTORY ', newValues.get("ROOT_DIRECTORY"))
 
-                setting_name = _line[0].replace(" ","")
-                setting_value = _line[1].split(" ##")[0]
-                setting_comment = _line[1].split(" ##")[1]
+    config.add_section('galaxy_settings')
+    config.set('galaxy_settings', 'GALAXY_SERVER', newValues.get("GALAXY_SERVER"))
+    config.set('galaxy_settings', 'GALAXY_SERVER_URL', newValues.get("GALAXY_SERVER_URL"))
+    config.set('galaxy_settings', 'ADMIN_ACCOUNTS', ",".join(newValues.get("ADMIN_ACCOUNTS")))
 
-                newValue = newSettings.get(setting_name, setting_value)
-                if newValue == None:
-                    newValue = ""
-                if setting_value.find("\"") != -1:
-                    newValue = "\"" + str(newValue) + "\""
-
-                content += _line[0] + "= " + str(newValue) + " ##" + setting_comment
-            else:
-                content += line
-    f.close()
-
-    from shutil import copyfile
-    copyfile(ROOT_DIRECTORY + "server/conf/serverconf.py", ROOT_DIRECTORY + "server/conf/serverconf.py_back")
-
-    with open(ROOT_DIRECTORY + "server/conf/serverconf.py", 'w') as f:
-        f.write(content)
-    f.close()
+    #STEP 3 Writing our configuration file to 'server.cfg'
+    with open(ROOT_DIRECTORY + "server/conf/server.cfg", 'wb') as configfile:
+        config.write(configfile)
+    configfile.close()
 
     response.setContent({"success": True, "isFirstLaunch" : isFirstLaunch})
     return response
 
-def readSettingsFile(ROOT_DIRECTORY, isFirstLaunch=False):
-    settings = {}
-    with open(ROOT_DIRECTORY + "server/conf/serverconf.py") as f:
-        for line in f:
-            if line != "" and line[0] != "#":
-                line = line.split("=", 1)
-                if len(line) < 2:
-                    continue
-                setting_name = line[0].replace(" ","")
-                setting_value = line[1].split(" ##")[0]
+def readConfigurationFile(isFirstLaunch=False):
+    import ConfigParser
+    import os
 
-                if setting_value.find("\"") != -1:
-                    setting_value = setting_value.split("\"")[1]
-                else:
-                    setting_value = setting_value.replace(" ","")
-                settings[setting_name] = setting_value
+    class Settings(object):
+        pass
+    settings= Settings()
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.dirname(os.path.realpath(__file__)) + "/../conf/server.cfg")
+    settings.SERVER_HOST_NAME = config.get('server_settings', 'SERVER_HOST_NAME')
+    settings.SERVER_SUBDOMAIN = config.get('server_settings', 'SERVER_SUBDOMAIN')
+    settings.SERVER_PORT_NUMBER = config.getint('server_settings', 'SERVER_PORT_NUMBER')
+    settings.SERVER_ALLOW_DEBUG = config.getboolean('server_settings', 'SERVER_ALLOW_DEBUG')
+    settings.MAX_CONTENT_LENGTH = config.getint('server_settings', 'MAX_CONTENT_LENGTH')
+    settings.ROOT_DIRECTORY = config.get('server_settings', 'ROOT_DIRECTORY')
+    import os
+    if settings.ROOT_DIRECTORY == "":
+        settings.ROOT_DIRECTORY = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/../../") + "/"
+    else:
+        settings.ROOT_DIRECTORY = os.path.abspath(settings.ROOT_DIRECTORY) + "/"
+
+    settings.GALAXY_SERVER = config.get('galaxy_settings', 'GALAXY_SERVER').rstrip("/")
+    settings.GALAXY_SERVER_URL = config.get('galaxy_settings', 'GALAXY_SERVER_URL').rstrip("/")
+    settings.ADMIN_ACCOUNTS = config.get('galaxy_settings', 'ADMIN_ACCOUNTS').split(",")
+    # PREPARE LOGGING
+    loggingConfig.fileConfig(settings.ROOT_DIRECTORY + 'server/conf/logging.cfg')
+
     if isFirstLaunch:
         try:
             import os
-            settings["IS_DOCKER"] = (os.environ["IS_DOCKER"] == '1')
+
+            settings.GALAXY_SERVER = os.environ["GALAXY_SERVER"]
+            settings.ADMIN_ACCOUNTS = os.environ["ADMIN_ACCOUNTS"]
+            settings.IS_DOCKER = True
         except Exception as ex:
-            settings["IS_DOCKER"] = False
+            settings.IS_DOCKER = False
 
     return settings
+
