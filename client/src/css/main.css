@@ -480,6 +480,10 @@ i.tag.pink2 {background-color: #db6070; color: #fff;}
 	width: 100%;
 	border-radius: 0px;
 }
+.workflow-card a.runWorkflowButton.runWorkflowButton-half {
+	width: 188px;
+	display: inline-block;
+}
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/

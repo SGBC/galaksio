@@ -63,12 +63,12 @@
 						$scope.isLoading = false;
 
 						if(group === 'my_workflows'){
-							$scope.workflows = WorkflowList.updateWorkflows(response.data).getWorkflows();
+							WorkflowList.updateWorkflows(response.data);
 						}else{
-							$scope.workflows = WorkflowList.setWorkflows(response.data).getWorkflows();
+							WorkflowList.setWorkflows(response.data);
 						}
 						$scope.tags =  WorkflowList.updateTags().getTags();
-						$scope.filteredWorkflows = $scope.workflows.length;
+						$scope.filteredWorkflows = WorkflowList.getWorkflows().length;
 
 						//Display the workflows in batches
 						if(window.innerWidth > 1500){
@@ -80,6 +80,8 @@
 						}
 
 						$scope.visibleWorkflows = Math.min($scope.filteredWorkflows, $scope.visibleWorkflows);
+
+						$scope.workflows = WorkflowList.getWorkflows();
 					},
 					function errorCallback(response){
 						$scope.isLoading = false;
@@ -101,6 +103,7 @@
 		};
 
 		this.retrieveWorkflowDetails = function(workflow){
+			var username = $scope.username || Cookies.get("galaxyusername");
 			$http($rootScope.getHttpRequestConfig(
 				"GET",
 				"workflow-info",
@@ -110,16 +113,24 @@
 					for (var attrname in response.data) {
 						workflow[attrname] = response.data[attrname];
 					}
-					if(workflow["imported"]){
-						workflow["name"] = "imported: " + workflow["name"];
-					}
 					workflow.steps = Object.values(workflow.steps);
+
+					if(workflow.name.search(/^imported: /) !== -1){
+					    workflow.name = workflow.name.replace(/imported: /g, "");
+						workflow.imported = true;
+					}
+
+					if(workflow.owner !== username){
+						workflow.valid = false;
+						workflow.imported = false;
+						workflow.importable = true;
+					}else{
+						workflow.owned = true;
+					}
 				},
 				function errorCallback(response){
 					if(response.data.err_code === 403002){
-						workflow.annotation = "This workflow is not owned by or shared with you.";
-						workflow.valid = false;
-						workflow.importable = true;
+
 					}else{
 						workflow.annotation = "Unable to get the description: " + response.data.err_msg;
 						workflow.valid = false;
@@ -217,7 +228,7 @@
 						})).then(
 							function successCallback(response){
 								$dialogs.showSuccessDialog("The workflow was successfully deleted.");
-								$scope.workflows = WorkflowList.deleteWorkflow(workflow.id);
+								$scope.workflows = WorkflowList.deleteWorkflow(workflow).getWorkflows();
 								$scope.tags =  WorkflowList.updateTags().getTags();
 								// $scope.filteredWorkflows = $scope.workflows.length;
 								me.retrieveWorkflowsData("my_workflows", true);
@@ -303,5 +314,167 @@
 		if($scope.workflows.length === 0){
 			this.retrieveWorkflowsData("my_workflows");
 		}
+	});
+
+	app.controller('WorkflowDetailController', function($rootScope, $scope, $http, $stateParams, $dialogs, WorkflowList){
+		//--------------------------------------------------------------------
+		// CONTROLLER FUNCTIONS
+		//--------------------------------------------------------------------
+
+		/**
+		* This function creates a network from a given list of steps of a workflow.
+		*
+		* @param workflow_steps a list of workflow steps
+		* @return a network representation of the workflow (Object) with a list
+		*         of nodes and a list of edges.
+		*/
+		this.generateWorkflowDiagram = function(workflow_steps){
+			var step=null, edge_id="", edges={}, diagram = {"nodes":[], "edges": []};
+
+			if(workflow_steps === undefined){
+				workflow_steps = $scope.workflow.steps;
+			}
+
+			try {
+				for(var i in workflow_steps){
+					step = workflow_steps[i];
+
+					diagram.nodes.push({
+						id: step.id,
+						label: (step.id+1) + ". " + (step.tool_id || step.tool_inputs.name),
+						step_type: step.type,
+					});
+
+					for(var j in step.input_steps){
+						if(step.input_steps[j].source_step !== undefined){
+							edge_id = step.id + "" + step.input_steps[j].source_step;
+							if(!edges[edge_id] && step.input_steps[j].source_step !== undefined && step.id !== undefined){
+								edges[edge_id]=true;
+								diagram.edges.push({
+									id: edge_id,
+									source: step.input_steps[j].source_step,
+									target: step.id,
+									type: 'arrow'
+								});
+							}
+						}
+					}
+				}
+			} catch (e) {
+				debugger;
+			}
+
+			return diagram;
+		};
+
+		this.updateWorkflowDiagram = function(diagram, doLayout){
+			if(diagram === undefined){
+				diagram = $scope.diagram;
+			}
+
+			if($scope.sigma === undefined){
+
+				$scope.sigma = new sigma({
+					graph: diagram,
+					renderer: {
+						container: document.getElementById('sigmaContainer'),
+						type: 'canvas'
+					},
+					settings: {
+						edgeColor: 'default',
+						defaultEdgeColor: '#d3d3d3',
+						// mouseEnabled: false,
+						sideMargin: 100,
+						labelAlignment: "bottom"
+					}
+				});
+			}
+
+			// Create a custom color palette:
+			var myPalette = {
+				iconScheme: {
+					'data_input': {
+						font: 'FontAwesome',
+						scale: 1.0,
+						color: '#fff',
+						content: "\uf15c"
+					}
+				},
+				aSetScheme: {
+					7: ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628"]
+				}
+			};
+
+			var nodeSize = 20;
+			var edgeSize = 7;
+			if(diagram.nodes.length > 15){
+				nodeSize = 9;
+				edgeSize = 3;
+			}else if(diagram.nodes.length > 10){
+				nodeSize = 15;
+				edgeSize = 4;
+			}
+
+			var myStyles = {
+				nodes: {
+					size: {by: 'size', bins: 7, min: nodeSize,max: nodeSize},
+					icon: {by: 'step_type', scheme: 'iconScheme'},
+					color: {by: 'step_type', scheme: 'aSetScheme', set:7},
+				},
+				edges:{
+					size: {by: 'size', min: edgeSize, max: edgeSize},
+				}
+			};
+
+			// Instanciate the design:
+			design = sigma.plugins.design($scope.sigma, {
+				styles: myStyles,
+				palette: myPalette
+			});
+
+			design.apply();
+
+			if(doLayout === true){
+				// Configure the DAG layout:
+				sigma.layouts.dagre.configure($scope.sigma, {
+					directed: true, // take edge direction into account
+					rankdir: 'LR', // Direction for rank nodes. Can be TB, BT, LR, or RL,
+					easing: 'quadraticInOut', // animation transition function
+					duration: 800, // animation duration
+				});
+
+				// Start the DAG layout:
+				sigma.layouts.dagre.start($scope.sigma);
+			}
+		};
+
+		//--------------------------------------------------------------------
+		// EVENT HANDLERS
+		//--------------------------------------------------------------------
+		this.cancelButtonHandler = function(){
+			history.back();
+		};
+
+		this.importWorkflowHandler = function(event){
+		};
+
+		this.layoutDiagramHandler = function(){
+			this.updateWorkflowDiagram($scope.diagram, true);
+		}
+
+		//--------------------------------------------------------------------
+		// INITIALIZATION
+		//--------------------------------------------------------------------
+		var me = this;
+		//The corresponding view will be watching to this variable
+		//and update its content after the http response
+		$scope.loadingComplete = false;
+		$scope.workflow = WorkflowList.getWorkflow($stateParams.id);
+		$scope.viewMode = $stateParams.mode;
+		$scope.diagram = me.generateWorkflowDiagram($scope.workflow.steps);
+		me.updateWorkflowDiagram($scope.diagram, true);
+		//UPDATE VIEW
+		$scope.loadingComplete = true;
+
 	});
 })();

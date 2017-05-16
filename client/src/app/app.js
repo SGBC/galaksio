@@ -53,14 +53,24 @@
 				templateUrl: "app/workflows/workflow-list.tpl.html",
 				data: {requireLogin: true}
 			},
-			workflowDetail = {
-				name: 'workflowDetail',
-				url: '/workflow-detail/',
+			workflowRun = {
+				name: 'workflowRun',
+				url: '/workflow-run/',
 				params : {
 					id : null,
 					invocation_id : null
 				},
 				templateUrl: "app/workflows/workflow-run.tpl.html",
+				data: {requireLogin: true}
+			},
+			workflowDetail = {
+				name: 'workflowDetail',
+				url: '/workflow-detail/',
+				params : {
+					id : null,
+					mode : null
+				},
+				templateUrl: "app/workflows/workflow-detail.tpl.html",
 				data: {requireLogin: true}
 			},
 			histories = {
@@ -78,6 +88,7 @@
 			$stateProvider.state(signin);
 			$stateProvider.state(home);
 			$stateProvider.state(workflows);
+			$stateProvider.state(workflowRun);
 			$stateProvider.state(workflowDetail);
 			$stateProvider.state(histories);
 			$stateProvider.state(admin);
@@ -118,6 +129,8 @@
 				case "workflow-list":
 				return myAppConfig.GALAKSIO_SERVER + "api/workflows/";
 				case "workflow-info":
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra;
+				case "workflow-download":
 				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra + "/download";
 				case "workflow-run":
 				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra + "/invocations";

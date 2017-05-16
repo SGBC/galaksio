@@ -1,22 +1,16 @@
 <div class="workflow-card">
 	<div class="workflow-card-body">
-		<a style="float: right;margin: 0px 10px;" class="removeButton" ng-click="controller.deleteWorkflowHandler(workflow);" >
+		<a style="float: right;margin: 0px 10px;" ng-if="workflow.imported" class="removeButton" ng-click="controller.deleteWorkflowHandler(workflow);" >
 			<i class="fa fa-trash"></i>
 		</a>
 		<h2 class="workflow-card-name">{{workflow.name}}</h2>
 		<div class="workflow-card-description" ng-if="workflow.annotation === undefined">
 			<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading details...
 		</div>
-		<div class="workflow-card-description" ng-if="workflow.annotation !== undefined">
-			<div ng-if="workflow.valid === false" style="text-align: center;">
-				<span  class='text-danger'>{{workflow.annotation}}</span>
-				<span ng-if="workflow.importable">
-					<a class="btn btn-default btn-sm" style="margin-top: 20px;" ng-click="controller.importWorkflowHandler(workflow);">
-						<i class="fa fa-plus"></i> Add this workflow to my collection.
-					</a>
-				</span>
-			</div>
-			<span ng-if="workflow.valid !== false">{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</span>
+		<div class="workflow-card-description" ng-if="workflow.annotation !== undefined" style="text-align: justify;">
+			<p ng-if="!workflow.owned" class="text-danger" style="text-align: center; margin-bottom: 4px; ">This workflow is not owned by or shared with you.</p>
+			<span ng-if="workflow.annotation !== '' && workflow.annotation !== null">{{workflow.annotation}}</span>
+			<p ng-if="workflow.annotation === '' || workflow.annotation === null" style="text-align: center;">No description provided</p>
 		</div>
 		<div class="workflow-card-tags-list">
 			<i class="tag {{getTagColor(tag)}}" ng-repeat="tag in workflow.tags | orderBy" style="cursor:pointer;" ng-click="controller.filterByTag(tag);">{{tag}}</i>
@@ -28,6 +22,13 @@
 	<div class="workflow-card-author" ng-if="workflow.imported === true">
 		<span style="color:#0F8CDA;">Imported workflow</span>
 	</div>
-	<a ng-if="workflow.valid !== false" class="btn btn-info runWorkflowButton" ui-sref="workflowDetail({id: workflow.id})"> <i class="fa fa-info-circle"></i> More details </a>
-	<a ng-if="workflow.valid === false" ng-disabled="true" class="btn btn-info runWorkflowButton"> <i class="fa fa-info-circle"></i> More details </a>
+	<a ng-if="workflow.owned" class="btn btn-info runWorkflowButton" ui-sref="workflowRun({id: workflow.id})">
+		<i class="fa fa-bolt" style=" color: #ffeb41; "></i> Run workflow
+	</a>
+	<a ng-if="workflow.importable" class="btn btn-primary runWorkflowButton" ng-class="workflow.importable?'runWorkflowButton-half':''" ng-click="controller.importWorkflowHandler(workflow);">
+		<i class="fa fa-plus-circle"></i> Import to my collection
+	</a>
+	<a ng-if="!workflow.owned" class="btn btn-info runWorkflowButton" ng-class="workflow.importable?'runWorkflowButton-half':''" ui-sref="workflowDetail({id: workflow.id, mode: 'view'})">
+		<i class="fa fa-info-circle"></i> More details
+	</a>
 </div>

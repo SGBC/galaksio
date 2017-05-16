@@ -26,7 +26,7 @@
 	var app = angular.module('workflows.services.workflow-list', []);
 
 	app.factory("WorkflowList", ['$rootScope', function($rootScope) {
-		var workflows = [];
+		var workflows = {};
 		var tags = [];
 		var filters = [];
 		var tagColors = ['yellow', 'green', 'red', 'blue', 'purple', 'pink', 'yellow2', 'green2', 'red2', 'blue2', 'purple2', 'pink2']
@@ -34,61 +34,47 @@
 		//http://stackoverflow.com/questions/18247130/how-to-store-the-data-to-local-storage
 		return {
 			getWorkflows: function() {
-				return workflows;
+				return Object.values(workflows);
 			},
 			setWorkflows: function(_workflows) {
-				workflows = _workflows;
+			    workflows = {};
+			    var workflow;
 				for(var i in _workflows){
-					if(_workflows[i].name.indexOf('imported: ') !== -1){
-						_workflows[i].imported = true;
+				    workflow = _workflows[i];
+					if(workflow.name.search(/^imported: /) !== -1){
+					    workflow.name = workflow.name.replace(/imported: /g, "");
+						workflow.imported = true;
 					}
+					
+					workflows[workflow.id] = workflow;
 				}
 
 				old = new Date();
 				return this;
 			},
-			updateWorkflows: function(newWorkflows) {
-				var found, nElems = workflows.length;
-				for(var i in newWorkflows){
-					found= false;
-					if(newWorkflows[i].name.indexOf('imported: ') !== -1){
-						// newWorkflows[i].name = newWorkflows[i].name.replace('imported: ','');
-						newWorkflows[i].imported = true;
+			updateWorkflows: function(_workflows) {
+			    var workflow;
+				for(var i in _workflows){
+				    workflow = _workflows[i];
+					if(workflow.name.search(/^imported: /) !== -1){
+					    workflow.name = workflow.name.replace(/imported: /g, "");
+						workflow.imported = true;
 					}
-
-					for(var j=0; j < nElems; j++){
-						if(newWorkflows[i].id === workflows[j].id){
-							found= true;
-							workflows[j] = newWorkflows[i];
-							break;
-						}
-					}
-					if(!found){
-						workflows.push(newWorkflows[i]);
-					}
+					workflows[workflow.id] = workflow;
 				}
+
 				return this;
 			},
 			getWorkflow: function(workflow_id) {
-				for(var i in workflows){
-					if(workflows[i].id === workflow_id){
-						return workflows[i];
-					}
-				}
-				return null;
+                return workflows[workflow_id];
 			},
 			addWorkflow: function(workflow) {
-				workflows.push(workflow);
+				workflows[workflow.id] = workflow;
 				return this;
 			},
-			deleteWorkflow: function(workflow_id) {
-				for(var i in workflows){
-					if(workflows[i].id === workflow_id){
-						workflows.splice(i,1);
-						return workflows;
-					}
-				}
-				return null;
+			deleteWorkflow: function(workflow) {
+				delete workflows[workflow.id];
+				return this;
 			},
 			getTags: function() {
 				return tags;
@@ -107,9 +93,9 @@
 			},
 			updateTags: function() {
 				var tagsAux = {}, _tags;
-
-				for(var i in workflows){
-					_tags = workflows[i].tags;
+				var _workflows = this.getWorkflows();
+				for(var i in _workflows){
+					_tags = _workflows[i].tags;
 					for(var j in _tags){
 						tagsAux[_tags[j]] = {
 							name: _tags[j],
@@ -123,7 +109,7 @@
 					tags[i].color =  tagColors[i%tagColors.length]
 				}
 
-				tags.push({name: "All", times: workflows.length})
+				tags.push({name: "All", times: _workflows.length})
 
 				return this;
 			},

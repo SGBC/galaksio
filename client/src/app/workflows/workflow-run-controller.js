@@ -51,7 +51,7 @@
 			$scope.workflow = WorkflowList.getWorkflow(workflow_id);
 			if($scope.workflow !== null){
 				$scope.loadingComplete = false;
-				$http($rootScope.getHttpRequestConfig("GET","workflow-info", {
+				$http($rootScope.getHttpRequestConfig("GET","workflow-download", {
 					extra: workflow_id})
 				).then(
 					function successCallback(response){
@@ -59,7 +59,10 @@
 							$scope.workflow[attrname] = response.data[attrname];
 						}
 						$scope.workflow.steps = Object.values($scope.workflow.steps);
-
+						if($scope.workflow.name.search(/^imported: /) !== -1){
+							$scope.workflow.name = $scope.workflow.name.replace(/imported: /g, "");
+							work$scope.workflowflow.imported = true;
+						}
 						$scope.diagram = me.generateWorkflowDiagram($scope.workflow.steps);
 						me.updateWorkflowDiagram();
 						//UPDATE VIEW
@@ -297,14 +300,6 @@
 			this.updateWorkflowDiagram($scope.diagram, true);
 		}
 
-		//--------------------------------------------------------------------
-		// INITIALIZATION
-		//--------------------------------------------------------------------
-		var me = this;
-		//The corresponding view will be watching to this variable
-		//and update its content after the http response
-		$scope.loadingComplete = false;
-		$scope.workflow = null;
 		$scope.filterInputSteps = function (item) {
 			return item.type === 'data_input' || item.type === "data_collection_input" || (item.type === 'tool' && (item.tool_id === 'upload_workflows' || item.tool_id === 'irods_pull'));
 		};
@@ -356,6 +351,17 @@
 			}
 			return "Unknown input file";
 		};
+
+		//--------------------------------------------------------------------
+		// INITIALIZATION
+		//--------------------------------------------------------------------
+		var me = this;
+		//The corresponding view will be watching to this variable
+		//and update its content after the http response
+		$scope.loadingComplete = false;
+		$scope.workflow = null;
+
+		$scope.viewMode = $stateParams.mode;
 
 		if($stateParams.invocation_id !== null){
 			$scope.invocation = WorkflowInvocationList.getInvocation($stateParams.invocation_id);

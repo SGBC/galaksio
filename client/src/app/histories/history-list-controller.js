@@ -260,7 +260,7 @@
 
 		if($state.current.name === "histories"){
 			this.retrieveAllHistoriesList(true, false, this.retrieveCurrentHistoryData);
-		}else if($state.current.name === "workflowDetail"){
+		}else if($state.current.name === "workflowRun"){
 			this.retrieveAllHistoriesList(false, false, this.retrieveCurrentHistoryData);
 		}else if($state.current.name === "home"){
 			this.retrieveCurrentHistoryData();

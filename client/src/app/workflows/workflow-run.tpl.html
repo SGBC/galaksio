@@ -21,7 +21,7 @@
 	<div class="panel panel-container" ng-show="invocation.current_step == 1">
 		<h4>Details</h4>
 		<p><b>Author: </b>{{workflow.owner}}</p>
-		<p><b>Description: </b>{{(workflow.annotation !== ""?workflow.annotation:"No description provided")}}</p>
+		<p><b>Description: </b>{{((workflow.annotation !== "" && workflow.annotation !== null)?workflow.annotation:"No description provided")}}</p>
 	</div>
 	<!-- ************************************************************* -->
 	<!-- WORKFLOW DIAGRAM -->

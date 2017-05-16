@@ -96,6 +96,10 @@
 			link: function($scope, element){
 				var model = $scope.step;
 
+				if(!model.tool_state){
+					return;
+				}
+				
 				model.label = JSON.parse(model.tool_state).name;
 
 				var template =

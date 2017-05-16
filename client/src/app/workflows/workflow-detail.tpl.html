@@ -1,0 +1,41 @@
+<div ng-controller="WorkflowDetailController as controller" >
+	<nav class="navbar navbar-default navbar-top title-bar">
+		<h1>Workflow <small>details</small></h1>
+	</nav>
+	<div class="workflow-run-container">
+		<h2 class="workflow-title" style="text-align:center;margin-bottom: 17px;margin-top: 0;"><b>Workflow name: </b>{{workflow.name}}</h2>
+		<!-- ************************************************************* -->
+		<!-- WORKFLOW DESCRIPTION -->
+		<!-- ************************************************************* -->
+		<div class="panel panel-container" >
+			<h4>Details</h4>
+			<p><b>Author: </b>{{workflow.owner}}</p>
+			<p><b>Description: </b>{{((workflow.annotation !== "" && workflow.annotation !== null)?workflow.annotation:"No description provided")}}</p>
+		</div>
+		<!-- ************************************************************* -->
+		<!-- WORKFLOW DIAGRAM -->
+		<!-- ************************************************************* -->
+		<div class="panel panel-container" >
+			<a style="cursor:pointer; float: right; color:#333;" ng-click="controller.layoutDiagramHandler()"> <i class="fa fa-refresh"></i> Update diagram layout</a>
+			<h4>Workflow overview</h4>
+			<i ng-show="loadingComplete === false" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
+				<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflow details...
+			</i>
+			<div id="sigmaContainer" style="height:450px;"></div>
+		</div>
+		<div style="margin-top: 100px; display:block; clear:both;"></div>
+		<!-- ************************************************************* -->
+		<!-- NAVIGATION BAR -->
+		<!-- ************************************************************* -->
+		<nav class="navbar navbar-default navbar-fixed-bottom " >
+			<div class="container">
+				<a class="btn btn-danger btn-md navbar-left" ng-click="controller.cancelButtonHandler();">
+					<i class="fa fa-chevron-left"></i> Close and go back
+				</a>
+				<a class="btn btn-default btn-md navbar-left" ng-click="controller.backButtonHandler();" >
+					<i class="fa fa-plus-circle"></i> Import to my collection
+				</a>
+			</div>
+		</nav>
+	</div>
+</div>
