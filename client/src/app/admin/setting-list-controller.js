@@ -117,7 +117,7 @@
 					$dialogs.showSuccessDialog("Settings successfully updated. You may need to restart the server to apply the changes.", {
 						logMessage : "Settings updated at AdminController:retrieveHistoryData.",
 						callback : function(){
-							location.reload(true);
+                            location.replace(getPathname().replace(/\/$/g, "") + "/#/signin?_=" + (new Date()).getTime());
 						}
 					});
 					$scope.isLoading = false;
