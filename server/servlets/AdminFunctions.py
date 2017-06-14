@@ -29,8 +29,8 @@ def isAdminAccount(request, response, ROOT_DIRECTORY):
     response.setContent({"success": (request.cookies.get("galaxyuser") in accounts)})
     return response
 
-def getSettingsList(request, response, ROOT_DIRECTORY, isFirstLaunch=False):
-    response.setContent({"success": True, "settings": readConfigurationFile(isFirstLaunch).__dict__})
+def getSettingsList(request, response, ROOT_DIRECTORY, isFirstLaunch=False, isDocker=False):
+    response.setContent({"success": True, "settings": readConfigurationFile(isFirstLaunch, isDocker).__dict__})
     return response
 
 def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
@@ -65,7 +65,7 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     response.setContent({"success": True, "isFirstLaunch" : isFirstLaunch})
     return response
 
-def readConfigurationFile(isFirstLaunch=False):
+def readConfigurationFile(isFirstLaunch=False, isDocker=False):
     import ConfigParser
     import os
 
@@ -93,15 +93,40 @@ def readConfigurationFile(isFirstLaunch=False):
     # PREPARE LOGGING
     loggingConfig.fileConfig(settings.ROOT_DIRECTORY + 'server/conf/logging.cfg')
 
-    if isFirstLaunch:
-        try:
-            import os
+    settings.IS_DOCKER = isDocker
 
+    if isFirstLaunch:
+        import os
+        failed = 0
+        settings.AUTO_INSTALL = True
+
+        try:
             settings.GALAXY_SERVER = os.environ["GALAXY_SERVER"]
+            settings.IS_DOCKER = True
+        except Exception as ex:
+            failed = failed + 1
+
+        try:
+            settings.GALAXY_SERVER_URL = os.environ["GALAXY_SERVER_URL"]
+            settings.IS_DOCKER = True
+        except Exception as ex:
+            failed = failed + 1
+
+        try:
+            settings.MAX_CONTENT_LENGTH = os.environ["MAX_CONTENT_LENGTH"]
+            settings.IS_DOCKER = True
+        except Exception as ex:
+            failed = failed + 1
+
+        try:
             settings.ADMIN_ACCOUNTS = os.environ["ADMIN_ACCOUNTS"]
             settings.IS_DOCKER = True
         except Exception as ex:
-            settings.IS_DOCKER = False
+            failed = failed + 1
+
+        if failed > 0:
+            settings.IS_DOCKER = isDocker
+            settings.AUTO_INSTALL = False
 
     return settings
 

@@ -3,6 +3,7 @@ import os
 
 
 isFirstLaunch = False
+isDocker = True
 
 if not os.path.isfile(os.path.dirname(os.path.realpath(__file__)) + "/conf/server.cfg"):
     print "Configuration not found, creating new settings file"
@@ -26,6 +27,7 @@ except Exception as ex:
 
 application = Application()
 application.isFirstLaunch = isFirstLaunch
+application.isDocker= isDocker
 app = application.app
 
 application.launch()

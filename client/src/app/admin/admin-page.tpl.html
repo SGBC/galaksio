@@ -6,26 +6,26 @@
 		<div class="col-md-12">
 			<div class="panel panel-container">
 				<div ng-show="settings === undefined" class="well well-bg">
-					<h1><i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Setting up for first run!</h1>
-					<p>We are setting up Galaksio for the first run, please wait!</p>
+					<h1><i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Preparing settings!</h1>
+					<p>We are preparing the settings for Galaksio, please wait!</p>
 				</div>
 				<form ng-show="settings !== undefined" class="form-horizontal">
 					<h2>Main server settings</h2>
-					<div class="form-group">
+					<div class="form-group" ng-hide="settings.IS_DOCKER">
 						<label class="control-label col-sm-2" for="SERVER_HOST_NAME">Galaksio host name:</label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" id="SERVER_HOST_NAME" ng-model="settings.SERVER_HOST_NAME" ng-required="true">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The IP address for Galaksio. Leave 0.0.0.0 to listen to all requests."></i>
 					</div>
-					<div class="form-group">
+					<div class="form-group" ng-hide="settings.IS_DOCKER">
 						<label class="control-label col-sm-2" for="SERVER_PORT_NUMBER">Galaksio port number:  </label>
 						<div class="col-sm-9">
 							<input type="number" class="form-control" id="SERVER_PORT_NUMBER" ng-model="settings.SERVER_PORT_NUMBER" ng-required="true">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The port number that Galaksio listens for requests."></i>
 					</div>
-					<div class="form-group">
+					<div class="form-group" ng-hide="settings.IS_DOCKER">
 						<label class="control-label col-sm-2" for="SERVER_SUBDOMAIN">Galaksio subdomain:</label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" placeholder="None" id="SERVER_SUBDOMAIN" ng-model="settings.SERVER_SUBDOMAIN">
@@ -46,7 +46,7 @@
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Accounts that have administration rights. Use emails separated by commas."></i>
 					</div>
-					<div class="form-group">
+					<div class="form-group" ng-hide="settings.IS_DOCKER">
 						<label class="control-label col-sm-2" for="ROOT_DIRECTORY">Galaksio root directory:  </label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" id="ROOT_DIRECTORY" ng-model="settings.ROOT_DIRECTORY" placeholder="Leave empty to auto-detect">
@@ -55,14 +55,14 @@
 					</div>
 					<h2>Galaxy settings</h2>
 					<div class="form-group">
-						<label class="control-label col-sm-2" for="GALAXY_SERVER">Galaxy server (internal):  </label>
+						<label class="control-label col-sm-2" for="GALAXY_SERVER">Galaxy server URL (internal):  </label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" id="GALAXY_SERVER" ng-model="settings.GALAXY_SERVER" ng-required="true">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The internal URL or IP for the Galaxy instance that will receive all the Galaksio requests. If you are using a dockerized version of Galaksio and Galaxy, this value should be the internal name used for linking the containers (e.g. by default http://galaxy_machine)"></i>
 					</div>
 					<div class="form-group">
-						<label class="control-label col-sm-2" for="GALAXY_SERVER_URL">Galaxy server URL:  </label>
+						<label class="control-label col-sm-2" for="GALAXY_SERVER_URL">Galaxy server URL (external):  </label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" id="GALAXY_SERVER_URL" ng-model="settings.GALAXY_SERVER_URL">
 						</div>

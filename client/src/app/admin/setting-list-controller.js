@@ -72,7 +72,7 @@
 						}
 					}
 
-					if($scope.settings["IS_DOCKER"]){
+					if($scope.settings["AUTO_INSTALL"]){
 						me.updateSettingsHandler();
 					}
 				},

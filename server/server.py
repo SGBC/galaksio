@@ -44,6 +44,7 @@ class Application(object):
         #*******************************************************************************************
         self.app = Flask(__name__)
         self.isFirstLaunch = False
+        self.isDocker = False
         self.settings = AdminFunctions.readConfigurationFile()
         self.app.config['MAX_CONTENT_LENGTH'] = self.settings.MAX_CONTENT_LENGTH * pow(1024, 2)
         #******************************************************************************************
@@ -172,7 +173,7 @@ class Application(object):
             else:
                 isAdmin=True
             if isAdmin:
-                return AdminFunctions.getSettingsList(request, Response(), self.settings.ROOT_DIRECTORY, self.isFirstLaunch).getResponse()
+                return AdminFunctions.getSettingsList(request, Response(), self.settings.ROOT_DIRECTORY, self.isFirstLaunch, self.isDocker).getResponse()
             return Response().setContent({"success": False}).setStatus(401).getResponse()
 
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/update-settings', methods=['OPTIONS', 'POST'])
