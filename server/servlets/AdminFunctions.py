@@ -22,6 +22,7 @@
 from flask import json, jsonify
 import logging
 from logging import config as loggingConfig
+import os
 
 def isAdminAccount(request, response, ROOT_DIRECTORY):
     settings = readConfigurationFile()
@@ -129,4 +130,13 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
             settings.AUTO_INSTALL = False
 
     return settings
+
+def storeTmpFiles(files):
+    tmp_files = {}
+    for file_id in files.keys():
+        file = files[file_id]
+        tmp_path = os.path.join("/tmp", file.filename)
+        file.save(tmp_path)
+        tmp_files[file_id] = (file.filename, open(tmp_path, 'rb'), 'text/plain')
+    return tmp_files
 

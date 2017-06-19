@@ -95,12 +95,15 @@ class Application(object):
                 service = "/api/tools"
 
                 data = dict(request.form)
+
+                tmp_files = AdminFunctions.storeTmpFiles(request.files)
+
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method=method,
                     url=self.settings.GALAXY_SERVER + service,
                     data=data,
-                    files=request.files,
+                    files=tmp_files,
                     auth=auth,
                     cookies=request.cookies,
                     allow_redirects=False)
