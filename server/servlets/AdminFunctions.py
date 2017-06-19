@@ -76,6 +76,7 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
 
     config = ConfigParser.RawConfigParser()
     config.read(os.path.dirname(os.path.realpath(__file__)) + "/../conf/server.cfg")
+
     settings.SERVER_HOST_NAME = config.get('server_settings', 'SERVER_HOST_NAME')
     settings.SERVER_SUBDOMAIN = config.get('server_settings', 'SERVER_SUBDOMAIN')
     settings.SERVER_PORT_NUMBER = config.getint('server_settings', 'SERVER_PORT_NUMBER')

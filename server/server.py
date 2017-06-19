@@ -22,6 +22,7 @@
 
 import requests
 import re
+import logging
 
 import servlets.AdminFunctions as AdminFunctions
 from flask import Flask, request, send_from_directory, request, jsonify, json
@@ -47,6 +48,9 @@ class Application(object):
         self.isDocker = False
         self.settings = AdminFunctions.readConfigurationFile()
         self.app.config['MAX_CONTENT_LENGTH'] = self.settings.MAX_CONTENT_LENGTH * pow(1024, 2)
+
+        self.log("Starting application...")
+
         #******************************************************************************************
         #     ______ _____ _      ______  _____
         #   |  ____|_   _| |    |  ____|/ ____|
@@ -60,6 +64,7 @@ class Application(object):
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/')
         def main():
             if self.isFirstLaunch:
+                self.log("First launch detected, showing install form")
                 return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', 'install.html')
             else:
                 return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', 'index.html')
@@ -92,12 +97,15 @@ class Application(object):
                 method = request.method
 
             if service == "upload/":
+                self.log("New upload request detected")
                 service = "/api/tools"
 
                 data = dict(request.form)
 
                 tmp_files = AdminFunctions.storeTmpFiles(request.files)
+                self.log("All files were temporary stored at: " + ", ".join(tmp_files))
 
+                self.log("Forwarding the files uploading...")
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method=method,
@@ -108,6 +116,8 @@ class Application(object):
                     cookies=request.cookies,
                     allow_redirects=False)
             elif service == "signup/":
+                self.log("New sign up request detected")
+
                 service = "/user/create?cntrller=user"
 
                 data = dict(request.form)
@@ -124,6 +134,8 @@ class Application(object):
             else:
                 service = "/api/" + service
 
+                self.log("New request detected (" + service + ")")
+
                 # STEP 2. Generate the new requests
                 resp = requests.request(
                     method= method,
@@ -137,6 +149,8 @@ class Application(object):
             headers = []
             excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
             headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+
+            self.log("Done! Returning response...")
 
             response = flask_response(resp.content, resp.status_code, headers)
             return response
@@ -206,8 +220,16 @@ class Application(object):
         ##*******************************************************************************************
         ##* LAUNCH APPLICATION
         ##*******************************************************************************************
-        self.app.run(host=self.settings.SERVER_HOST_NAME, port=self.settings.SERVER_PORT_NUMBER,  debug=self.settings.SERVER_ALLOW_DEBUG, threaded=True)
+        self.app.run(host=self.settings.SERVER_HOST_NAME, port=self.settings.SERVER_PORT_NUMBER,  debug=False, threaded=True)
 
+    def log(self, message, type="info"):
+        if self.settings.SERVER_ALLOW_DEBUG == True:
+            if type == "warn":
+                logging.warning(message)
+            elif type == "err":
+                logging.error(message)
+            else:
+                logging.info(message)
 
 class Response(object):
     """This class is used to specify the custom response object"""
