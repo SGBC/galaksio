@@ -167,9 +167,32 @@
 				try{
 					var tool_state = JSON.parse($scope.step.tool_state);
 					if(tool_state[model.name]){
-						inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
+						if (typeof tool_state[model.name] === 'string' || tool_state[model.name] instanceof String){
+    						inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
+						}else{
+    						inputValue = tool_state[model.name];
+						}
+					}else if($scope.parent_tool_state !== undefined && $scope.parent_tool_state[model.name] !== undefined){
+						if (typeof $scope.parent_tool_state[model.name] === 'string' || $scope.parent_tool_state[model.name] instanceof String){
+    						inputValue = $scope.parent_tool_state[model.name].replace(/(^\"|\"$)/g,"");
+						}else{
+    						inputValue = $scope.parent_tool_state[model.name];
+						}
 					}else{
-						console.error("No values for '" + model.name + "' in 'step.tool_state' at stepInput directive.");
+						var errorMessage = "No values for '" + model.name + "' in 'step.tool_state' at stepInput directive.";
+						 if(model.value !== undefined){
+						    errorMessage += " Using default value: " + model.value;
+    						inputValue = model.value;
+						 } else if(model.default !== undefined){
+						    errorMessage += " Using default value: " + model.default;
+    						inputValue = model.default;
+						 } else if(model.default_value !== undefined){
+						    errorMessage += " Using default value: " + model.default_value;
+    						inputValue = model.default_value;
+						 }else{
+						    errorMessage += " No default value was found.";
+						 }
+						console.error(errorMessage);
 					}
 				}catch(err) {
 					console.error("Unable to parse 'step.tool_state' at stepInput directive.");
@@ -206,59 +229,70 @@
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "integer"){
 						model.value = Number.parseInt(inputValue);
+                        var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="number" name="{{input.name}}" ' +
+						((model.max !== null)?'max="' + model.max + '"':'') +
+						((model.min !== null)?'min="' + model.min + '"':'') +
 						'       ng-model="input.value"' +
 						'       ng-required="!(input.optional===true)" >' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}' + extra_help + '"></i>':'' + extra_help);
 						//SELECTORS INPUTS
 					}else if(model.type === "float" ){
 						model.value = Number.parseFloat(inputValue);
+                        var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="number" name="{{input.name}}" ' +
+						((model.max !== null)?'max="' + model.max + '"':'') +
+						((model.min !== null)?'min="' + model.min + '"':'') +
 						'       ng-model="input.value"' +
 						'       ng-required="!(input.optional===true)" >' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//SELECTORS INPUTS
 					}else if(model.type === "select"){
-						model.value = inputValue;
+						model.value = ((inputValue !== "" && !(inputValue instanceof Object))? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<select class="form-control" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
-						'        ng-options="option[1] as option[0] for option in input.options"' +
+						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >'+
+                        '   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>";
 					}else if(model.type === "data_column"){
-						model.value = inputValue;
+						model.value = (inputValue !== ""? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
 						'<select class="form-control" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
-						'        ng-options="option[1] as option[0] for option in input.options"' +
+						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >'+
+                        '   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>" +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "genomebuild"){
-						model.value = inputValue;
+						model.value = (inputValue !== ""? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
 						'<select class="form-control" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
-						'        ng-options="option[1] as option[0] for option in input.options"' +
+						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >' +
+                        '   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>" +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
 						try {
-							inputValue = JSON.parse(inputValue);
+							if (typeof inputValue === 'string' || inputValue instanceof String){
+    							inputValue = JSON.parse(inputValue);
+							}
 							model.value = model.cases[inputValue["__current_case__"]].value;
 						} catch (e) {
 							model.value = inputValue;
@@ -268,11 +302,13 @@
 						//TODO: REMOVE THE NAME PROPERTY? VALUES ARE BEING REMOVED WHEN EXPANDING TOOLS
 						template+=
 						'<div ng-repeat="option in input.test_param.options">' +
-						'	<input type="radio" name="{{input.test_param.name}}"' +
+						'	<input type="radio" name="{{input.test_param.name}}' + randomIDgenerator(5) + '"' +
 						'        ng-model="input.value" value="{{option[1]}}"'+
 						'        ng-required="!(input.optional===true)" > {{option[0]}}'  +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'</div>';
+						//Generate child nodes
+						$scope.parent_tool_state = inputValue;
 						template+=
 						'<div style="margin-left: 20px;" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
 						'	<step-input ng-repeat="input in option.inputs"></step-input>'+
@@ -326,8 +362,7 @@
 									'<div class="inputRepeatItem">'+
 									'  <label>{{input.title}}' + (i+1) + "</label>" +
 									'  <i name="{{input.name}}" >Output dataset from step ' + ($scope.step.input_connections[_key].id + 1) + '</i>' +
-									'</div>'
-									;
+									'</div>';
 								}
 							}
 						}
@@ -343,6 +378,11 @@
 					}
 				}catch(err) {
 					debugger;
+
+                    if (err instanceof Object && err.message !== undefined){
+                        err = err.message;
+                    }
+
 					template = '<b color="red">Unknown input</b>';
 					$dialogs.showErrorDialog("Error while creating the form: "  + err.split(":")[0],{
 						title        : "Error while creating the form",
@@ -353,9 +393,9 @@
 							debugger;
 							// Collapse the tool
 							$scope.loadingComplete = false;
-							$scope.collapsed = true;
+							//$scope.collapsed = true;
 							// Remove extra information from step
-							delete $scope.step.extra;
+							//delete $scope.step.extra;
 						}
 					});
 				}
