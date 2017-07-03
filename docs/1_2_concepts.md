@@ -12,3 +12,8 @@
 * Any workflow that you have permissions to import, you can modify with the workflow editor.
 * Workflow can be reused over and over, not only reducing tedious work, but enhancing reproducibility by applying the same exact methods to all of your data.
 More information about workflows, [here](https://galaxyproject.org/learn/advanced-workflow/).
+aasasds
+
+<div class="imageContainer" style="text-align:center;" >
+    <img src="galaxy_workflows.png" title="Galaxy workflows." style="height: 350px !important; margin-bottom: 20px; ">
+</div>
