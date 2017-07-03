@@ -6,8 +6,6 @@ pages:
 - ['1_2_concepts.md', 'Getting start', 'Must know concepts']
 - ['2_1_users.md', 'User system', 'Users in Galaksio']
 - ['3_1_histories.md', 'Histories and datasets', 'Browsing data']
-- ['3_2_histories.md', 'Histories and datasets', 'Uploading files']
-- ['3_3_histories.md', 'Histories and datasets', 'Dataset collections']
 - ['4_1_workflows.md', 'Workflows', 'Browsing workflows']
 - ['4_2_workflows.md', 'Workflows', 'Running a workflow']
 - ['5_license.md', 'About', 'License']
