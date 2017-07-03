@@ -4,9 +4,10 @@
 
 
 # Must know concepts
-- [What is a Workflow in Galaxy?](#what-is-a-workflow-in-galaxy?)
+- [What is a Workflow in Galaxy?](#what-is-a-workflow-in-galaxy)
 - [Datasets in Galaxy](#datasets-in-galaxy)
 - [Histories in Galaxy](#histories-in-galaxy)
+- [Dataset collections](#dataset-collections)
 
 Note: Part of this content has been Extracted from the [Galaxy project documentation](https://galaxyproject.org/learn).
 
