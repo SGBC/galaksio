@@ -7,6 +7,7 @@
 **Galaksio** is a web tool that provides a simple but complete UI for using Galaxy for biologists that require bioinformatical workflows to complete their researching. Galaxy is an open source, web-based platform for data intensive biomedical research. A workflow in Galaxy is a series of tools and dataset actions that run in sequence as a batch operation.
 
 The major steps of workflow execution using Galaksio can be summarized as follows:
+
 * Log in the application using your Galaxy account or create a new one.
 * Upload your data to Galaksio to your Galaxy history and design your dataset collections.
 * Browse the publicly available workflows in Galaxy and import them to your collection.
