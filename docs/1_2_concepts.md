@@ -3,7 +3,7 @@
 </div>
 
 
-# Must know concepts
+# Some "must know" concepts
 - [What is a Workflow in Galaxy?](#what-is-a-workflow-in-galaxy)
 - [Datasets in Galaxy](#datasets-in-galaxy)
 - [Histories in Galaxy](#histories-in-galaxy)
@@ -12,12 +12,13 @@
 Note: Part of this content has been Extracted from the [Galaxy project documentation](https://galaxyproject.org/learn).
 
 ## What is a Workflow in Galaxy?
-* A workflow is a series of tools and dataset actions that run in sequence as a batch operation.
+A workflow is a series of tools and dataset actions that run in sequence as a batch operation.
 * Workflows can be created from scratch using the workflow editor.
 * Workflows can be annotated, viewed, shared, published, and imported - just like other Galaxy objects.
 * Any workflow that you have permissions to import, you can modify with the workflow editor.
 * Workflow can be reused over and over, not only reducing tedious work, but enhancing reproducibility by applying the same exact methods to all of your data.
-More information about workflows, [here](https://galaxyproject.org/learn/advanced-workflow/).
+
+More information [here](https://galaxyproject.org/learn/advanced-workflow/).
 
 
 <div class="imageContainer" style="text-align:center;" >
@@ -27,6 +28,8 @@ More information about workflows, [here](https://galaxyproject.org/learn/advance
 
 ## Datasets in Galaxy
 Datasets are the inputs and outputs of each step in an analysis project in Galaxy. The tracking information associated with Datasets in a History represent an experimental record of the methods, parameters, and other inputs.
+
+[More info](https://galaxyproject.org/learn/managing-datasets/)
 
 ## Histories in Galaxy
 When data is uploaded from your computer or analysis is done on existing data using Galaxy, each output from those steps generates a dataset. These datasets (and the output datasets from subsequent analysis on them) are stored by Galaxy in Histories.
@@ -38,6 +41,8 @@ All users have one 'current' history, which can be thought of as a workspace or 
 The history panel displays output datasets in the order in which they were created with the oldest/first shown at the bottom. As new analyses are done and new output datasets are generated, the newest datasets are added to the top of the history panel. In this way, the history panel displays the history of your analysis over time.
 
 Users that have registered an account and logged in can have many histories and the history panel allows switching between them and creating new ones. This can be useful to organize different analyses.
+
+[More info](https://galaxyproject.org/tutorials/histories/)
 
 <div class="imageContainer" style="text-align:center;" >
     <img src="galaxy_histories.png" title="Galaxy histories." style="height: 350px !important; margin-bottom: 20px; ">
