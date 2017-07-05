@@ -242,6 +242,7 @@
 			})).then(
 				function successCallback(response){
 					$rootScope.GALAXY_SERVER_URL = response.data.GALAXY_SERVER_URL;
+					$rootScope.MAX_CONTENT_LENGTH = response.data.MAX_CONTENT_LENGTH;
 				},
 				function errorCallback(response){
 					debugger;
@@ -263,7 +264,6 @@
 		*
 		******************************************************************************/
 		$scope.$on(APP_EVENTS.loginSuccess, function (event, args) {
-			debugger
 			$http($rootScope.getHttpRequestConfig("GET", "check-is-admin", {
 				headers: {'Content-Type': 'application/json; charset=utf-8'},
 			})).then(

@@ -23,6 +23,8 @@
 import requests
 import re
 import logging
+from bioblend.galaxy import GalaxyInstance
+from os import remove as removeFile
 
 import servlets.AdminFunctions as AdminFunctions
 from flask import Flask, request, send_from_directory, request, jsonify, json
@@ -97,24 +99,44 @@ class Application(object):
                 method = request.method
 
             if service == "upload/":
-                self.log("New upload request detected")
-                service = "/api/tools"
+                if self.settings.SAFE_UPLOAD:
+                    self.log("New upload request detected")
+                    service = "/api/tools"
 
-                data = dict(request.form)
+                    data = dict(request.form)
 
-                tmp_files = AdminFunctions.storeTmpFiles(request.files)
-                self.log("All files were temporary stored at: " + ", ".join(tmp_files))
+                    tmp_files = AdminFunctions.storeTmpFiles(request.files)
+                    self.log("All files were temporary stored at: " + ", ".join(tmp_files))
 
-                self.log("Forwarding the files uploading...")
-                # STEP 2. Generate the new requests
-                resp = requests.request(
-                    method=method,
-                    url=self.settings.GALAXY_SERVER + service,
-                    data=data,
-                    files=tmp_files,
-                    auth=auth,
-                    cookies=request.cookies,
-                    allow_redirects=False)
+                    self.log("Forwarding the files uploading...")
+
+                    history_id = data.get("history_id")[0]
+                    galaxy_key = data.get("key")[0]
+
+                    gi = GalaxyInstance(self.settings.GALAXY_SERVER, galaxy_key)
+
+                    responses = []
+                    for tmp_file in tmp_files:
+                        responses.append(gi.tools.upload_file(tmp_file, history_id))
+
+                    for tmp_file in tmp_files:
+                        removeFile(tmp_file)
+
+                    return jsonify({'success': True, 'responses': responses})
+                else:
+                    service = "/api/tools"
+
+                    data = dict(request.form)
+                    # STEP 2. Generate the new requests
+                    resp = requests.request(
+                        method=method,
+                        url=self.settings.GALAXY_SERVER + service,
+                        data=data,
+                        files=request.files,
+                        auth=auth,
+                        cookies=request.cookies,
+                        allow_redirects=False)
+
             elif service == "signup/":
                 self.log("New sign up request detected")
 
@@ -167,7 +189,7 @@ class Application(object):
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/local-galaxy-url', methods=['OPTIONS', 'GET'])
         def get_local_galaxy_url():
             if self.settings.GALAXY_SERVER_URL == "":
-                return Response().setContent({"GALAXY_SERVER_URL": self.settings.GALAXY_SERVER}).getResponse()
+                return Response().setContent({"GALAXY_SERVER_URL": self.settings.GALAXY_SERVER, "MAX_CONTENT_LENGTH": self.settings.MAX_CONTENT_LENGTH}).getResponse()
             else:
                 return Response().setContent({"GALAXY_SERVER_URL": self.settings.GALAXY_SERVER_URL}).getResponse()
 

@@ -2,6 +2,14 @@
 	<form name="signForm" class="form-signin" novalidate ng-submit="controller.signFormSubmitHandler()">
 		<h3 class="form-signin-heading">{{(isLogin)?"Welcome back! Please Sign In":"Create your Galaxy account"}}</h3>
 		<hr class="colorgraph"><br>
+		<div class="well">
+			<p>This Galaksio instance is connected to the following Galaxy server:</p>
+			<code style="text-align: center;display: block;">
+				<a href="{{GALAXY_SERVER_URL}}">{{GALAXY_SERVER_URL}}</a>
+			</code>
+			<p>Start a new session using your Galaxy user and password as usual, or create a new account.</p>
+			<p>You can find more information about user accounts <a href="http://galaksio.readthedocs.io/en/feature-doc/2_1_users">here</a></p>
+		</div>
 		<input name="email" type="email" class="form-control" ng-model="userInfo.email" placeholder="Email" required="" autofocus="" />
 		<span>
 			<span class="text-danger" ng-show="signForm.email.$error.required">Required!</span>
