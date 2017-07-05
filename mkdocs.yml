@@ -1,12 +1,16 @@
 site_name: Galaksio Documentation
 pages:
 - ['index.md', 'Home']
-- ['0_install.md', 'Install', 'Installing Galaksio']
 - ['1_1_galaxy.md', 'Getting start', 'The Galaxy project and Galaksio']
 - ['1_2_concepts.md', 'Getting start', 'Must know concepts']
+- ['1_3_install.md', 'Getting start', 'Installing Galaksio']
+- ['1_4_quick_start.md', 'Getting start', 'Quick start']
 - ['2_1_users.md', 'User system', 'Users in Galaksio']
-- ['3_1_histories.md', 'Histories and datasets', 'Browsing data']
+- ['3_1_histories.md', 'Histories and datasets', 'Histories in Galaksio']
+- ['3_2_histories.md', 'Histories and datasets', 'Managing datasets']
+- ['3_3_histories.md', 'Histories and datasets', 'Managing dataset collections']
 - ['4_1_workflows.md', 'Workflows', 'Browsing workflows']
 - ['4_2_workflows.md', 'Workflows', 'Running a workflow']
-- ['5_license.md', 'About', 'License']
+- ['5_use_case.md', 'Use case', 'Example of use']
+- ['6_license.md', 'About', 'License']
 theme: readthedocs
