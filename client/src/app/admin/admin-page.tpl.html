@@ -40,6 +40,15 @@
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The max size for the requests sent by the clients, in MB."></i>
 					</div>
 					<div class="form-group">
+						<label class="control-label col-sm-2" for="SAFE_UPLOAD">Safe upload:</label>
+						<div class="col-sm-9">
+							<div class="checkbox">
+								<label><input type="checkbox" id="SAFE_UPLOAD" ng-model="settings.SAFE_UPLOAD"> Use safe upload</label>
+							</div>
+						</div>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Whether use normal file upload or safe upload. Safe upload will temporary store the uploaded file in the Galaksio server before send it to Galaxy. Normal upload will send them on the fly, which is much faster but sometimes could fail."></i>
+					</div>
+					<div class="form-group">
 						<label class="control-label col-sm-2" for="ADMIN_ACCOUNTS">Admin accounts:  </label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" id="ADMIN_ACCOUNTS" ng-model="settings.ADMIN_ACCOUNTS" ng-required="true">

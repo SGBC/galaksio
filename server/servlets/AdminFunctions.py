@@ -22,6 +22,7 @@
 from flask import json, jsonify
 import logging
 from logging import config as loggingConfig
+import os
 
 def isAdminAccount(request, response, ROOT_DIRECTORY):
     settings = readConfigurationFile()
@@ -49,6 +50,7 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     config.set('server_settings', 'SERVER_SUBDOMAIN', newValues.get("SERVER_SUBDOMAIN"))
     config.set('server_settings', 'SERVER_PORT_NUMBER', str(newValues.get("SERVER_PORT_NUMBER")))
     config.set('server_settings', 'SERVER_ALLOW_DEBUG', str(newValues.get("SERVER_ALLOW_DEBUG")))
+    config.set('server_settings', 'SAFE_UPLOAD', str(newValues.get("SAFE_UPLOAD") == True))
     config.set('server_settings', 'MAX_CONTENT_LENGTH', str(newValues.get("MAX_CONTENT_LENGTH")))
     config.set('server_settings', 'ROOT_DIRECTORY ', newValues.get("ROOT_DIRECTORY"))
 
@@ -75,10 +77,15 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
 
     config = ConfigParser.RawConfigParser()
     config.read(os.path.dirname(os.path.realpath(__file__)) + "/../conf/server.cfg")
+
     settings.SERVER_HOST_NAME = config.get('server_settings', 'SERVER_HOST_NAME')
     settings.SERVER_SUBDOMAIN = config.get('server_settings', 'SERVER_SUBDOMAIN')
     settings.SERVER_PORT_NUMBER = config.getint('server_settings', 'SERVER_PORT_NUMBER')
     settings.SERVER_ALLOW_DEBUG = config.getboolean('server_settings', 'SERVER_ALLOW_DEBUG')
+    try:
+        settings.SAFE_UPLOAD = config.getboolean('server_settings', 'SAFE_UPLOAD')
+    except:
+        settings.SAFE_UPLOAD = True
     settings.MAX_CONTENT_LENGTH = config.getint('server_settings', 'MAX_CONTENT_LENGTH')
     settings.ROOT_DIRECTORY = config.get('server_settings', 'ROOT_DIRECTORY')
     import os
@@ -90,6 +97,7 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
     settings.GALAXY_SERVER = config.get('galaxy_settings', 'GALAXY_SERVER').rstrip("/")
     settings.GALAXY_SERVER_URL = config.get('galaxy_settings', 'GALAXY_SERVER_URL').rstrip("/")
     settings.ADMIN_ACCOUNTS = config.get('galaxy_settings', 'ADMIN_ACCOUNTS').split(",")
+
     # PREPARE LOGGING
     loggingConfig.fileConfig(settings.ROOT_DIRECTORY + 'server/conf/logging.cfg')
 
@@ -130,3 +138,20 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
 
     return settings
 
+# def storeTmpFiles(files):
+#     tmp_files = {}
+#     for file_id in files.keys():
+#         file = files[file_id]
+#         tmp_path = os.path.join("/tmp", file.filename)
+#         file.save(tmp_path)
+#         tmp_files[file_id] = (file.filename, open(tmp_path, 'rb'), 'text/plain')
+#     return tmp_files
+
+def storeTmpFiles(files):
+    tmp_files = []
+    for file_id in files.keys():
+        file = files[file_id]
+        tmp_path = os.path.join("/tmp", file.filename)
+        file.save(tmp_path)
+        tmp_files.append(tmp_path)
+    return tmp_files

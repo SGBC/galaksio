@@ -340,6 +340,9 @@
 			}
 		};
 		$scope.findFileName = function (file_id) {
+			if(file_id === undefined){
+			    return "";
+			}
 			if($scope.displayedHistory === undefined){
 				$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
 			}
@@ -350,6 +353,17 @@
 				}
 			}
 			return "Unknown input file";
+		};
+
+		$scope.adaptOptionsData = function(options){
+            if( options instanceof Array){
+                var newOptions = [];
+                for(var i in options){
+                    newOptions.push({"value" : options[i][1], "label" : options[i][0]});
+                }
+                return newOptions;
+            }
+            return options;
 		};
 
 		//--------------------------------------------------------------------
@@ -471,6 +485,7 @@
 				$scope.helpHtml = $sanitize($scope.step.extra.help + '<a style="color: #e61669;" class="clickable" ng-click="isCollapsed=!isCollapsed;"> Hide help</a>');
 			}
 		};
+
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------

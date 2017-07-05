@@ -93,11 +93,12 @@
       template:
       ' <div class="panel panel-container" ng-controller="UserSessionController as controller">' +
       '   <h4>Your account</h4>' +
-      '   <p><b>Signed in as </b> <i>{{userInfo.email}}</i></p>' +
-      '   <p><b>Disk usage: </b>{{userInfo.disk_usage || "Loading..."}}</p>' +
-      '   <a class="btn btn-danger btn-sm" style=" display: block; margin: auto; width: 130px; " ng-click="controller.signOutButtonHandler()">' +
+      '   <p><b>Galaxy server:</b><a href="{{GALAXY_SERVER_URL}}">{{GALAXY_SERVER_URL}}</a> </p>' +
+      '   <a class="btn btn-danger btn-sm" style="float: right;width: 130px;margin-right: 50px;" ng-click="controller.signOutButtonHandler()">' +
       '     <i class="fa fa-sign-out fa-fw" ></i> Close session' +
       '   </a>' +
+      '   <p><b>Signed in as </b> <i>{{userInfo.email}}</i></p>' +
+      '   <p><b>Disk usage: </b>{{userInfo.disk_usage || "Loading..."}}</p>' +
       ' </div>'
     };
   });

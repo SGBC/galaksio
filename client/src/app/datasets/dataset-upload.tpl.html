@@ -1,4 +1,7 @@
 <div class="panel panel-container" >
+	<div class="well well-sm">
+		<i class="fa fa-info-circle text-info"></i> Please note that max allowed size for files is {{MAX_CONTENT_LENGTH}} MB.
+	</div>
 	<table class="table" style="margin-bottom:10px;">
 		<thead>
 			<tr>
@@ -15,7 +18,7 @@
 			</tr>
 			<tr ng-repeat="file in files">
 				<td style="max-width:250px;word-wrap:break-word;">{{file.name}}</td>
-				<td>{{file.size}}</td>
+				<td>{{adaptFileSize(file.size)}}</td>
 				<td>{{file.type}}</td>
 				<td style="width:60px;max-width:60px;">
 					<span ng-if="file.state === 'pending'" class="label label-default">{{file.state}}</span>
@@ -31,7 +34,7 @@
 			</tr>
 		</tbody>
 	</table>
-	<input type="file" file-model="myFile" style="display:none;" id="uploadDatasetSelector">
+	<input type="file" file-model="myFile" multiple="true" style="display:none;" id="uploadDatasetSelector">
 	<a class="btn btn-default" style="float: right;" ng-click="controller.uploadDatasetHandler();" ng-disabled="controller.removeAllowed === false">Upload files</a>
 	<a class="btn btn-primary" style="float: right; margin-right: 10px;" ng-click="controller.selectNewDatasetHandler();" ng-disabled="controller.removeAllowed === false">Choose local file</a>
 </div>

@@ -73,31 +73,34 @@
 
 			var formData = new FormData();
 			formData.append('key', window.atob(Cookies.get("galaksiosession")));
-			formData.append('inputs', '{"dbkey":"?","file_type":"auto","files_0|type":"upload_dataset","files_0|space_to_tab":null,"files_0|to_posix_lines":"Yes","files_0|NAME":"' + file.name + '"}');
-			formData.append('files_0|file_data', file);
-			formData.append('tool_id', 'upload1');
 			formData.append('history_id', Cookies.get("current-history"));
+			formData.append('inputs', '{"dbkey":"?","file_type":"auto","files_0|type":"upload_dataset","files_0|space_to_tab":null,"files_0|to_posix_lines":"Yes","files_0|NAME":"' + file.name + '"}');
+			formData.append('tool_id', 'upload1');
+			formData.append('files_0|file_data', file, file.name);
 
 			file.state = "uploading";
 
-			$http.post(
-				$rootScope.getRequestPath("dataset-upload"), formData, {
-					transformRequest: angular.identity,
-					headers: {'Content-Type': undefined}
-				}
-			).then(
-				function successCallback(response){
-					file.state = "done";
-					me.uploadDatasetHandler(nItem+1);
-				},
-				function errorCallback(response){
-					file.state = "error";
-					me.uploadDatasetHandler(nItem+1);
-					debugger;
-					console.error("Error while uploading a new file at DatasetListController:uploadDatasetHandler.");
-					console.error(response);
-				}
-			);
+            // Set up the request.
+            var xhr = new XMLHttpRequest();
+            // Open the connection.
+            xhr.open('POST', $rootScope.getRequestPath("dataset-upload"), true);
+
+            // Set up a handler for when the request finishes.
+            xhr.onload = function () {
+              if (xhr.status === 200) {
+                file.state = "done";
+                me.uploadDatasetHandler(nItem+1);
+              } else {
+                file.state = "error";
+                me.uploadDatasetHandler(nItem+1);
+                debugger;
+                console.error("Error while uploading a new file at DatasetListController:uploadDatasetHandler.");
+                console.error(response);
+              }
+            };
+
+			// Send the Data.
+            xhr.send(formData);
 		};
 
 		this.deleteSelectedDatasetHandler = function(dataset){
@@ -227,6 +230,13 @@
 
 		$scope.filterDatasets = function (item) {
 			return (item.deleted === false || $scope.showDeleted) && ($scope.dataType === item.type) && ($scope.dataType !== "collection" || $scope.dataSubtype === undefined || $scope.dataSubtype === item.collection_type);
+		};
+
+		$scope.adaptFileSize = function(bytes){
+			if(bytes < 1024) return bytes + " Bytes";
+		    else if(bytes < 1048576) return(bytes / 1024).toFixed(2) + " KB";
+		    else if(bytes < 1073741824) return(bytes / 1048576).toFixed(2) + " MB";
+		    else return(bytes / 1073741824).toFixed(2) + " GB";
 		};
 
 		//--------------------------------------------------------------------

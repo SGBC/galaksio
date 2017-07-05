@@ -89,8 +89,15 @@
 			link: function($scope, element, attrs) {
 				element.bind('change', function(){
 					$scope.$apply(function(){
-						element[0].files[0].state="pending"
-						$scope.files.push(element[0].files[0]);
+					    if(element[0].files instanceof FileList){
+                            for(var i=0; i < element[0].files.length; i++){
+                                element[0].files[i].state="pending"
+                                $scope.files.push(element[0].files[i]);
+                            }
+					    }else{
+                            element[0].files[0].state="pending"
+                            $scope.files.push(element[0].files[0]);
+					    }
 					});
 				});
 			}
