@@ -341,22 +341,22 @@
 
 					diagram.nodes.push({
 						id: step.id,
-						label: (step.id+1) + ". " + (step.tool_id || step.tool_inputs.name),
+						label: (step.id+1) + ". " + (step.name || step.label),
+						x: step.position.left,
+						y: step.position.top,
 						step_type: step.type,
 					});
 
-					for(var j in step.input_steps){
-						if(step.input_steps[j].source_step !== undefined){
-							edge_id = step.id + "" + step.input_steps[j].source_step;
-							if(!edges[edge_id] && step.input_steps[j].source_step !== undefined && step.id !== undefined){
-								edges[edge_id]=true;
-								diagram.edges.push({
-									id: edge_id,
-									source: step.input_steps[j].source_step,
-									target: step.id,
-									type: 'arrow'
-								});
-							}
+					for(var j in step.input_connections){
+						edge_id = step.id + "" + step.input_connections[j].id;
+						if(!edges[edge_id] && step.input_connections[j].id !== undefined && step.id !== undefined){
+							edges[edge_id]=true;
+							diagram.edges.push({
+								id: edge_id,
+								source: step.input_connections[j].id,
+								target: step.id,
+								type: 'arrow'
+							});
 						}
 					}
 				}

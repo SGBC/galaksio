@@ -99,7 +99,7 @@
 				if(!model.tool_state){
 					return;
 				}
-				
+
 				model.label = JSON.parse(model.tool_state).name;
 
 				var template =
@@ -168,30 +168,30 @@
 					var tool_state = JSON.parse($scope.step.tool_state);
 					if(tool_state[model.name]){
 						if (typeof tool_state[model.name] === 'string' || tool_state[model.name] instanceof String){
-    						inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
+							inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
 						}else{
-    						inputValue = tool_state[model.name];
+							inputValue = tool_state[model.name];
 						}
 					}else if($scope.parent_tool_state !== undefined && $scope.parent_tool_state[model.name] !== undefined){
 						if (typeof $scope.parent_tool_state[model.name] === 'string' || $scope.parent_tool_state[model.name] instanceof String){
-    						inputValue = $scope.parent_tool_state[model.name].replace(/(^\"|\"$)/g,"");
+							inputValue = $scope.parent_tool_state[model.name].replace(/(^\"|\"$)/g,"");
 						}else{
-    						inputValue = $scope.parent_tool_state[model.name];
+							inputValue = $scope.parent_tool_state[model.name];
 						}
 					}else{
 						var errorMessage = "No values for '" + model.name + "' in 'step.tool_state' at stepInput directive.";
-						 if(model.value !== undefined){
-						    errorMessage += " Using default value: " + model.value;
-    						inputValue = model.value;
-						 } else if(model.default !== undefined){
-						    errorMessage += " Using default value: " + model.default;
-    						inputValue = model.default;
-						 } else if(model.default_value !== undefined){
-						    errorMessage += " Using default value: " + model.default_value;
-    						inputValue = model.default_value;
-						 }else{
-						    errorMessage += " No default value was found.";
-						 }
+						if(model.value !== undefined){
+							errorMessage += " Using default value: " + model.value;
+							inputValue = model.value;
+						} else if(model.default !== undefined){
+							errorMessage += " Using default value: " + model.default;
+							inputValue = model.default;
+						} else if(model.default_value !== undefined){
+							errorMessage += " Using default value: " + model.default_value;
+							inputValue = model.default_value;
+						}else{
+							errorMessage += " No default value was found.";
+						}
 						console.error(errorMessage);
 					}
 				}catch(err) {
@@ -229,7 +229,7 @@
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "integer"){
 						model.value = Number.parseInt(inputValue);
-                        var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
+						var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="number" name="{{input.name}}" ' +
@@ -241,7 +241,7 @@
 						//SELECTORS INPUTS
 					}else if(model.type === "float" ){
 						model.value = Number.parseFloat(inputValue);
-                        var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
+						var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
 						'<input type="number" name="{{input.name}}" ' +
@@ -261,7 +261,7 @@
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >'+
-                        '   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
+						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>";
 					}else if(model.type === "data_column"){
 						model.value = (inputValue !== ""? inputValue: model.default_value);
@@ -272,7 +272,7 @@
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >'+
-                        '   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
+						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>" +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "genomebuild"){
@@ -284,14 +284,14 @@
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >' +
-                        '   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
+						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>" +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
 						try {
 							if (typeof inputValue === 'string' || inputValue instanceof String){
-    							inputValue = JSON.parse(inputValue);
+								inputValue = JSON.parse(inputValue);
 							}
 							model.value = model.cases[inputValue["__current_case__"]].value;
 						} catch (e) {
@@ -321,7 +321,11 @@
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//DISPLAY
 					}else if(model.type === "data"){
-						if(inputValue.indexOf("RuntimeValue") > -1 || inputValue.indexOf("null") > -1 || inputValue === "" ){
+						if(inputValue=== null || inputValue=== undefined ){
+							throw 'Unknown value for data type "' + inputValue + '" : ' + JSON.stringify(model);
+						}else if(inputValue.value !== undefined ){
+							debugger
+						}else if(inputValue instanceof String && (inputValue.indexOf("RuntimeValue") > -1 || inputValue.indexOf("null") > -1 || inputValue === "" )){
 							template+=
 							'<label>{{input.label || input.title}}</label>' +
 							'<i name="{{input.name}}">'+
@@ -333,8 +337,6 @@
 							'<label>{{input.label || input.title}}</label>' +
 							'<i name="{{input.name}}">Output dataset from <b>step {{step.input_connections[\'library|\'+ input.name].id + 1}}</b></i>' +
 							((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
-						}else{
-							throw 'Unknown value for data type "' + inputValue + '" : ' + JSON.stringify(model);
 						}
 					}else if(model.type === "data_collection"){
 						debugger;
@@ -366,7 +368,7 @@
 								}
 							}
 						}
-					}else if(model.type === "hidden"){
+					}else if(model.type === "hidden" || model.type === "hidden_data"){
 						model.value = inputValue;
 						template+=
 						'<input type="hidden" name="{{input.name}}" ng-model="input.value" >';
@@ -379,9 +381,9 @@
 				}catch(err) {
 					debugger;
 
-                    if (err instanceof Object && err.message !== undefined){
-                        err = err.message;
-                    }
+					if (err instanceof Object && err.message !== undefined){
+						err = err.message;
+					}
 
 					template = '<b color="red">Unknown input</b>';
 					$dialogs.showErrorDialog("Error while creating the form: "  + err.split(":")[0],{

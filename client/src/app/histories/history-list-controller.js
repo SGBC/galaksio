@@ -242,6 +242,34 @@
 			);
 			return this;
 		};
+
+		this.createNewHistory = function(history_name){
+			if(!history_name){
+				history_name = prompt("Please enter the name for the new history", "My new history");
+				if (history_name == null || history_name == "") {
+					return;
+				}
+			}
+
+			$http($rootScope.getHttpRequestConfig("POST", "history-create",{
+				data: {"name":history_name}
+			})).then(
+				function successCallback(response){
+					me.retrieveAllHistoriesList(true,false);
+				},
+				function errorCallback(response){
+					$scope.isLoading = false;
+
+					debugger;
+					var message = "Failed when creating a new history.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at HistoryListController:retrieveAllHistoriesList."
+					});
+					console.error(response.data);
+				}
+			);
+		};
+
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------

@@ -38,7 +38,7 @@
 	/***************************************************************************/
 	/*WORKFLOW CONTROLLER*******************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunController', function($state, $rootScope, $scope, $http, $stateParams, $timeout, $dialogs, WorkflowList, WorkflowInvocationList, HistoryList){
+	app.controller('WorkflowRunController', function($state, $rootScope, $scope, $http, $window, $stateParams, $timeout, $dialogs, WorkflowList, WorkflowInvocationList, HistoryList){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -47,40 +47,44 @@
 		* This function gets the details for a given Workflow
 		* @param workflow_id the id for the Workflow to be retieved
 		*/
-		this.retrieveWorkflowDetails  = function(workflow_id){
+		this.retrieveWorkflowDetails  = function(workflow_id, invocation_id){
 			$scope.workflow = WorkflowList.getWorkflow(workflow_id);
-			if($scope.workflow !== null){
-				$scope.loadingComplete = false;
-				$http($rootScope.getHttpRequestConfig("GET","workflow-download", {
-					extra: workflow_id})
-				).then(
-					function successCallback(response){
-						for (var attrname in response.data) {
-							$scope.workflow[attrname] = response.data[attrname];
-						}
-						$scope.workflow.steps = Object.values($scope.workflow.steps);
-						if($scope.workflow.name.search(/^imported: /) !== -1){
-							$scope.workflow.name = $scope.workflow.name.replace(/imported: /g, "");
-							work$scope.workflowflow.imported = true;
-						}
-						$scope.diagram = me.generateWorkflowDiagram($scope.workflow.steps);
-						me.updateWorkflowDiagram();
-						//UPDATE VIEW
-						$scope.loadingComplete = true;
-					},
-					function errorCallback(response){
-						debugger;
-						var message = "Failed while retrieving the workflow's details.";
-						$dialogs.showErrorDialog(message, {
-							logMessage : message + " at WorkflowRunController:retrieveWorkflowDetails."
-						});
-						console.error(response.data);
-						$scope.loadingComplete = true;
-					}
-				);
-			}else {
+			if(!$scope.workflow && !invocation_id){
 				$state.go('workflows');
+				return;
+			}else if(!$scope.workflow){
+				$scope.workflow = {};
 			}
+
+			$scope.loadingComplete = false;
+			$http($rootScope.getHttpRequestConfig("GET","workflow-download", {
+				extra: workflow_id})
+			).then(
+				function successCallback(response){
+					for (var attrname in response.data) {
+						$scope.workflow[attrname] = response.data[attrname];
+					}
+					$scope.workflow.steps = Object.values($scope.workflow.steps);
+					if($scope.workflow.name.search(/^imported: /) !== -1){
+						$scope.workflow.name = $scope.workflow.name.replace(/imported: /g, "");
+						work$scope.workflowflow.imported = true;
+					}
+					$scope.diagram = me.generateWorkflowDiagram($scope.workflow.steps);
+					me.updateWorkflowDiagram();
+					//UPDATE VIEW
+					$scope.loadingComplete = true;
+				},
+				function errorCallback(response){
+					debugger;
+					var message = "Failed while retrieving the workflow's details.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at WorkflowRunController:retrieveWorkflowDetails."
+					});
+					console.error(response.data);
+					$scope.loadingComplete = true;
+				}
+			);
+
 		};
 
 		/**
@@ -231,7 +235,7 @@
 			if($scope.invocation.valid === true){
 				$scope.invocation.current_step++;
 			}
-		}
+		};
 
 		this.executeWorkflowHandler = function(event){
 			if($scope.invocation.valid === false){
@@ -298,11 +302,57 @@
 
 		this.layoutDiagramHandler = function(){
 			this.updateWorkflowDiagram($scope.diagram, true);
-		}
+		};
+
+		this.downloadInvocationReport = function(format){
+			// if(!format){
+			// 	format="pdf";
+			// }
+			//
+			// $http($rootScope.getHttpRequestConfig("POST","workflow-report", {
+			// 	data: {
+			// 		'format' : format,
+			// 		'workflow' : $scope.workflow,
+			// 		'invocation' : $scope.invocation
+			// 	}
+			// })).then(
+			// 	function successCallback(response){
+			// 		var file_path = response.data.path;
+			// 		$window.open(file_path, "Report");
+			// 	},
+			// 	function errorCallback(response){
+			// 		debugger;
+			// 		var message = "Failed while retrieving the workflow's report.";
+			// 		$dialogs.showErrorDialog(message, {
+			// 			logMessage : message + " at WorkflowRunController:downloadInvocationReport."
+			// 		});
+			// 		console.error(response.data);
+			// 		$scope.loadingComplete = true;
+			// 	}
+			// );
+			$http($rootScope.getHttpRequestConfig("PUT","history-export", {
+				extra : Cookies.get("current-history")
+			})).then(
+				function successCallback(response){
+					var download_url = response.data.download_url + "?key=" + window.atob(Cookies.get("galaksiosession"));
+					$window.open(download_url, "Download");
+				},
+				function errorCallback(response){
+					debugger;
+					var message = "Failed while retrieving the workflow's report.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at WorkflowRunController:downloadInvocationReport."
+					});
+					console.error(response.data);
+					$scope.loadingComplete = true;
+				}
+			);
+		};
 
 		$scope.filterInputSteps = function (item) {
 			return item.type === 'data_input' || item.type === "data_collection_input" || (item.type === 'tool' && (item.tool_id === 'upload_workflows' || item.tool_id === 'irods_pull'));
 		};
+
 		$scope.filterNotInputSteps = function (item) {
 			return !$scope.filterInputSteps(item);
 		};
@@ -339,9 +389,10 @@
 				}
 			}
 		};
+
 		$scope.findFileName = function (file_id) {
 			if(file_id === undefined){
-			    return "";
+				return "";
 			}
 			if($scope.displayedHistory === undefined){
 				$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
@@ -356,14 +407,14 @@
 		};
 
 		$scope.adaptOptionsData = function(options){
-            if( options instanceof Array){
-                var newOptions = [];
-                for(var i in options){
-                    newOptions.push({"value" : options[i][1], "label" : options[i][0]});
-                }
-                return newOptions;
-            }
-            return options;
+			if( options instanceof Array){
+				var newOptions = [];
+				for(var i in options){
+					newOptions.push({"value" : options[i][1], "label" : options[i][0]});
+				}
+				return newOptions;
+			}
+			return options;
 		};
 
 		//--------------------------------------------------------------------
@@ -383,7 +434,7 @@
 			$scope.invocation = WorkflowInvocationList.getNewInvocation();
 		}
 
-		this.retrieveWorkflowDetails($stateParams.id);
+		this.retrieveWorkflowDetails($stateParams.id, $stateParams.invocation_id);
 	});
 
 	/***************************************************************************/
@@ -523,6 +574,7 @@
 					function successCallback(response){
 						for(var k in response.data){
 							response.data[k].workflow_title = workflows[i].name;
+							response.data[k].workflow_id = workflows[i].id;
 							_invocations.push(response.data[k]);
 						}
 						recoverInvocations(i+1, workflows, _invocations);
@@ -659,7 +711,8 @@
 		};
 
 		this.recoverWorkflowInvocation = function(invocation){
-			$state.go('workflowDetail', {
+			invocation.current_step=6;
+			$state.go('workflowRun', {
 				'id' : invocation.workflow_id,
 				'invocation_id': invocation.id
 			});

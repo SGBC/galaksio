@@ -26,7 +26,7 @@
 	<!-- ************************************************************* -->
 	<!-- WORKFLOW DIAGRAM -->
 	<!-- ************************************************************* -->
-	<div class="panel panel-container" ng-show="invocation.current_step != 2">
+	<div class="panel panel-container" ng-show="invocation.current_step != 2 && invocation.current_step < 6">
 		<a style="cursor:pointer; float: right; color:#333;" ng-click="controller.layoutDiagramHandler()"> <i class="fa fa-refresh"></i> Update diagram layout</a>
 		<h4>Workflow overview</h4>
 		<i ng-show="loadingComplete === false" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
@@ -42,6 +42,9 @@
 			<h3>History selection</h3>
 			<p class="description">
 				<b>First, choose the history that contains the files that will be used in the workflow.</b><br>Remember that when data is uploaded from your computer or analysis is done on existing data using Galaxy, each output from those steps generates a dataset. These datasets (and the output datasets from later analysis on them) are stored by Galaxy in <b>Histories</b>.
+				<div class="well well-sm">
+					<i class="fa fa-info"></i> If you wish to publish your results we strongly recommend that you run your workflow in a clean history before saving the workflow. That way you can make the entire file available as a supplementary material that can be evaluated during peer-review as a supplementary material and reviewed using Galaxy.
+				</div>
 			</p>
 		</div>
 		<history-list-panel ng-init="showHelp=false;"></history-list-panel>
@@ -158,6 +161,10 @@
 			<!-- #################### -->
 			<div style="text-align: center; padding: 10px;" class="bg-success" ng-show="invocation.state === 'success'">
 				<h3>Your workflow has finished successfully!!</h3>
+				<a class="btn btn-lg btn-default" ng-click="controller.downloadInvocationReport()">
+					<!-- <i class="fa fa-file-pdf-o text-danger"></i> Download report in PDF -->
+					<i class="fa fa-download text-danger"></i> Download current history
+				</a>
 				<div style="display:block; max-width: 800px; margin: auto;">
 					<table ng-if="invocation.hasOutput === true" style="margin: auto;" class="table">
 						<thead>

@@ -24,9 +24,11 @@ import requests
 import re
 import logging
 from bioblend.galaxy import GalaxyInstance
-from os import remove as removeFile
+from os import remove as removeFile, path as osPath
 
 import servlets.AdminFunctions as AdminFunctions
+import servlets.GalaxyAPI as GalaxyAPI
+
 from flask import Flask, request, send_from_directory, request, jsonify, json
 from flask import Response as flask_response
 
@@ -77,6 +79,11 @@ class Application(object):
         def get_static(filename):
             return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', filename)
 
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/tmp/<path:filename>')
+        def get_tmp_static(filename):
+            return send_from_directory(self.settings.TMP_DIRECTORY, filename)
+
+
         #******************************************************************************************
         #     _____          _               __   ____     __           _____ _____
         #    / ____|   /\   | |        /\    \ \ / /\ \   / /     /\   |  __ \_   _|
@@ -105,7 +112,7 @@ class Application(object):
 
                     data = dict(request.form)
 
-                    tmp_files = AdminFunctions.storeTmpFiles(request.files)
+                    tmp_files = AdminFunctions.storeTmpFiles(request.files, self.settings.TMP_DIRECTORY)
                     self.log("All files were temporary stored at: " + ", ".join(tmp_files))
 
                     self.log("Forwarding the files uploading...")
@@ -177,6 +184,13 @@ class Application(object):
             response = flask_response(resp.content, resp.status_code, headers)
             return response
 
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/other/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE', 'PUT'])
+        def other_request(service, method = None):
+            # STEP 1. Read requests auth params
+            if service == 'workflows/report/':
+                file_path = GalaxyAPI.generateWorkflowReport(request, self.settings)
+                return jsonify({'success': True, 'path': file_path})
+            return ""
         #******************************************************************************************
         #             _____  __  __ _____ _   _
         #       /\   |  __ \|  \/  |_   _| \ | |

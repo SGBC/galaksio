@@ -34,17 +34,52 @@
 		</span>
 	</div>
 	<div class="panel" ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-show="showPanel === true">
-		<table style="width:100%">
+		<table style="width:100%" ng-init="maxInvocations=5">
 			<tr><th>Workflow name</th><th>State</th><th style="width:75px;">Recover</th></tr>
 			<tr ng-show="invocations.length === 0"><td colspan="3">No data</td></tr>
-			<tr ng-repeat="invocation in invocations | limitTo:5 track by $index " >
+			<tr ng-repeat="invocation in invocations | orderBy:'-update_time' | limitTo:maxInvocations track by $index " >
 				<td>{{invocation.workflow_title}}</td>
-				<td>
-					<span ng-if="invocation.state === 'sending'" class="label label-default">{{invocation.state}}</span>
-					<span ng-if="invocation.state === 'working'" class="label label-primary">{{invocation.state}}</span>
-					<span ng-if="invocation.state === 'success'" class="label label-success">{{invocation.state}}</span>
-					<span ng-if="invocation.state === 'error'" class="label label-danger">{{invocation.state}}</span>
-					<span ng-if="invocation.state === 'waiting'" class="label label-default">{{invocation.state}}</span>
+				<td class="job-status-cat"  ng-if="invocation.state === 'success'">
+					<span class="fa-stack" style="font-size: 12px;">
+						<i class="fa fa-square fa-stack-2x" style="color:#00b353;"></i>
+						<i class="fa fa-check fa-fw fa-stack-1x fa-inverse"></i>
+					</span>
+					<span style="color: #000;" class="job-status-cat-title">Done</span>
+				</td>
+				<td class="job-status-cat" ng-if="invocation.state === 'sending'">
+					<span class="fa-stack" style="font-size: 12px;">
+						<i class="fa fa-square fa-stack-2x" style="color:#6485ea;"></i>
+						<i class="fa fa-paper-plane fa-fw fa-stack-1x fa-inverse"></i>
+					</span>
+					<span style="color: #000;" class="job-status-cat-title">Sending</span>
+				</td>
+				<td class="job-status-cat" ng-if="invocation.state === 'working'">
+					<span class="fa-stack" style="font-size: 12px;">
+						<i class="fa fa-square fa-stack-2x" style="color:#b900ff;"></i>
+						<i class="fa fa-refresh fa-spin fa-fw fa-stack-1x fa-inverse"></i>
+					</span>
+					<span style="color: #000;" class="job-status-cat-title">Running</span>
+				</td>
+				<td class="job-status-cat" ng-if="invocation.state === 'waiting'">
+					<span class="fa-stack" style="font-size: 12px;">
+						<i class="fa fa-square fa-stack-2x" style="color:#666666;"></i>
+						<i class="fa fa-pause fa-fw fa-stack-1x fa-inverse"></i>
+					</span>
+					<span style="color: #000;" class="job-status-cat-title">Waiting</span>
+				</td>
+				<td  class="job-status-cat" ng-if="invocation.state === 'error'">
+					<span class="fa-stack" style="font-size: 12px;">
+						<i class="fa fa-square fa-stack-2x" style="color:#de2b2b;"></i>
+						<i class="fa fa-times fa-fw fa-stack-1x fa-inverse"></i>
+					</span>
+					<span style="color: #000;" class="job-status-cat-title">Failed</span>
+				</td>
+				<td class="job-status-cat" ng-if="['error', 'waiting', 'working', 'sending', 'success'].indexOf(invocation.state) === -1">
+					<span class="fa-stack" style="font-size: 12px;">
+						<i class="fa fa-square fa-stack-2x" style="color:#dedede;"></i>
+						<i class="fa fa-question fa-fw fa-stack-1x fa-inverse"></i>
+					</span>
+					<span style="color: #000;" class="job-status-cat-title">Unknown</span>
 				</td>
 				<td>
 					<a style="font-size:12px; cursor:pointer" ng-click="controller.recoverWorkflowInvocation(invocation)">

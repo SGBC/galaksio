@@ -138,6 +138,8 @@
 				return myAppConfig.GALAKSIO_SERVER + "api/workflows/" + extra;
 				case "workflow-delete":
 				return myAppConfig.GALAKSIO_SERVER + "api/workflows/" + extra;
+				case "workflow-report":
+				return myAppConfig.GALAKSIO_SERVER + "other/workflows/report/";
 				case "invocation-state":
 				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
 				case "invocation-result":
@@ -156,6 +158,10 @@
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra[0] + "/contents/dataset_collections/" + extra[1];
 				case "history-list":
 				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra;
+				case "history-create":
+				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra;
+				case "history-export":
+				return myAppConfig.GALAKSIO_SERVER + "api/histories/" + extra + "/exports/";
 				case "dataset-upload":
 				return myAppConfig.GALAKSIO_SERVER + "api/upload/";
 				case "setting-list":

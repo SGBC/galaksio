@@ -53,6 +53,7 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     config.set('server_settings', 'SAFE_UPLOAD', str(newValues.get("SAFE_UPLOAD") == True))
     config.set('server_settings', 'MAX_CONTENT_LENGTH', str(newValues.get("MAX_CONTENT_LENGTH")))
     config.set('server_settings', 'ROOT_DIRECTORY ', newValues.get("ROOT_DIRECTORY"))
+    config.set('server_settings', 'TMP_DIRECTORY ', newValues.get("TMP_DIRECTORY"))
 
     config.add_section('galaxy_settings')
     config.set('galaxy_settings', 'GALAXY_SERVER', newValues.get("GALAXY_SERVER"))
@@ -86,6 +87,12 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
         settings.SAFE_UPLOAD = config.getboolean('server_settings', 'SAFE_UPLOAD')
     except:
         settings.SAFE_UPLOAD = True
+
+    try:
+        settings.TMP_DIRECTORY = config.getboolean('server_settings', 'TMP_DIRECTORY')
+    except:
+        settings.TMP_DIRECTORY = "/tmp"
+
     settings.MAX_CONTENT_LENGTH = config.getint('server_settings', 'MAX_CONTENT_LENGTH')
     settings.ROOT_DIRECTORY = config.get('server_settings', 'ROOT_DIRECTORY')
     import os
@@ -147,11 +154,11 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
 #         tmp_files[file_id] = (file.filename, open(tmp_path, 'rb'), 'text/plain')
 #     return tmp_files
 
-def storeTmpFiles(files):
+def storeTmpFiles(files, tmp_dir):
     tmp_files = []
     for file_id in files.keys():
         file = files[file_id]
-        tmp_path = os.path.join("/tmp", file.filename)
+        tmp_path = os.path.join(tmp_dir, file.filename)
         file.save(tmp_path)
         tmp_files.append(tmp_path)
     return tmp_files
