@@ -12,7 +12,7 @@ Galaxy is an open source, web-based platform for data intensive biomedical resea
 </div>
 
 ## What is Galaksio?
-Galaksio provides a workflow-centric graphical user interface for the Galaxy Workflow Management system in order to provide an accessible and automated interface for biologists and medical researchers completing routine tasks in bioinformatics. Galaksio reduce the workload of bioinformaticians as routine tasks can be performed with minimal training. The presentation of workflows also provides a comprehensive overview of necessary input data as well as methodological changes to the end user.
+Galaksio provides a workflow-centric graphical user interface for the Galaxy Workflow Management system in order to provide an accessible and automated interface for biologists and medical researchers completing routine tasks in bioinformatics. Galaksio reduce the workload of bioinformaticians as routine tasks can be performed with minimal training using verified procedures. The presentation of workflows also provides a comprehensive overview of necessary input data and a reporting tool to export the history or workflow for later evaluation or replication.
 
 <div class="imageContainer" style="" >
     <img src="galaksio_screenshot.png" title="Galaksio screenshot." style=" height: 450px !important; margin-bottom: 20px; ">

@@ -47,4 +47,4 @@ Using the option "Run workflow" we will notify Galaxy to start a new run of our 
     <p class="imageLegend" style="font-size:10px;">Figure 6. Workflows can be executed in background. In figure, the top bar displays the status for all the worflows (5 done and 1 running). This information is also available at the home panel, at the "Workflow invocations" section.</p>
 </div>
 
-When our workflow is done, we can recover them and access to the resulting datasets. All the results for our workflow can be downloaded and are stored in our current history (Figure 7).
+When our workflow is done, we can recover them and access to the resulting datasets. All the results for our workflow can be downloaded and are stored in our current history.

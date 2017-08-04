@@ -129,7 +129,7 @@ Finally restart your web server.  Your new fresh Galaksio instance will be liste
 ```bash
 service apache2 restart
 ```
-## First configuration for Galaksio <a name="configure" />
+## First configuration for Galaksio 
 By default Galaksio will work with the official [Galaxy](https://usegalaxy.org) instance.
 This and other options can be customized through the web application.
 The first time that you access to your Galaksio instance you will need to configure some of the main settings.
