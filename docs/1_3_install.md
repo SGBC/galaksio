@@ -8,7 +8,7 @@ Galaksio is a web application which means that you don't necessarily need to ins
 ## Auto-install using Dockers
 The Galaksio Docker Image is an easy distributable full-fledged Galaksio installation. The docker image for Galaksio can be found in the [docker hub](https://hub.docker.com/r/fikipollo/galaksio/).
 
-### Install the image <a name="install" />
+### Install the image
 
 First you need to install docker. Please follow the [instructions](https://docs.docker.com/installation/) from the Docker project.
 
@@ -129,7 +129,7 @@ Finally restart your web server.  Your new fresh Galaksio instance will be liste
 ```bash
 service apache2 restart
 ```
-## First configuration for Galaksio 
+## First configuration for Galaksio
 By default Galaksio will work with the official [Galaxy](https://usegalaxy.org) instance.
 This and other options can be customized through the web application.
 The first time that you access to your Galaksio instance you will need to configure some of the main settings.
