@@ -3,6 +3,7 @@
 	var app = angular.module('b3galaxyApp', [
 		'ang-dialogs',
 		'ui.router',
+		'ngScrollSpy',
 		'angular-toArrayFilter',
 		'users.directives.user-session',
 		'workflows.controllers.workflow-list',

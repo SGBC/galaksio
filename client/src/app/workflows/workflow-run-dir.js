@@ -105,6 +105,7 @@
 				var template =
 				'<label>{{step.label}}</label>' +
 				'<dataset-list-input></dataset-list-input>' +
+				'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, false, [1,3]);">' +
 				'	<i class="fa fa-search"></i> Browse file' +
 				'</a>'+
@@ -127,22 +128,28 @@
 			link: function($scope, element){
 				var model = $scope.step;
 				var tool_state = JSON.parse(model.tool_state);
+				var sublabel = "";
 
 				$scope.dataType = "collection";
 				$scope.dataSubtype = tool_state.collection_type;
+
 				if($scope.dataSubtype === "list"){
-					model.label = "List of datasets";
+					sublabel += "List of datasets";
 				} else if($scope.dataSubtype === "paired"){
-					model.label = "Pair of datasets";
+					sublabel += "Pair of datasets";
 				}else  if($scope.dataSubtype === "list:paired"){
-					model.label = "List of paired datasets";
-				}else{
-					model.label = tool_state.name;
+					sublabel += "List of paired datasets";
+				}
+
+				if(model.label === undefined){
+					model.label = sublabel;
+					sublabel="";
 				}
 
 				var template =
-				'<label>{{step.label}}</label>' +
+				'<label>{{step.label}}<p class="collection-label-subtype">' + sublabel + '</p></label>' +
 				'<dataset-collection-list-input></dataset-collection-list-input>' +
+				'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, false, [0,2,4], \'' + $scope.dataType + '\', \'' + $scope.dataSubtype + '\');">' +
 				'	<i class="fa fa-search"></i> Browse collections' +
 				'</a>'+
@@ -226,6 +233,7 @@
 						'<input type="text" name="{{input.name}}" ' +
 						'       ng-model="input.value"' +
 						'       ng-required="!(input.optional)" >'+
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "integer"){
 						model.value = Number.parseInt(inputValue);
@@ -237,6 +245,7 @@
 						((model.min !== null)?'min="' + model.min + '"':'') +
 						'       ng-model="input.value"' +
 						'       ng-required="!(input.optional===true)" >' +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}' + extra_help + '"></i>':'' + extra_help);
 						//SELECTORS INPUTS
 					}else if(model.type === "float" ){
@@ -249,6 +258,7 @@
 						((model.min !== null)?'min="' + model.min + '"':'') +
 						'       ng-model="input.value"' +
 						'       ng-required="!(input.optional===true)" >' +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//SELECTORS INPUTS
 					}else if(model.type === "select"){
@@ -262,7 +272,8 @@
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >'+
 						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
-						"</select>";
+						"</select>" +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 					}else if(model.type === "data_column"){
 						model.value = (inputValue !== ""? inputValue: model.default_value);
 						template =
@@ -274,6 +285,7 @@
 						'        ng-required="!(input.optional===true)" >'+
 						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>" +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 					}else if(model.type === "genomebuild"){
 						model.value = (inputValue !== ""? inputValue: model.default_value);
@@ -286,6 +298,7 @@
 						'        ng-required="!(input.optional===true)" >' +
 						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
 						"</select>" +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
@@ -305,6 +318,7 @@
 						'	<input type="radio" name="{{input.test_param.name}}' + randomIDgenerator(5) + '"' +
 						'        ng-model="input.value" value="{{option[1]}}"'+
 						'        ng-required="!(input.optional===true)" > {{option[0]}}'  +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'</div>';
 						//Generate child nodes
@@ -318,6 +332,7 @@
 						template+=
 						'<input type="checkbox" name="{{input.name}}" ng-model="input.value">' +
 						'<label>{{input.label || input.title}}</label>' +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
 						//DISPLAY
 					}else if(model.type === "data"){

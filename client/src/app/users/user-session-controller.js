@@ -51,6 +51,10 @@
 					Cookies.set("galaxyuser", $scope.userInfo.email, {expires : 1, path: getPathname()});
 				},
 				function errorCallback(response){
+					if(Cookies.get("galaksiosession") === undefined){
+						return;
+					}
+					
 					debugger;
 					var message = "Failed while getting user's details at UserSessionController:signInButtonHandler";
 					console.error(message);
@@ -167,8 +171,10 @@
 			delete $scope.userInfo.email;
 			$state.go('signin');
 
+			location.reload();
+
 			//Notify all the other controllers that user has signed in
-			$rootScope.$broadcast(APP_EVENTS.logoutSuccess);
+			//$rootScope.$broadcast(APP_EVENTS.logoutSuccess);
 		};
 
 		//--------------------------------------------------------------------

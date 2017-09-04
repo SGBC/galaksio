@@ -59,6 +59,10 @@
 						$scope.displayedHistory.content = response.data;
 					},
 					function errorCallback(response){
+						if(Cookies.get("galaksiosession") === undefined){
+							return;
+						}
+
 						debugger;
 						var message = "Failed when retrieving the list of datasets for displayed history.";
 						$dialogs.showErrorDialog(message, {
@@ -183,6 +187,11 @@
 					},
 					function errorCallback(response){
 						$scope.isLoading = false;
+
+						if(Cookies.get("galaksiosession") === undefined){
+							return;
+						}
+						
 						debugger;
 						var message = "Failed when retrieving the most recently used history.";
 						$dialogs.showErrorDialog(message, {

@@ -1,5 +1,6 @@
-<div class="histories-container" ng-controller="HistoryListController as controller">
-	<div class="col-lg-6">
+<div class="histories-container" ng-controller="HistoryListController as controller" >
+	<div class="col-lg-6"  >
+	<div affix>
 		<div class="panel panel-container" ng-hide="showHelp===false" >
 			<h3>About histories</h3>
 			<p class="description">
@@ -7,15 +8,15 @@
 			</p>
 			<a href="https://wiki.galaxyproject.org/Histories" target="_blank"><i class="fa fa-question-circle"></i> Learn more about histories</a>
 		</div>
-		<div class="panel panel-container">
+		<div class="panel panel-container" >
 			<div>
-				<p style=" float: left; line-height: 30px; "><i class="fa fa-info"></i> Click on one history name to get more details.</p>
-				<a class="btn btn-default btn-sm navbar-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
+				<a class="btn btn-default btn-sm navbar-right pull-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
 					<i class="fa fa-refresh fa-fw" ></i> Refresh
 				</a>
-				<a class="btn btn-primary btn-sm navbar-right" style="margin-right:10px;" ng-click="controller.createNewHistory();">
+				<a class="btn btn-primary btn-sm navbar-right pull-right" style="margin-right:10px;" ng-click="controller.createNewHistory();">
 					<i class="fa fa-plus fa-fw" ></i> New history
 				</a>
+				<p class="text-info" style="line-height: 30px; "><i class="fa fa-info-circle"></i> Click on one history name to get more details.</p>
 			</div>
 			<table class="table historyListTable">
 				<thead>
@@ -48,6 +49,7 @@
 					</tr>
 				</tbody>
 			</table>
+		</div>
 		</div>
 	</div>
 	<div class="col-lg-6" ng-show="displayedHistory !== undefined">

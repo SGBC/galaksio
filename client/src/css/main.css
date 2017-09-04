@@ -110,11 +110,15 @@ body{font-family: 'Open Sans', sans-serif; font-weight: lighter;  }
 	background: none;
 }
 
+.affix-clone {
+    display: none;
+}
+
 #alt_menu .menuIcon{margin-right: 10px; color: #d9534f;}
 #alt_menu li:nth-child(2) .menuIcon{color: #3498DB;}
 #alt_menu li:nth-child(3) .menuIcon{color: #dcb30e;}
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1200px) {
 	#alt_menu {
 		display: none;
 	}
@@ -143,6 +147,10 @@ body{font-family: 'Open Sans', sans-serif; font-weight: lighter;  }
 		position: relative;
 		margin-right: 0;
 	}
+}
+
+.affix{
+	position: initial ;
 }
 
 #page-content-wrapper .title-bar {
@@ -487,6 +495,8 @@ i.tag.pink2 {background-color: #db6070; color: #fff;}
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/
+i.invalid-value-icon{display: none; margin-left: 15px;}
+.ng-invalid + i.invalid-value-icon{display: inline-block;}
 
 .stepBox > .panel-heading > i {
 	display: none;
@@ -544,11 +554,6 @@ h1.workflow-state-title {
 	color: #8792a2;
 	text-shadow: 1px 3px 2px #D4D4D4;
 	padding: 20px;
-	display: none;
-}
-
-h1.workflow-state-title.currentState {
-	display: block;
 }
 
 h1.workflow-state-title > img {
@@ -598,7 +603,7 @@ table.workflow-summary-step th {
 }
 
 table.table td.job-status-cat {
-    text-align: left;
+	text-align: left;
 }
 
 .job-status-cat .job-number{
@@ -649,6 +654,13 @@ tr.deletedDataset td:nth-child(4) {
 tr.selectedDataset {
 	background-color: #d9edf7;
 }
+@media screen and (min-width: 1024px) {
+	.histories-container div.affix{
+		max-width: 560px;
+		top:68px;
+		position: fixed;;
+	}
+}
 
 
 .collection-table span {
@@ -697,4 +709,10 @@ tr.selectedDataset {
 	border: 1px solid #dedede;
 	margin: 10px auto;
 	padding: 10px;
+}
+.collection-label-subtype{
+	text-align: center;
+	font-size: 10px;
+	font-weight: lighter;
+	color: #909090;
 }

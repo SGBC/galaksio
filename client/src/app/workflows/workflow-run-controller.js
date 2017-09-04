@@ -149,7 +149,7 @@
 					settings: {
 						edgeColor: 'default',
 						defaultEdgeColor: '#d3d3d3',
-						// mouseEnabled: false,
+						mouseWheelEnabled: false,
 						sideMargin: 100,
 						labelAlignment: "bottom"
 					}
@@ -215,10 +215,22 @@
 		};
 
 		this.getDownloadLink = function(dataset_url){
+			if(dataset_url === undefined){
+				debugger
+				return "";
+			}
 			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
 			dataset_url.replace(fullpath,"");
 			dataset_url = $scope.GALAXY_SERVER_URL + dataset_url;
 			return dataset_url;
+		};
+
+		this.getInvocationStateImage = function(state){
+			var extension=".png";
+			if(state === "working"){
+				extension=".gif";
+			}
+			return "css/invocation_" + state + extension;
 		};
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
@@ -232,6 +244,12 @@
 		};
 
 		this.nextStepButtonHandler = function(){
+			if($scope.invocation.current_step===3){
+				$scope.invocation.valid = $scope.workflowRunForm.step1form.$valid;
+			} else if($scope.invocation.current_step===4){
+				$scope.invocation.valid = $scope.workflowRunForm.step2form.$valid;
+			}
+
 			if($scope.invocation.valid === true){
 				$scope.invocation.current_step++;
 			}
@@ -302,6 +320,14 @@
 
 		this.layoutDiagramHandler = function(){
 			this.updateWorkflowDiagram($scope.diagram, true);
+		};
+
+		this.zoomDiagramHandler = function(zoom){
+			debugger
+			zoom = (($scope.sigma.camera.ratio * 100) + (10 * zoom))/100;
+			$scope.sigma.camera.goTo({"ratio": zoom});
+			console.log(zoom);
+			return;
 		};
 
 		this.downloadInvocationReport = function(format){
@@ -582,8 +608,12 @@
 					function errorCallback(response){
 						$scope.isLoading = false;
 
+						if(Cookies.get("galaksiosession") === undefined){
+							return;
+						}
+
 						debugger;
-						var message = "Failed while retrieving the workflows list.";
+						var message = "Failed while retrieving the list of workflows invocations.";
 						$dialogs.showErrorDialog(message, {
 							logMessage : message + " at DatasetListController:getInvocationsHandler."
 						});
@@ -651,6 +681,7 @@
 					extra: [invocation.workflow_id, invocation.id]
 				})).then(
 					function successCallback(response){
+						var unknownStateSteps = 0;
 						var erroneousSteps = 0;
 						var waitingSteps = 0;
 						var runningSteps = 0;
@@ -663,11 +694,21 @@
 						for (var attrname in response.data) {
 							invocation[attrname] = response.data[attrname];
 						}
+
+						if(invocation.steps === undefined || invocation.steps.length === 0){
+							debugger
+							return;
+						}
+
+						var totalSteps = invocation.steps.length;
+
 						//Valid Galaxy job states include:
 						//TODO: ‘new’, ‘upload’, ‘waiting’, ‘queued’, ‘running’, ‘ok’, ‘error’, ‘paused’, ‘deleted’, ‘deleted_new’
-						for(var i in invocation.steps){
-							if(invocation.steps[i].state === null || invocation.steps[i].state === "ok" ){
+						for(var i = 0; i < invocation.steps.length; i++){
+							if(invocation.steps[i].state === "ok"){
 								doneSteps++;
+							} else if(invocation.steps[i].state === null){
+								totalSteps--;
 							}else if(invocation.steps[i].state === 'queued'){
 								queuedSteps++;
 							}else if(invocation.steps[i].state === 'new' || invocation.steps[i].state === 'waiting'){
@@ -679,27 +720,29 @@
 							}else if(invocation.steps[i].state === 'paused'){
 								pausedSteps++;
 							}else{
-								debugger;
-								erroneousSteps++;
+								unknownStateSteps++;
 							}
 						}
-
 						if(runningSteps > 0){
 							invocation.state = "working";
 							invocation.state_text = "Running your workflow...";
 						}else if(waitingSteps > 0 || queuedSteps > 0){
 							invocation.state = "waiting";
-							invocation.state_text = "Running your workflow...";
+							invocation.state_text = "Waiting in queue...";
 						}else if(erroneousSteps > 0){
 							//TODO: show summary of results
 							invocation.state = "error";
-							invocation.state_text = "Failed...";
+							invocation.state_text = "Error";
 							me.recoverWorkflowResults(invocation);
-						}else if(invocation.steps && invocation.steps.length === doneSteps){
-							invocation.state_text = "Done!!";
+						}else if(invocation.steps && totalSteps === doneSteps){
+							debugger
+							invocation.state_text = "Finished";
 							invocation.state = "success";
 							//Generate the summary of results
 							me.recoverWorkflowResults(invocation);
+						}else {
+							invocation.state = "waiting";
+							invocation.state_text = "Waiting for Galaxy...";
 						}
 					},
 					function errorCallback(response){

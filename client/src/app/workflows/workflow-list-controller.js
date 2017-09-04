@@ -129,9 +129,10 @@
 					}
 				},
 				function errorCallback(response){
-					if(response.data.err_code === 403002){
-
+					if(response.data && response.data.err_code === 403002){
+						debugger;
 					}else{
+						debugger;
 						workflow.annotation = "Unable to get the description: " + response.data.err_msg;
 						workflow.valid = false;
 					}
