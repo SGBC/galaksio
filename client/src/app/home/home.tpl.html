@@ -34,14 +34,19 @@
 		<div class="col-md-6" ng-controller="WorkflowInvocationListController as controller">
 			<div class="panel panel-container">
 				<h4>Workflow invocations</h4>
-				<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="invocations.length === 0">
+				<div style="text-align: center; padding: 10px;" class="bg-info" ng-show="isLoading === false && invocations.length === 0">
 					<h5><i>Whoops! Looks like there are no workflows in the queue.</i></h5>
 					<button class="btn btn-info " ui-sref="workflows()">
 						<i class="fa fa-sign-out fa-fw"></i>Let's run some workflows!
 					</button>
 				</div>
-				<table class="table" style="width:100%" ng-show="invocations.length > 0" ng-init="maxInvocations=5">
+				<table class="table" style="width:100%" ng-show="isLoading === true || invocations.length > 0" ng-init="maxInvocations=5">
 					<tr><th>Workflow name</th><th style="width:90px">Date</th><th style="width:90px">State</th><th style="width:110px;">Tools</th></tr>
+					<tr ng-if="isLoading === true ">
+						<td colspan="4" style="text-align:center;">
+							<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading invocations...
+						</td>
+					</tr>
 					<tr ng-repeat="invocation in invocations | orderBy:'-update_time' | limitTo:maxInvocations track by $index " >
 						<td>{{invocation.workflow_title}}</td>
 						<td style=" font-size: 10px; ">{{adaptInvocationDate(invocation.update_time)}}</td>

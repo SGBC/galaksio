@@ -402,17 +402,22 @@
 
 					template = '<b color="red">Unknown input</b>';
 					$dialogs.showErrorDialog("Error while creating the form: "  + err.split(":")[0],{
-						title        : "Error while creating the form",
-						reportButton : true,
+						title        : "Error while creating the form: unknown field type.",
 						logMessage   : err,
 						callback     : function(reason){
-							// Show error message
-							debugger;
 							// Collapse the tool
 							$scope.loadingComplete = false;
 							//$scope.collapsed = true;
 							// Remove extra information from step
 							//delete $scope.step.extra;
+						},
+						reportButton : true,
+						reportButtonHandler : function(){
+							$scope.sendReportMessage({
+								error: err.split(":")[0],
+								input : model,
+								tool : $scope.step
+							});
 						}
 					});
 				}

@@ -10,7 +10,11 @@
 					<p>We are preparing the settings for Galaksio, please wait!</p>
 				</div>
 				<form ng-show="settings !== undefined" class="form-horizontal">
-					<h2>Main server settings</h2>
+					<h2>Galaksio server settings</h2>
+					<div class="well well-md text-info">
+						<p><i class="fa fa-info-circle" ></i> Use this section to configure the main settings for your Galaksio server.</p>
+						<p>Use the <i class="fa fa-question-circle" ></i> icon at the right for getting help for any field in the form.</p>
+					</div>
 					<div class="form-group" ng-hide="settings.IS_DOCKER">
 						<label class="control-label col-sm-2" for="SERVER_HOST_NAME">Galaksio host name:</label>
 						<div class="col-sm-9">
@@ -63,6 +67,9 @@
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The location for the Galaksio files, leave blank to auto-detect."></i>
 					</div>
 					<h2>Galaxy settings</h2>
+					<div class="well well-md text-info">
+						<p><i class="fa fa-info-circle" ></i> Configure the Galaxy instance that will be connected to this Galaksio instance.</p>
+					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="GALAXY_SERVER">Galaxy server URL (internal):  </label>
 						<div class="col-sm-9">
@@ -77,22 +84,27 @@
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The external URL for the Galaxy instance, leave empty if it is the same than previous setting (Galaxy server)."></i>
 					</div>
-					<!-- <h2>Email settings</h2>
+					<h2>Email settings</h2>
+					<div class="well well-md text-info">
+						<p><i class="fa fa-info-circle" ></i> Using this email settings your Galaksio instance will be able to send all the error reports to the Galaksio developers.</p>
+						<p>Your feedback helps us to improve the application and we will really appreciate it and all received information will be considered confidential and treated accordingly.</p>
+						<p>Leave this part empty if you don't want to disable error reporting.</p>
+					</div>
 					<div class="form-group">
-						<label class="control-label col-sm-2" for="smtp_host">SMTP host:  </label>
+						<label class="control-label col-sm-2" for="SMTP_SERVER">SMTP host:  </label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="smtp_host" ng-model="settings.smtp_host">
+							<input type="text" class="form-control" id="SMTP_SERVER" ng-model="settings.SMTP_SERVER">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Sets Gmail, Office... as the SMTP server"></i>
 					</div>
 					<div class="form-group">
-						<label class="control-label col-sm-2" for="smtp_port">SMTP port:  </label>
+						<label class="control-label col-sm-2" for="SMTP_PORT">SMTP port:  </label>
 						<div class="col-sm-9">
-							<input type="number" class="form-control" id="smtp_port" ng-model="settings.smtp_port">
+							<input type="number" class="form-control" id="SMTP_PORT" ng-model="settings.SMTP_PORT">
 						</div>
-						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Set the SMTP port for the GMAIL"></i>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Sets the SMTP port for the GMAIL"></i>
 					</div>
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<label class="control-label col-sm-2" for="smtp_port">SMTP authentication:</label>
 						<div class="col-sm-9">
 							<div class="checkbox">
@@ -100,8 +112,8 @@
 							</div>
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Enable SMTP authentication"></i>
-					</div>
-					<div class="form-group">
+					</div> -->
+					<!-- <div class="form-group">
 						<label class="control-label col-sm-2" for="smtp_port">SMTP SSL:</label>
 						<div class="col-sm-9">
 							<div class="checkbox">
@@ -109,29 +121,29 @@
 							</div>
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Whether use normal SMTP or SMTP_SSL"></i>
-					</div>
-					<div class="form-group">
+					</div> -->
+					<!-- <div class="form-group">
 						<label class="control-label col-sm-2" for="smtp_secure">SMTP secure:  </label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" id="smtp_secure" ng-model="settings.smtp_secure">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Use tls, etc."></i>
-					</div>
+					</div> -->
 					<div class="form-group">
-						<label class="control-label col-sm-2" for="smpt_username">Username:  </label>
+						<label class="control-label col-sm-2" for="SMTP_ACCOUNT">Username:  </label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="smpt_username" ng-model="settings.smpt_username">
+							<input type="text" class="form-control" id="SMTP_ACCOUNT" ng-model="settings.SMTP_ACCOUNT">
 						</div>
-						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE SENDER EMAIL, DEPENDS ON THE SMTP SETTINGS"></i>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The email account for sending emails, depends on the smtp settings."></i>
 					</div>
 					<div class="form-group">
-						<label class="control-label col-sm-2" for="smpt_pass">Password:</label>
+						<label class="control-label col-sm-2" for="SMTP_PASS">Password:</label>
 						<div class="col-sm-9">
-							<input type="password" class="form-control" id="smpt_pass" ng-model="settings.smpt_pass">
+							<input type="password" class="form-control" id="SMTP_PASS" ng-model="settings.SMTP_PASS">
 						</div>
-						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="THE SENDER PASS IN MD5 CODIFICATION, DEPENDS ON THE SMTP SETTINGS"></i>
+						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="The password for the email account used for sending the emails."></i>
 					</div>
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<label class="control-label col-sm-2" for="smpt_sender">Sender email:</label>
 						<div class="col-sm-9">
 							<input type="email" class="form-control" id="smpt_sender" ng-model="settings.smpt_sender">
@@ -144,10 +156,11 @@
 							<input type="text" class="form-control" id="smpt_sender_name" ng-model="settings.smpt_sender_name">
 						</div>
 						<i style="color: #31708f;line-height: 30px;" class="fa fa-question-circle" uib-tooltip="Sender name (the \"From\" value in the email)"></i>
-					</div>-->
+					</div> -->
 					<div class="form-group">
 						<div style=" text-align: center; ">
-							<a class="btn btn-success btn-lg" ng-click="controller.updateSettingsHandler()">Update settings</a>
+							<a ng-show="isLoading !== true" class="btn btn-success btn-lg" ng-click="controller.updateSettingsHandler()">Update settings</a>
+							<a ng-show="isLoading === true" disabled class="btn btn-default btn-lg"><i class="fa fa-spinner fa-spin fa-fw"></i> Saving</a>
 						</div>
 					</div>
 				</form>

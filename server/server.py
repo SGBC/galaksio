@@ -247,6 +247,10 @@ class Application(object):
                 return response
             return Response().setContent({"success": False}).setStatus(401).getResponse()
 
+        @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/send-error-report', methods=['OPTIONS', 'POST'])
+        def send_error_report():
+            return AdminFunctions.sendErrorReport(request, Response()).getResponse()
+
     def iterform(self, multidict):
         for key in multidict.keys():
             for value in multidict.getlist(key):

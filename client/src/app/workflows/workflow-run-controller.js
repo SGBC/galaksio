@@ -226,6 +226,8 @@
 		};
 
 		this.getInvocationStateImage = function(state){
+			state = state || "waiting";
+
 			var extension=".png";
 			if(state === "working"){
 				extension=".gif";
@@ -642,7 +644,6 @@
 		};
 
 		this.checkInvocationsState = function(){
-			// debugger
 			var invocations = WorkflowInvocationList.getInvocations();
 			var running = 0, erroneous = 0, done = 0, waiting=0; unknown = 0;
 			for(var i in invocations){
@@ -695,16 +696,11 @@
 							invocation[attrname] = response.data[attrname];
 						}
 
-						if(invocation.steps === undefined || invocation.steps.length === 0){
-							debugger
-							return;
-						}
-
-						var totalSteps = invocation.steps.length;
+						var totalSteps = (invocation.steps?invocation.steps.length:0);
 
 						//Valid Galaxy job states include:
 						//TODO: ‘new’, ‘upload’, ‘waiting’, ‘queued’, ‘running’, ‘ok’, ‘error’, ‘paused’, ‘deleted’, ‘deleted_new’
-						for(var i = 0; i < invocation.steps.length; i++){
+						for(var i in invocation.steps){
 							if(invocation.steps[i].state === "ok"){
 								doneSteps++;
 							} else if(invocation.steps[i].state === null){
@@ -723,6 +719,11 @@
 								unknownStateSteps++;
 							}
 						}
+
+						if(invocation.steps === undefined || invocation.steps.length === 0 || totalSteps===0){
+							return;
+						}
+
 						if(runningSteps > 0){
 							invocation.state = "working";
 							invocation.state_text = "Running your workflow...";

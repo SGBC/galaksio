@@ -54,17 +54,17 @@
 		</div>
 		<history-list-panel ng-init="showHelp=false;"></history-list-panel>
 	</div>
-	<form class="panel panel-container" name='workflowRunForm' novalidate ng-show="invocation.current_step > 2">
+	<form name='workflowRunForm' novalidate >
 		<!-- ************************************************************* -->
 		<!-- INPUT DATA SELECTION -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-if="invocation.current_step > 2" ng-show="invocation.current_step == 3" ng-form="step1form" >
+		<div class="panel panel-container" ng-if="invocation.current_step > 2 && invocation.current_step < 6" ng-show="invocation.current_step === 3" ng-form="step1form" >
 			<h3>Input data:</h3>
 			<p class="description">
 				<b>Now, choose the input files for each input step.</b> Use the diagram above to identify each step in the process.<br>
 				Remember that workflows are analyses that are intended to be executed (one ore more times) with different user-provided input Datasets.</br>
 			</p>
-			<p class="invalidFormMessage" ng-show="!invocation.valid">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
+			<p class="invalidFormMessage" ng-show="!invocation.valid">Ooops! Some of the required fields are not valid or are empty. Please check your form and try again.</p>
 			<span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...</span>
 			<div ng-show="loadingComplete">
 				<workflow-step ng-repeat="step in workflow.steps | filter:filterInputSteps"></workflow-step>
@@ -73,13 +73,13 @@
 		<!-- ************************************************************* -->
 		<!-- OTHER STEPS CUSTOMIZATION -->
 		<!-- ************************************************************* -->
-		<div class="progressStep" ng-if="invocation.current_step > 2" ng-show="invocation.current_step == 4" ng-form="step2form">
+		<div class="panel panel-container" ng-if="invocation.current_step > 2 && invocation.current_step < 6" ng-show="invocation.current_step === 4"  ng-form="step2form">
 			<h3>Other steps:</h3>
 			<p class="description">
 				<b>We are almost done! In this step you can customize the execution of all the steps in the workflow.</b><br>
 				Workflow can be reused over and over and for that reason, all the steps in the process have default values for execution. Note that these default values were considered as optimal by the creator of the workflow. Nevertheless, feel free to customize the settings for each step at your convenience. <b>Remember that this is an optional step!</b>
 			</p>
-			<p class="invalidFormMessage"  ng-show="!invocation.valid">Some of the required fields are not valid or are empty. Please check the form and try again!</p>
+			<p class="invalidFormMessage"  ng-show="!invocation.valid">Some of the required fields are not valid or are empty. Please fill in all fields to continue.</p>
 			<div ng-show="loadingComplete" >
 				<workflow-step ng-repeat="step in workflow.steps | filter:filterNotInputSteps"></workflow-step>
 			</div>
@@ -89,7 +89,7 @@
 	<!-- ************************************************************* -->
 	<!-- PRE-RUN WORKFLOW SUMMARY -->
 	<!-- ************************************************************* -->
-	<div class="progressStep" ng-if="invocation.current_step == 5">
+	<div class="panel panel-container" ng-if="invocation.current_step === 5">
 		<h1 class="workflow-state-title">{{invocation.state_text}}</h1>
 		<h1 style=" text-align: center; font-size: 70px; color: #009CDE;"></h1>
 		<div class="description" style="text-align: center;">
@@ -108,7 +108,7 @@
 	<!-- ************************************************************* -->
 	<!-- RUNNING WORKFLOW SUMMARY -->
 	<!-- ************************************************************* -->
-	<div class="progressStep" ng-if="invocation.current_step == 6">
+	<div class="panel panel-container" ng-if="invocation.current_step === 6">
 		<h1 class="workflow-state-title">
 			<img src="{{controller.getInvocationStateImage(invocation.state)}}" style="height: 70px;">{{invocation.state_text}}
 		</h1>
@@ -204,10 +204,10 @@
 			<a class="btn btn-danger btn-md navbar-left" ng-click="controller.cancelButtonHandler();" ng-show="invocation.current_step == 1">
 				<i class="fa fa-chevron-left"></i> Cancel and go back
 			</a>
-			<a class="btn btn-default btn-md navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1">
+			<a class="btn btn-default btn-md navbar-left" ng-click="controller.backButtonHandler();" ng-show="invocation.current_step > 1 && invocation.current_step < 6">
 				<i class="fa fa-chevron-left"></i> Previous step
 			</a>
-			<a class="btn btn-md" ui-sref="workflows()" ng-show="invocation.current_step > 1" style="color: #E88080;">or Cancel</a>
+			<a class="btn btn-md" ui-sref="workflows()" ng-show="invocation.current_step > 1 && invocation.current_step < 6" style="color: #E88080;">or Cancel</a>
 			<a class="btn btn-info btn-md navbar-right"
 			ng-disabled="((invocation.current_step === 3 && workflowRunForm.step1form.$invalid) || (invocation.current_step === 4 && workflowRunForm.step2form.$invalid))"
 			ng-click="controller.nextStepButtonHandler()"

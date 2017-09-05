@@ -23,6 +23,7 @@
 		loginSuccess: 'auth-login-success',
 		loginFailed: 'auth-login-failed',
 		logoutSuccess: 'auth-logout-success',
+		logoutRequired: 'auth-logout-required',
 		sessionTimeout: 'auth-session-timeout',
 		notAuthenticated: 'auth-not-authenticated',
 		notAuthorized: 'auth-not-authorized',
@@ -173,6 +174,8 @@
 				return myAppConfig.GALAKSIO_SERVER + "admin/is-admin";
 				case "get-local-galaxy-url":
 				return myAppConfig.GALAKSIO_SERVER + "admin/local-galaxy-url";
+				case "send-error-report":
+				return myAppConfig.GALAKSIO_SERVER + "admin/send-error-report";
 				default:
 				return "";
 			}
@@ -258,7 +261,25 @@
 					console.error(response.data);
 				}
 			);
-		}
+		};
+
+		$rootScope.sendReportMessage = function(data){
+			debugger
+			$http($rootScope.getHttpRequestConfig("POST", "send-error-report", {
+				headers: {'Content-Type': 'application/json; charset=utf-8'},
+				data : data
+			})).then(
+				function successCallback(response){
+					alert("An error report has been generated. Your feedback help us improve Galaksio. Thanks!")
+				},
+				function errorCallback(response){
+					var message = "Failed while sending the report, but don't worry! You can contact us by email ebiokit@gmail.com.";
+					alert(message);
+					console.error(message);
+					console.error(response.data);
+				}
+			);
+		};
 
 		/******************************************************************************
 		*            _____   _____ _  _ _____

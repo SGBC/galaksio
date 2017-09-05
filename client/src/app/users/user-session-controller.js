@@ -54,8 +54,7 @@
 					if(Cookies.get("galaksiosession") === undefined){
 						return;
 					}
-					
-					debugger;
+
 					var message = "Failed while getting user's details at UserSessionController:signInButtonHandler";
 					console.error(message);
 					console.error(response.data);
@@ -72,6 +71,10 @@
 
 		$scope.$on(APP_EVENTS.logoutSuccess, function (event, args) {
 			delete $scope.userInfo.email;
+		});
+
+		$scope.$on(APP_EVENTS.logoutRequired, function (event, args) {
+			me.signOutButtonHandler();
 		});
 
 		this.signFormSubmitHandler = function () {
@@ -169,8 +172,7 @@
 			Cookies.remove("galaxyusername", {path: getPathname()});
 			sessionStorage.removeItem("workflow_invocations");
 			delete $scope.userInfo.email;
-			$state.go('signin');
-
+			location.replace(getPathname().replace(/\/$/g, "") + "/#/signin?_=" + (new Date()).getTime());
 			location.reload();
 
 			//Notify all the other controllers that user has signed in
@@ -180,6 +182,7 @@
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------
+		var me = this;
 		$scope.userInfo = {
 			email : Cookies.get("galaxyuser")
 		};

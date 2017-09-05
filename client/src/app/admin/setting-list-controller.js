@@ -38,7 +38,7 @@
 	*      \_____\____/|_| \_|  |_|  |_|  \_\\____/|______|______|______|_|  \_\_____/
 	*
 	******************************************************************************/
-	app.controller('AdminController', function($state, $rootScope, $scope, $http, $uibModal, $dialogs){
+	app.controller('AdminController', function($state, $rootScope, $scope, $http, $uibModal, $dialogs, APP_EVENTS){
 		/******************************************************************************
 		*       ___ ___  _  _ _____ ___  ___  _    _    ___ ___
 		*      / __/ _ \| \| |_   _| _ \/ _ \| |  | |  | __| _ \
@@ -117,7 +117,7 @@
 					$dialogs.showSuccessDialog("Settings successfully updated. You may need to restart the server to apply the changes.", {
 						logMessage : "Settings updated at AdminController:retrieveHistoryData.",
 						callback : function(){
-                            location.replace(getPathname().replace(/\/$/g, "") + "/#/signin?_=" + (new Date()).getTime());
+							$rootScope.$broadcast(APP_EVENTS.logoutRequired);
 						}
 					});
 					$scope.isLoading = false;

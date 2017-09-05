@@ -43,7 +43,10 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     newValues = json.loads(request.data)
 
     import ConfigParser
+    import base64
     config = ConfigParser.RawConfigParser()
+
+    prev_settings = readConfigurationFile()
 
     config.add_section('server_settings')
     config.set('server_settings', 'SERVER_HOST_NAME', newValues.get("SERVER_HOST_NAME"))
@@ -59,6 +62,15 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     config.set('galaxy_settings', 'GALAXY_SERVER', newValues.get("GALAXY_SERVER"))
     config.set('galaxy_settings', 'GALAXY_SERVER_URL', newValues.get("GALAXY_SERVER_URL"))
     config.set('galaxy_settings', 'ADMIN_ACCOUNTS', ",".join(newValues.get("ADMIN_ACCOUNTS")))
+
+    config.add_section('smtp_settings')
+    config.set('smtp_settings', 'SMTP_ACCOUNT', newValues.get("SMTP_ACCOUNT", ""))
+    config.set('smtp_settings', 'SMTP_SERVER', newValues.get("SMTP_SERVER", ""))
+    config.set('smtp_settings', 'SMTP_PORT', newValues.get("SMTP_PORT", ""))
+
+    if prev_settings.SMTP_PASS != newValues.get("SMTP_PASS", ""):
+        prev_settings.SMTP_PASS = base64.b64encode(newValues.get("SMTP_PASS", ""))
+    config.set('smtp_settings', 'SMTP_PASS', prev_settings.SMTP_PASS)
 
     #STEP 3 Writing our configuration file to 'server.cfg'
     with open(ROOT_DIRECTORY + "server/conf/server.cfg", 'wb') as configfile:
@@ -105,6 +117,17 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
     settings.GALAXY_SERVER_URL = config.get('galaxy_settings', 'GALAXY_SERVER_URL').rstrip("/")
     settings.ADMIN_ACCOUNTS = config.get('galaxy_settings', 'ADMIN_ACCOUNTS').split(",")
 
+    try:
+        settings.SMTP_ACCOUNT = config.get('smtp_settings', 'SMTP_ACCOUNT')
+        settings.SMTP_PASS = config.get('smtp_settings', 'SMTP_PASS')
+        settings.SMTP_SERVER = config.get('smtp_settings', 'SMTP_SERVER')
+        settings.SMTP_PORT = config.getint('smtp_settings', 'SMTP_PORT')
+    except:
+        settings.SMTP_ACCOUNT = ""
+        settings.SMTP_PASS = ""
+        settings.SMTP_SERVER = ""
+        settings.SMTP_PORT = 587
+
     # PREPARE LOGGING
     loggingConfig.fileConfig(settings.ROOT_DIRECTORY + 'server/conf/logging.cfg')
 
@@ -145,15 +168,6 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
 
     return settings
 
-# def storeTmpFiles(files):
-#     tmp_files = {}
-#     for file_id in files.keys():
-#         file = files[file_id]
-#         tmp_path = os.path.join("/tmp", file.filename)
-#         file.save(tmp_path)
-#         tmp_files[file_id] = (file.filename, open(tmp_path, 'rb'), 'text/plain')
-#     return tmp_files
-
 def storeTmpFiles(files, tmp_dir):
     tmp_files = []
     for file_id in files.keys():
@@ -162,3 +176,71 @@ def storeTmpFiles(files, tmp_dir):
         file.save(tmp_path)
         tmp_files.append(tmp_path)
     return tmp_files
+
+
+def sendErrorReport(request, response):
+    settings = readConfigurationFile()
+    newValues = json.loads(request.data)
+
+    try:
+        import smtplib
+        import base64
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.text import MIMEText
+        from email.mime.base import MIMEBase
+        from email import encoders
+        import tempfile
+
+        destination = "rafahd87@gmail.com"
+        msg = MIMEMultipart()
+        msg['From'] = settings.SMTP_ACCOUNT
+        msg['To'] = destination
+        msg['Subject'] = "Galaksio error reporting."
+
+        body = "Error type: " + str(newValues.get("error")) + "\n"
+        body += "Galaksio server: " + str(settings.SERVER_HOST_NAME)+ "\n"
+        body += "Galaksio subdomain: " + str(settings.SERVER_SUBDOMAIN)+ "\n"
+        msg.attach(MIMEText(body, 'plain'))
+
+        if newValues.get("tool") != None:
+            fd, filename = tempfile.mkstemp()
+            try:
+                with open(filename, 'w') as fd:
+                    json.dump(newValues.get("tool"), fd)
+                fd.close()
+                attachment = open(filename, "rb")
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload((attachment).read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', "attachment; filename= tool.json")
+                msg.attach(part)
+            finally:
+                os.remove(filename)
+
+        if newValues.get("input") != None:
+            fd, filename = tempfile.mkstemp()
+            try:
+                with open(filename, 'w') as fd:
+                    json.dump(newValues.get("input"), fd)
+                fd.close()
+                attachment = open(filename, "rb")
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload((attachment).read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', "attachment; filename= input.json")
+                msg.attach(part)
+            finally:
+                os.remove(filename)
+
+        server = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT)
+        server.starttls()
+        server.login(settings.SMTP_ACCOUNT, base64.b64decode(settings.SMTP_PASS))
+        text = msg.as_string()
+        server.sendmail(settings.SMTP_ACCOUNT, destination, text)
+        server.quit()
+
+        response.setContent({"success": True})
+    except Exception as ex:
+        response.setStatus(401)
+        response.setContent({"success": False})
+    return response
