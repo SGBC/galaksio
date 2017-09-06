@@ -164,6 +164,11 @@
 						scale: 1.0,
 						color: '#fff',
 						content: "\uf15c"
+					},'data_collection_input': {
+						font: 'FontAwesome',
+						scale: 1.0,
+						color: '#fff',
+						content: "\uf0c5"
 					}
 				},
 				aSetScheme: {
@@ -171,8 +176,8 @@
 				}
 			};
 
-			var nodeSize = 20;
-			var edgeSize = 7;
+			var nodeSize = 15;
+			var edgeSize = 5;
 			if(diagram.nodes.length > 15){
 				nodeSize = 9;
 				edgeSize = 3;
@@ -183,7 +188,7 @@
 
 			var myStyles = {
 				nodes: {
-					size: {by: 'size', bins: 7, min: nodeSize,max: nodeSize},
+					size: {by: 'size', bins: 7, min: nodeSize, max: nodeSize},
 					icon: {by: 'step_type', scheme: 'iconScheme'},
 					color: {by: 'step_type', scheme: 'aSetScheme', set:7},
 				},
@@ -246,15 +251,57 @@
 		};
 
 		this.nextStepButtonHandler = function(){
-			if($scope.invocation.current_step===3){
-				$scope.invocation.valid = $scope.workflowRunForm.step1form.$valid;
-			} else if($scope.invocation.current_step===4){
-				$scope.invocation.valid = $scope.workflowRunForm.step2form.$valid;
+			if($scope.invocation.current_step===3 || $scope.invocation.current_step===4){
+				var erroneousFields = this.getErroneousFields($scope.workflowRunForm.step1form);
+				erroneousFields = this.getErroneousFields($scope.workflowRunForm.step2form, erroneousFields);
+
+				if(erroneousFields.labels.length > 0){
+					$scope.invocation.valid = false;
+					$scope.erroneousFields = erroneousFields.labels;
+
+					try {
+						$('html, body').animate({
+							scrollTop: $(erroneousFields.elements[0]).offset().top  - 60
+						}, 1000);
+					} catch (e) {
+					}
+					return;
+				}
 			}
 
-			if($scope.invocation.valid === true){
-				$scope.invocation.current_step++;
+			$scope.invocation.valid = true;
+			$scope.invocation.current_step++;
+			return;
+		};
+
+		this.getErroneousFields = function(aform, erroneousFields){
+			erroneousFields = erroneousFields || {elements: [], labels: []};
+			if(aform && aform.$error && aform.$error.required){
+				var errors = aform.$error.required;
+				for(var i in errors){
+					var _error, element;
+					try {
+						element = $("[name=" + errors[i].$name + "] ").siblings("label")[0];
+						_error = element.textContent + " (" + errors[i].$name + ")";
+					} catch (e) {
+						element= $(".ng-invalid[name=" + errors[i].$name + "] ")[0];
+						_error = "Input name: " + errors[i].$name;
+					}
+					//Avoid repeating the fields
+					if(erroneousFields.labels.indexOf(_error) > -1){
+						var n = 2;
+						var __error = _error + "[" + n + "]"
+						while(erroneousFields.labels.indexOf(__error) > -1){
+							n++;
+							__error = _error + "[" + n + "]"
+						}
+						_error = __error;
+					}
+					erroneousFields.elements.push(element);
+					erroneousFields.labels.push(_error);
+				}
 			}
+			return erroneousFields;
 		};
 
 		this.executeWorkflowHandler = function(event){
@@ -325,10 +372,8 @@
 		};
 
 		this.zoomDiagramHandler = function(zoom){
-			debugger
 			zoom = (($scope.sigma.camera.ratio * 100) + (10 * zoom))/100;
 			$scope.sigma.camera.goTo({"ratio": zoom});
-			console.log(zoom);
 			return;
 		};
 

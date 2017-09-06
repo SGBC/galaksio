@@ -273,7 +273,7 @@
 					alert("An error report has been generated. Your feedback help us improve Galaksio. Thanks!")
 				},
 				function errorCallback(response){
-					var message = "Failed while sending the report, but don't worry! You can contact us by email ebiokit@gmail.com.";
+					var message = "Failed while sending the report, but don't worry! You can contact us by email at " + response.data.developers_email;
 					alert(message);
 					console.error(message);
 					console.error(response.data);

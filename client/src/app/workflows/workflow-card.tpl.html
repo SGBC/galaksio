@@ -3,13 +3,20 @@
 		<a style="float: right;margin: 0px 10px;" ng-if="workflow.imported" class="removeButton" ng-click="controller.deleteWorkflowHandler(workflow);" >
 			<i class="fa fa-trash"></i>
 		</a>
-		<h2 class="workflow-card-name">{{workflow.name}}</h2>
+		<h2 class="workflow-card-name" title="{{workflow.name}}">{{workflow.name}}</h2>
 		<div class="workflow-card-description" ng-if="workflow.annotation === undefined">
 			<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading details...
 		</div>
 		<div class="workflow-card-description" ng-if="workflow.annotation !== undefined" style="text-align: justify;">
-			<p ng-if="!workflow.owned" class="text-danger" style="text-align: center; margin-bottom: 4px; ">This workflow is not owned by or shared with you.</p>
-			<span ng-if="workflow.annotation !== '' && workflow.annotation !== null">{{workflow.annotation}}</span>
+			<!-- <p ng-if="!workflow.owned" class="text-danger" style="text-align: center; margin-bottom: 4px; ">This workflow is not owned by or shared with you.</p> -->
+			<span max-content-height="65" ng-if="workflow.annotation !== null && workflow.annotation !== ''">
+				<b ng-show="showMore" class="workflow-card-description-more">
+					[...]
+					<span ng-if="workflow.owned" class="text-info clickable" ui-sref="workflowRun({id: workflow.id})">Read more</span>
+					<span ng-if="!workflow.owned" class="text-info clickable" ui-sref="workflowDetail({id: workflow.id, mode: 'view'})">Read more</span>
+				</b>
+				{{workflow.annotation}}
+			</span>
 			<p ng-if="workflow.annotation === '' || workflow.annotation === null" style="text-align: center;">No description provided</p>
 		</div>
 		<div class="workflow-card-tags-list">

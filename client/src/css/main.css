@@ -111,7 +111,7 @@ body{font-family: 'Open Sans', sans-serif; font-weight: lighter;  }
 }
 
 .affix-clone {
-    display: none;
+	display: none;
 }
 
 #alt_menu .menuIcon{margin-right: 10px; color: #d9534f;}
@@ -139,8 +139,8 @@ body{font-family: 'Open Sans', sans-serif; font-weight: lighter;  }
 	}
 
 	#page-content-wrapper {
-		padding: 20px;
 		position: relative;
+		padding: 20px;
 	}
 
 	#wrapper.toggled #page-content-wrapper {
@@ -401,7 +401,7 @@ div.sessionToolbar button, div.sessionToolbar li{
 }
 .workflow-card-container, .workflow-run-container, .histories-container, .home-container {
 	max-width: 1400px;
-	padding: 10px 30px;
+	padding: 10px 0px;
 	margin: auto;
 	margin-top: 15px;
 }
@@ -450,6 +450,13 @@ div.sessionToolbar button, div.sessionToolbar li{
 	font-style: italic;
 	color: #8A8A8A;
 }
+.workflow-card-description-more{
+	position: absolute;
+	height: 20px;
+	margin-left: 284px;
+	background-color: white;
+	margin-top: 50px;
+}
 .workflow-card-tags-list {
 	padding: 10px 0px;
 	max-height: 35px;
@@ -495,9 +502,6 @@ i.tag.pink2 {background-color: #db6070; color: #fff;}
 /*------------------------------------------------------*/
 /*STYLES FOR WORKFLOW RUN FORM                          */
 /*------------------------------------------------------*/
-i.invalid-value-icon{display: none; margin-left: 15px;}
-.ng-invalid + i.invalid-value-icon{display: inline-block;}
-
 .stepBox > .panel-heading > i {
 	display: none;
 	font-size: 10px;
@@ -520,7 +524,17 @@ h3.workflow-title:hover {
 }
 select.ng-invalid, input.ng-invalid {
 	border: 1px solid #E88080;
+	float: left;
+	width: 96%;
+	margin-right: 5px;
 }
+i.invalid-value-icon{display: none; line-height: 30px;}
+.ng-invalid + i.invalid-value-icon{display: block;}
+step-data-collection-input .ng-invalid + i.invalid-value-icon{display: inline-block;}
+step-data-input .ng-invalid + i.invalid-value-icon{display: inline-block;}
+step-data-collection-input label{display: block;}
+step-data-input label{display: block;}
+
 select.ng-valid, input.ng-valid {
 	border: 1px solid #54BF78;
 }
@@ -531,14 +545,18 @@ step-input {
 	display: block;
 	margin-top: 5px;
 }
-step-input input, step-input i {
-	margin-left: 10px;
+step-input input {
+	display: block;
+	margin: 0;
+	border-radius: 3px;
+	width: 100%;
+	min-height: 30px;
+	padding: 0px 5px;
 }
-step-input input[type=checkbox] {
-	margin-right: 10px;
-}
+
 step-input i {
 	display: block;
+	margin-left: 10px;
 }
 
 step-input .inputRepeatItem {
@@ -581,7 +599,12 @@ table.workflow-summary-step td, table.workflow-summary-step th {
 table.workflow-summary-step th {
 	background: #f5f5f5;
 }
-/*------------------------------------------------------*/
+
+.yes-no-input{display: block; height: 30px;}
+.yes-no-input + input{display: none;}
+
+.form-subsection{margin-left: 20px; border-left: 1px solid #dedede; padding-left: 20px;}
+
 /*STYLES FOR WORKFLOW STATE INDICATOR                   */
 /*------------------------------------------------------*/
 .invocationListToolbar{display: inline-block; margin: 5px 20px;}
@@ -630,7 +653,7 @@ table.table td.job-status-cat {
 /*------------------------------------------------------*/
 /*STYLES FOR HISTORIES LIST                             */
 /*------------------------------------------------------*/
-table.historyListTable {font-size: 12px;}
+table.historyListTable,table.datasetsTable, .table.collection-table {font-size: 11px;}
 table.historyListTable > tbody > tr > td{line-height: 40px !important;}
 table.historyListTable > tbody > tr > td:first-child{text-align: right;}
 table.historyListTable > tbody > tr.current{font-weight: bold;color: #337ab7;}
@@ -710,9 +733,10 @@ tr.selectedDataset {
 	margin: 10px auto;
 	padding: 10px;
 }
+
 .collection-label-subtype{
-	text-align: center;
-	font-size: 10px;
+	margin-left: 5px;
+	font-size: 11px;
 	font-weight: lighter;
 	color: #909090;
 }

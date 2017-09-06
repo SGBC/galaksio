@@ -62,7 +62,7 @@
 			'    <i style="color: #e61669;">Expand for details</i>' +
 			'  </div>' +
 			'  <div class="panel-body" ng-hide="collapsed">'+
-			'    <span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Loading...</span>'+
+			'    <span ng-hide="loadingComplete"><i class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i> Loading tool info...</span>'+
 			'    <div ng-if="loadingComplete && step.type == \'data_input\'">'+
 			'      <step-data-input></step-data-input>'+
 			'    </div>' +
@@ -100,10 +100,12 @@
 					return;
 				}
 
-				model.label = JSON.parse(model.tool_state).name;
+				if(model.label == null || model.label === ""){
+					model.label = "Input dataset for step " + (model.id + 1);
+				}
 
 				var template =
-				'<label>{{step.label}}</label>' +
+				'<label style="display:block;">{{step.label}}</label>' +
 				'<dataset-list-input></dataset-list-input>' +
 				'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, false, [1,3]);">' +
@@ -147,7 +149,7 @@
 				}
 
 				var template =
-				'<label>{{step.label}}<p class="collection-label-subtype">' + sublabel + '</p></label>' +
+				'<label>{{step.label}}<span class="collection-label-subtype">' + sublabel + '</span></label>' +
 				'<dataset-collection-list-input></dataset-collection-list-input>' +
 				'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 				'<a type="button" class="btn btn-primary btn-sm" style="margin-left: 10px;margin-bottom: 4px;" ng-click="controller.showDatasetSelectorDialog(step, false, [0,2,4], \'' + $scope.dataType + '\', \'' + $scope.dataSubtype + '\');">' +
@@ -230,36 +232,36 @@
 						model.value = inputValue;
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<input type="text" name="{{input.name}}" ' +
 						'       ng-model="input.value"' +
-						'       ng-required="!(input.optional)" >'+
-						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						'       ng-required="!(input.optional)" >' +
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 					}else if(model.type === "integer"){
 						model.value = Number.parseInt(inputValue);
 						var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}' + extra_help + '"></i>':'' + extra_help) +
 						'<input type="number" name="{{input.name}}" ' +
 						((model.max !== null)?'max="' + model.max + '"':'') +
 						((model.min !== null)?'min="' + model.min + '"':'') +
 						'       ng-model="input.value"' +
 						'       ng-required="!(input.optional===true)" >' +
-						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}' + extra_help + '"></i>':'' + extra_help);
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 						//SELECTORS INPUTS
 					}else if(model.type === "float" ){
 						model.value = Number.parseFloat(inputValue);
 						var extra_help = ((model.min !== null)?' Min. value=' + model.min:'') + ((model.max !== null)?' Max. value=' + model.max :'');
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<input type="number" name="{{input.name}}" ' +
 						((model.max !== null)?'max="' + model.max + '"':'') +
 						((model.min !== null)?'min="' + model.min + '"':'') +
 						'       ng-model="input.value"' +
 						'       ng-required="!(input.optional===true)" >' +
-						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 						//SELECTORS INPUTS
 					}else if(model.type === "select"){
 						model.value = ((inputValue !== "" && !(inputValue instanceof Object))? inputValue: model.default_value);
@@ -271,35 +273,35 @@
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >'+
-						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
+						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
 						"</select>" +
 						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 					}else if(model.type === "data_column"){
 						model.value = (inputValue !== ""? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<select class="form-control" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >'+
-						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
+						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
 						"</select>" +
-						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 					}else if(model.type === "genomebuild"){
 						model.value = (inputValue !== ""? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<select class="form-control" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
 						'        ng-required="!(input.optional===true)" >' +
-						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>'
+						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
 						"</select>" +
-						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
 						try {
@@ -311,29 +313,38 @@
 							model.value = inputValue;
 						}
 
-						template= '<label>{{input.test_param.label || input.title}}</label>';
 						//TODO: REMOVE THE NAME PROPERTY? VALUES ARE BEING REMOVED WHEN EXPANDING TOOLS
-						template+=
-						'<div ng-repeat="option in input.test_param.options">' +
-						'	<input type="radio" name="{{input.test_param.name}}' + randomIDgenerator(5) + '"' +
-						'        ng-model="input.value" value="{{option[1]}}"'+
-						'        ng-required="!(input.optional===true)" > {{option[0]}}'  +
+						template=
+						'<label>{{input.test_param.label || input.title}}</label>' +
+						((model.help || model.test_param.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help || input.test_param.help}}"></i>':'') +
+						'<select class="form-control"' +
+						'        ng-model="input.value"' +
+						'        ng-required="!(input.optional===true)" >'+
+						'   <option ng-repeat="option in input.test_param.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
+						"</select>" +
 						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
+						'<div style="display:none;">' +
+						'	<input type="radio" ng-repeat="option in input.test_param.options" name="{{input.test_param.name}}' + randomIDgenerator(5) + '"' +
+						'        ng-model="input.value" value="{{option[1]}}"'+
+						'        ng-required="!(input.optional===true)" >'  +
 						'</div>';
 						//Generate child nodes
 						$scope.parent_tool_state = inputValue;
 						template+=
-						'<div style="margin-left: 20px;" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
+						'<div class="form-subsection" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
 						'	<step-input ng-repeat="input in option.inputs"></step-input>'+
 						'</div>';
 					}else if(model.type === "boolean"){
 						model.value = (inputValue === "true");
 						template+=
-						'<input type="checkbox" name="{{input.name}}" ng-model="input.value">' +
 						'<label>{{input.label || input.title}}</label>' +
-						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
+						'<div class="btn-group yes-no-input">'+
+						'   <label class="btn btn-sm" ng-class="input.value?\'btn-success\':\'btn-default\'" ng-model="input.value" uib-btn-radio="true">Yes</label>'+
+						'   <label class="btn btn-sm" ng-class="input.value?\'btn-default\':\'btn-danger\'"  ng-model="input.value" uib-btn-radio="false">No</label>'+
+						'</div>'+
+					 '<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
+					 '<input type="checkbox" style="display:none;" name="{{input.name}}" ng-model="input.value">';
 						//DISPLAY
 					}else if(model.type === "data"){
 						if(inputValue=== null || inputValue=== undefined ){

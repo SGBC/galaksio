@@ -39,4 +39,19 @@
       }
     };
   });
-})();
+
+  app.directive('maxContentHeight',function(){
+    return {
+      restrict: 'A',
+      link: function($scope,$el,$attr) {
+        $scope.$watch(
+          function() {
+            return $($el).height();
+          },
+          function(height) {
+            $scope.showMore = height > ~~$attr['maxContentHeight'];
+          }
+        )}
+      };
+    });
+  })();

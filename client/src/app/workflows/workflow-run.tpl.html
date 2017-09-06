@@ -34,8 +34,8 @@
 			<a class="clickable" ng-click="controller.layoutDiagramHandler()"> <i class="fa fa-refresh"></i> Update diagram layout</a>
 		</span>
 		<h4>Workflow overview</h4>
-		<i ng-show="loadingComplete === false" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
-			<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflow details...
+		<i ng-show="loadingComplete === false" style="line-height: 30px;font-size: 40px;color: #777;float: right;width: 100%;text-align: center;margin-top: 175px;">
+			<i class="fa fa-spinner fa-pulse fa-fw"></i> Diagram is being generated...
 		</i>
 		<div id="sigmaContainer" style="height:450px;"></div>
 	</div>
@@ -64,7 +64,13 @@
 				<b>Now, choose the input files for each input step.</b> Use the diagram above to identify each step in the process.<br>
 				Remember that workflows are analyses that are intended to be executed (one ore more times) with different user-provided input Datasets.</br>
 			</p>
-			<p class="invalidFormMessage" ng-show="!invocation.valid">Ooops! Some of the required fields are not valid or are empty. Please check your form and try again.</p>
+			<div class="well invalidFormMessage" ng-if="invocation.current_step === 3 && !invocation.valid">
+				<b>Some of the required fields are not valid or are empty. Please check your form and try again.</b>
+				<p>Unvalid fields:</p>
+				<ul>
+					<li ng-repeat="field in erroneousFields">{{field}}</li>
+				</ul>
+			</div>
 			<span ng-hide="loadingComplete"><i class="fa fa-cog fa-spin fa-2x fa-fw margin-bottom"></i> Generating panel...</span>
 			<div ng-show="loadingComplete">
 				<workflow-step ng-repeat="step in workflow.steps | filter:filterInputSteps"></workflow-step>
@@ -79,7 +85,13 @@
 				<b>We are almost done! In this step you can customize the execution of all the steps in the workflow.</b><br>
 				Workflow can be reused over and over and for that reason, all the steps in the process have default values for execution. Note that these default values were considered as optimal by the creator of the workflow. Nevertheless, feel free to customize the settings for each step at your convenience. <b>Remember that this is an optional step!</b>
 			</p>
-			<p class="invalidFormMessage"  ng-show="!invocation.valid">Some of the required fields are not valid or are empty. Please fill in all fields to continue.</p>
+			<div class="well invalidFormMessage" ng-if="invocation.current_step === 4 && !invocation.valid">
+				<b>Some of the required fields are not valid or are empty. Please check your form and try again.</b>
+				<p>Please check the following fields:</p>
+				<ul>
+					<li ng-repeat="field in erroneousFields">{{field}}</li>
+				</ul>
+			</div>
 			<div ng-show="loadingComplete" >
 				<workflow-step ng-repeat="step in workflow.steps | filter:filterNotInputSteps"></workflow-step>
 			</div>
