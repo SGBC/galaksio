@@ -250,13 +250,20 @@
 			$scope.invocation.current_step--;
 		};
 
+		/**
+		*
+		**/
 		this.nextStepButtonHandler = function(){
 			var form;
 			if($scope.invocation.current_step===3){
 				form=$scope.workflowRunForm.step1form;
 			}else if($scope.invocation.current_step===4){
 				form=$scope.workflowRunForm.step2form;
+				//Generate the complete list of params for the request
+				$scope.params = this.flattenStepParameters();
+				debugger
 			}
+
 			var erroneousFields = this.getErroneousFields(form);
 
 			if(erroneousFields.labels.length > 0){
@@ -277,6 +284,10 @@
 			return;
 		};
 
+		/**
+		* This function validates a given form and returns the list
+		* of invalid fields, if any,
+		**/
 		this.getErroneousFields = function(aform, erroneousFields){
 			erroneousFields = erroneousFields || {elements: [], labels: []};
 			if(aform && aform.$error && aform.$error.required){
@@ -328,20 +339,22 @@
 				"parameters": {}
 			};
 
-			var steps = $scope.workflow.steps;
-			for(var i in steps){
-				if(steps[i].type === "data_input"){
-					requestData.ds_map[steps[i].id] = {"src" : "hda", "id" : steps[i].inputs[0].value};
-				} else if(steps[i].type === "data_collection_input"){
-					requestData.ds_map[steps[i].id] = {"src" : "hdca", "id" : steps[i].inputs[0].value};
-				}else if(steps[i].extra !== undefined){ //the step was uncollapsed
-					var params = requestData.parameters[steps[i].id] = {};
-					var inputs = steps[i].extra.inputs
+			for(var i in $scope.params){
+				if($scope.params[i].type === "data_input"){
+					requestData.ds_map[$scope.params[i].id] = {"src" : "hda", "id" : $scope.params[i].inputs[0].value};
+				} else if($scope.params[i].type === "data_collection_input"){
+					requestData.ds_map[$scope.params[i].id] = {"src" : "hdca", "id" : $scope.params[i].inputs[0].value};
+				}else if($scope.params && $scope.params.length > 0){ //the step was uncollapsed
+					var params = requestData.parameters[$scope.params[i].id] = {};
+					var inputs = $scope.params[i].params;
 					for(var j in inputs){
 						params[inputs[j].name] = inputs[j].value;
 					}
 				}
 			}
+
+			debugger
+
 			//SHOW STATE MESSAGE FEW SECONDS BEFORE SEND THE REQUEST
 			$timeout( function(){
 				$http($rootScope.getHttpRequestConfig("POST", "workflow-run", {
@@ -432,38 +445,127 @@
 		$scope.filterNotInputSteps = function (item) {
 			return !$scope.filterInputSteps(item);
 		};
-		$scope.adjustValueString = function (input) {
-			var input_value = input.value;
 
-			if(input.type === "data"){
-				return "Output dataset from Step " + (this.step.input_connections[input.name].id + 1);
-			}else if(input.type === "repeat"){
-				var inputValue = "";
-				try{
-					inputValue = JSON.parse(this.step.tool_state)[input.name].replace(/(^\"|\"$)/g,"");
-					inputValue = JSON.parse(inputValue);
-				}catch(err) {
-				}
-
-				var value = "";
-				var _key; //queries_0|input2, queries_1|input2, ...
-				for(var i in inputValue){ //array of objects
-					for(var j in inputValue[i]){
-						//{"input2" : Object, "__index__": 0}
-						_key = input.name + "_" + inputValue[i]["__index__"] + "|" + j;
-						if(this.step.input_connections[_key] !== undefined){
-							value += 'Output dataset from step ' + (this.step.input_connections[_key].id + 1)
-						}
-					}
-				}
-				return value;
+		/**
+		* This function adjust the textual representation for the value of a given
+		* input. This function is mainly used for showing the workflow overview prior to
+		* workflow execution.
+		**/
+		$scope.adjustValueString = function (type, input_value) {
+			if(type === "data"){
+				return "Output dataset from Step " + (input_value + 1);
+			}else if(type === "repeat"){
+				debugger
+				//TODO
 			}else{
-				if(input_value instanceof Object){
+				if(input_value instanceof Array){
+					return "" + input_value;
+				}else if(input_value instanceof Object){
 					debugger
 				}else{
 					return "" + input_value;
 				}
 			}
+		};
+
+		$scope.adjustTitleString = function (input) {
+			return input.label || input.title || input.test_param.label;
+		};
+
+		this.flattenStepParameters = function(){
+			var step_params = [];
+			var step, type, params;
+			for(var i in $scope.workflow.steps){
+				step = $scope.workflow.steps[i];
+				if(step.type === "data_input" || step.type === "data_collection_input"){
+					step_params.push({
+						id : step.id,
+						name : step.name,
+						type : step.type,
+						inputs : step.inputs
+					});
+				}else{
+					var params=[];
+					if(step.extra && step.extra.inputs){ //the step was uncollapsed
+						params = this.flattenParameters(step.extra.inputs, step, params);
+					}
+					step_params.push({
+						id : step.id,
+						name : step.name,
+						params : params
+					});
+				}
+			}
+			return step_params;
+		};
+
+		this.flattenParameters = function(inputs, step, params, prefix){
+			prefix = (prefix || "");
+			for(var i in inputs){
+				var type = inputs[i].type;
+				if(type === "data"){
+					try{
+						params.push({
+							name : prefix + inputs[i].name,
+							label : $scope.adjustTitleString(inputs[i]),
+							value : step.input_connections[prefix + inputs[i].name].id,
+							type : type
+						});
+					}catch(e){
+
+					}
+				}else if(type === "repeat"){
+					debugger
+					// var inputValue = "";
+					// try{
+					// 	inputValue = JSON.parse(this.step.tool_state)[input.name].replace(/(^\"|\"$)/g,"");
+					// 	inputValue = JSON.parse(inputValue);
+					// }catch(err) {
+					// }
+					//
+					// var value = "";
+					// var _key; //queries_0|input2, queries_1|input2, ...
+					// for(var i in inputValue){ //array of objects
+					// 	for(var j in inputValue[i]){
+					// 		//{"input2" : Object, "__index__": 0}
+					// 		_key = input.name + "_" + inputValue[i]["__index__"] + "|" + j;
+					// 		if(this.step.input_connections[_key] !== undefined){
+					// 			value += 'Output dataset from step ' + (this.step.input_connections[_key].id + 1)
+					// 		}
+					// 	}
+					// }
+				} else if(type === "conditional"){
+					//Add the value for the selector e.g. "advanced_options|advanced_options_selector":"on"
+					var _prefix = prefix + inputs[i].name + "|";
+					params.push({
+						name : _prefix + inputs[i].test_param.name,
+						label : $scope.adjustTitleString(inputs[i]),
+						value : inputs[i].value,
+						type : type
+					});
+					//Add all the subvalues for the selected option
+					for(var j in inputs[i].cases){
+						if(inputs[i].cases[j].value === inputs[i].value){
+							this.flattenParameters(inputs[i].cases[j].inputs, step, params, _prefix);
+							break;
+						}
+					}
+				}else if(type === "section"){
+					var _prefix = prefix + inputs[i].name + "|";
+					//Add all the subvalues for the section
+					for(var j in inputs[i].inputs){
+						this.flattenParameters(inputs[i].inputs[j].inputs, step, params, _prefix);
+					}
+				}else{
+					params.push({
+						name : prefix + inputs[i].name,
+						label : $scope.adjustTitleString(inputs[i]),
+						value : inputs[i].value,
+						type : type
+					});
+				}
+			}
+			return params;
 		};
 
 		$scope.findFileName = function (file_id) {
@@ -613,15 +715,6 @@
 			}
 		};
 
-		$scope.changeSelection = function(input, c){
-			debugger
-			input.value = input.value || [];
-			if(input.value.indexOf(c) > -1){
-				input.value.splice(input.value.indexOf(c),1);
-			}else{
-				input.value.push(c);
-			}
-		}
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------

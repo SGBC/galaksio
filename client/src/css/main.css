@@ -605,6 +605,10 @@ table.workflow-summary-step th {
 
 .form-subsection{margin-left: 20px; border-left: 1px solid #dedede; padding-left: 20px;}
 
+multiple-select-input div {
+    padding: 10px 5px;
+    border: 1px solid #ddd;
+}
 /*STYLES FOR WORKFLOW STATE INDICATOR                   */
 /*------------------------------------------------------*/
 .invocationListToolbar{display: inline-block; margin: 5px 20px;}

@@ -166,6 +166,57 @@
 		};
 	});
 
+	app.directive("multipleSelectInput", function($compile) {
+		return {
+			restrict: 'E',
+			replace: true,
+			link: function($scope, element){
+				try {
+					$scope.input.value = JSON.parse($scope.input.value);
+				} catch (e) {
+					$scope.input.value = [];
+				}
+				var model = $scope.input;
+
+				$scope.input._value = "" + $scope.input.value;
+
+				if(!$scope.changeMultipleSelection){
+					$scope.changeMultipleSelection = function(c){
+						var pos = $scope.input.value.indexOf(c);
+						if(pos > -1){
+							$scope.input.value.splice(pos, 1);
+						}else{
+							$scope.input.value.push(c);
+						}
+						$scope.input._value = "" + $scope.input.value;
+					}
+				}
+
+				var template;
+				if(model.multiple){
+					template =
+					'<div>' +
+					'	<p ng-repeat="option in input.options" ng-click="changeMultipleSelection(option[1])">' +
+					'		<i class="fa" ng-class="(input.value.indexOf(option[1]) > -1)?\'fa-check-square-o text-success\':\'fa-square-o\'"></i> {{option[0]}}' +
+					'	</p>' +
+					'<input style="display:none;" type="text" ng-model="input._value" name="{{input.name}}" ng-required="!(input.optional)" >' +
+					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
+					'</div>';
+				}else{
+					template =
+					'<select class="form-control" name="{{input.name}}"' +
+					'        ng-model="input.value"' +
+					'        ng-required="!(input.optional===true)" >'+
+					'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
+					"</select>"+
+					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
+				}
+
+				$compile($(template).appendTo(element))($scope);
+			}
+		};
+	});
+
 	app.directive("stepInput", ['$compile', '$dialogs', function($compile, $dialogs) {
 		return {
 			restrict: 'E',
@@ -268,35 +319,14 @@
 						model.value = ((inputValue !== "" && !(inputValue instanceof Object))? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
-						// if(model.multiple){
-							//TODO: AQUIIIII
-							//TODO: required?
-							//TODO: styles
-							//TODO: default value
-						// 	template +=
-						// 	'<div>' +
-						// 	'	<p ng-repeat="option in input.options" ng-click="changeSelection(input, option[1])">' +
-						// 	'		<input type="checkbox"> {{option[0]}}' +
-						// 	'	</p>' +
-						// 	'</div>' +
-						// 	'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
-						// }else{
-							template +=
-							'<select class="form-control" name="{{input.name}}"' +
-							((model.multiple)?'        multiple':'') +
-							'        ng-model="input.value"' +
-							'        ng-required="!(input.optional===true)" >'+
-							'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
-							"</select>" +
-							'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
-						// }
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
+						'<multiple-select-input></multiple-select-input>';
 					}else if(model.type === "data_column"){
 						model.value = (inputValue !== ""? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
-						'<select class="form-control" name="{{input.name}}"' +
+						'<select class="form-control galaxy_data_column" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
@@ -309,7 +339,7 @@
 						template =
 						'<label>{{input.label || input.title}}</label>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
-						'<select class="form-control" name="{{input.name}}"' +
+						'<select class="form-control galaxy_genomebuild" name="{{input.name}}"' +
 						((model.multiple)?'        multiple':'') +
 						'        ng-model="input.value"' +
 						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
@@ -332,7 +362,7 @@
 						template=
 						'<label>{{input.test_param.label || input.title}}</label>' +
 						((model.help || model.test_param.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help || input.test_param.help}}"></i>':'') +
-						'<select class="form-control"' +
+						'<select class="form-control galaxy_conditional"' +
 						'        ng-model="input.value"' +
 						'        ng-required="!(input.optional===true)" >'+
 						'   <option ng-repeat="option in input.test_param.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
@@ -412,7 +442,7 @@
 					}else if(model.type === "section"){
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<div class="form-subsection">' +
 						'	<step-input ng-repeat="input in input.inputs"></step-input>'+
 						'</div>';
@@ -465,18 +495,20 @@
 			restrict: 'E',
 			//templateUrl: 'app/workflows/workflow-run-step.tpl.html' NOT USED BECAUSE OF ANGULAR BUG
 			template:
-			'<table class="workflow-summary-step" ng-repeat="step in workflow.steps">' +
+			'<table class="workflow-summary-step" ng-repeat="step in params">' +
 			'  <thead>'+
 			'    <tr><th colspan="2">Step {{$index + 1}}. {{step.name}}</th></tr>' +
 			'    <tr><th>Field name</th><th>Value</th></tr>' +
 			'  </thead>'+
 			'  <tbody>'+
-			'    <tr ng-if="step.type === \'data_input\'"><td>{{step.inputs[0].name}}</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
-			'    <tr ng-if="step.type === \'data_collection_input\'"><td>{{step.inputs[0].name}}</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
-			'    <tr ng-if="[\'data_input\', \'data_collection_input\'].indexOf(step.type) === -1  && step.extra === undefined"><td colspan="2">Using default values</td></tr>' +
-			'    <tr ng-if="step.extra !== undefined" ng-repeat="input in step.extra.inputs">' +
-			'       <td>{{input.label || input.title}}</td>' +
-			'       <td>{{adjustValueString(input)}}</td>' +
+			'    <tr ng-if="step.type === \'data_input\'"><td>Dataset</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
+			'    <tr ng-if="step.type === \'data_collection_input\'"><td>Dataset collection</td><td>{{findFileName(step.inputs[0].value)}}</td></tr>' +
+			'    <tr ng-if="step.params && step.params.length === 0">' +
+			'       <td colspan="2">Using default values</td>' +
+			'    </tr>' +
+			'    <tr ng-if="step.params && step.params.length > 0" ng-repeat="input in step.params" data="{{input.name}}">' +
+			'       <td>{{input.label}}</td>' +
+			'       <td>{{adjustValueString(input.type, input.value)}}</td>' +
 			'    </tr>' +
 			'  </tbody>'+
 			'</table>'
