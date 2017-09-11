@@ -210,7 +210,8 @@
 				//TODO: available types are
 				//  + genomebuild
 				//  + hidden
-				//  - hidden_data
+				//  + hidden_data
+				//  + section
 				//  - baseurl
 				//  - file
 				//  - ftpfile
@@ -267,15 +268,29 @@
 						model.value = ((inputValue !== "" && !(inputValue instanceof Object))? inputValue: model.default_value);
 						template =
 						'<label>{{input.label || input.title}}</label>' +
-						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
-						'<select class="form-control" name="{{input.name}}"' +
-						((model.multiple)?'        multiple':'') +
-						'        ng-model="input.value"' +
-						//'        ng-options="option.value as option.label for option in adaptOptionsData(input.options) track by option.value"' +
-						'        ng-required="!(input.optional===true)" >'+
-						'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
-						"</select>" +
-						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						// if(model.multiple){
+							//TODO: AQUIIIII
+							//TODO: required?
+							//TODO: styles
+							//TODO: default value
+						// 	template +=
+						// 	'<div>' +
+						// 	'	<p ng-repeat="option in input.options" ng-click="changeSelection(input, option[1])">' +
+						// 	'		<input type="checkbox"> {{option[0]}}' +
+						// 	'	</p>' +
+						// 	'</div>' +
+						// 	'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
+						// }else{
+							template +=
+							'<select class="form-control" name="{{input.name}}"' +
+							((model.multiple)?'        multiple':'') +
+							'        ng-model="input.value"' +
+							'        ng-required="!(input.optional===true)" >'+
+							'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
+							"</select>" +
+							'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
+						// }
 					}else if(model.type === "data_column"){
 						model.value = (inputValue !== ""? inputValue: model.default_value);
 						template =
@@ -343,8 +358,8 @@
 						'   <label class="btn btn-sm" ng-class="input.value?\'btn-success\':\'btn-default\'" ng-model="input.value" uib-btn-radio="true">Yes</label>'+
 						'   <label class="btn btn-sm" ng-class="input.value?\'btn-default\':\'btn-danger\'"  ng-model="input.value" uib-btn-radio="false">No</label>'+
 						'</div>'+
-					 '<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
-					 '<input type="checkbox" style="display:none;" name="{{input.name}}" ng-model="input.value">';
+						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
+						'<input type="checkbox" style="display:none;" name="{{input.name}}" ng-model="input.value">';
 						//DISPLAY
 					}else if(model.type === "data"){
 						if(inputValue=== null || inputValue=== undefined ){
@@ -394,6 +409,13 @@
 								}
 							}
 						}
+					}else if(model.type === "section"){
+						template+=
+						'<label>{{input.label || input.title}}</label>' +
+						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'');
+						'<div class="form-subsection">' +
+						'	<step-input ng-repeat="input in input.inputs"></step-input>'+
+						'</div>';
 					}else if(model.type === "hidden" || model.type === "hidden_data"){
 						model.value = inputValue;
 						template+=

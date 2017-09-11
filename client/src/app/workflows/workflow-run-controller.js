@@ -251,22 +251,25 @@
 		};
 
 		this.nextStepButtonHandler = function(){
-			if($scope.invocation.current_step===3 || $scope.invocation.current_step===4){
-				var erroneousFields = this.getErroneousFields($scope.workflowRunForm.step1form);
-				erroneousFields = this.getErroneousFields($scope.workflowRunForm.step2form, erroneousFields);
+			var form;
+			if($scope.invocation.current_step===3){
+				form=$scope.workflowRunForm.step1form;
+			}else if($scope.invocation.current_step===4){
+				form=$scope.workflowRunForm.step2form;
+			}
+			var erroneousFields = this.getErroneousFields(form);
 
-				if(erroneousFields.labels.length > 0){
-					$scope.invocation.valid = false;
-					$scope.erroneousFields = erroneousFields.labels;
+			if(erroneousFields.labels.length > 0){
+				$scope.invocation.valid = false;
+				$scope.erroneousFields = erroneousFields.labels;
 
-					try {
-						$('html, body').animate({
-							scrollTop: $(erroneousFields.elements[0]).offset().top  - 60
-						}, 1000);
-					} catch (e) {
-					}
-					return;
+				try {
+					$('html, body').animate({
+						scrollTop: $(erroneousFields.elements[0]).offset().top  - 60
+					}, 1000);
+				} catch (e) {
 				}
+				return;
 			}
 
 			$scope.invocation.valid = true;
@@ -610,6 +613,15 @@
 			}
 		};
 
+		$scope.changeSelection = function(input, c){
+			debugger
+			input.value = input.value || [];
+			if(input.value.indexOf(c) > -1){
+				input.value.splice(input.value.indexOf(c),1);
+			}else{
+				input.value.push(c);
+			}
+		}
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------
@@ -781,7 +793,6 @@
 							invocation.state_text = "Error";
 							me.recoverWorkflowResults(invocation);
 						}else if(invocation.steps && totalSteps === doneSteps){
-							debugger
 							invocation.state_text = "Finished";
 							invocation.state = "success";
 							//Generate the summary of results

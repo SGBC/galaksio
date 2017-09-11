@@ -5,12 +5,33 @@
 > An easy to use GUI for running Galaxy workflows.
 
 Galaksio is a web application that simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.org/).
-Galaksio provides a simple but complete UI for using Galaxy for biologists that require bioinformatics workflows to complete their research. 
-Using the application, users can run any workflow implemented in the associated Galaxy instance in just few *clicks*. 
-Besides, the rich user interface allows customizing the execution, uploading the necessary files, downloading the results, and executing several workflows simultaneously in the background. 
+Galaksio provides a simple but complete UI for using Galaxy for biologists that require bioinformatics workflows to complete their research.
+Using the application, users can run any workflow implemented in the associated Galaxy instance in just few *clicks*.
+Besides, the rich user interface allows customizing the execution, uploading the necessary files, downloading the results, and executing several workflows simultaneously in the background.
+
+### Quick start
+First install all dependencies. For example, the instructions for an Ubuntu 16.04 server would be:
+```bash
+apt-get update
+apt-get install -y python-pip unzip wget
+pip install requests bioblend flask fpdf
+```
+
+Download and extract the [latest version](https://github.com/fikipollo/galaksio/releases/tag/latest) of Galaksio from the GitHub repository.
+```bash
+wget https://github.com/fikipollo/galaksio/archive/latest.zip
+unzip galaksio-latest.zip
+```
+
+Launch the Flask server. Your new Galaksio instance will be listening to port 8081.
+```bash
+galaksio-latest/server/run.sh --start
+```
+
+By default Galaksio is configured to work with the official [Galaxy](https://usegalaxy.org) instance.This and other options can be customized through the web application. The first time that you access to your Galaksio instance you will need to configure some of the main settings.
 
 ## Documentation
-Documentation for the project, including installation instructions, can be found at the ReadTheDocs platform: [https://galaksio.readthedocs.io](https://galaksio.readthedocs.io). 
+Documentation for the project, including installation instructions, can be found at the ReadTheDocs platform: [http://galaksio.readthedocs.io/en/latest/](http://galaksio.readthedocs.io/en/latest/).
 
 ## Docker for Galaksio
 The Galaksio Docker Image is an easy distributable full-fledged Galaksio installation.
@@ -21,15 +42,4 @@ Galaksio has been developed by the [SLU Global Bioinformatics Centre](http://sgb
 This project is part of the B3Africa Project [http://www.b3africa.org/](http://www.b3africa.org/), which has received funding from the European Union’s Horizon 2020 research and innovation programme.
 **Galaksio** application is distributed under **GNU General Public License, Version 3.**.
 
-<div class="imageContainer" style="text-align:center; font-size:10px; color:#898989" >
-    <img src="https://cloud.githubusercontent.com/assets/11427394/26060852/8fd4b7ae-3986-11e7-9e99-872b430732a5.png" title="SGBC Logo"/>
-    <img src="https://cloud.githubusercontent.com/assets/11427394/26060695/1da40540-3986-11e7-903e-551bffd23873.jpg" title="B3Africa Logo"/>
-</div>
-
-<div class="imageContainer" style="text-align:center; font-size:10px; color:#898989" >
-    <img src="https://cloud.githubusercontent.com/assets/11427394/26060696/1da4622e-3986-11e7-9192-e9e01448061d.png" title="H2020 Logo"/>
-</div>
-
-
-## Some screenshots
-Comming soon...
+<img style="display:block; margin:auto;" src="https://user-images.githubusercontent.com/11427394/30154858-76cd4d9a-93bb-11e7-8834-c2d3dbf95ba3.png" title="Logos"/>

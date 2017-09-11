@@ -23,7 +23,6 @@ from flask import json, jsonify
 import requests
 from logging import config as loggingConfig
 import os
-from flask import Response as flask_response
 
 def isAdminAccount(request, response, ROOT_DIRECTORY):
     settings = readConfigurationFile()

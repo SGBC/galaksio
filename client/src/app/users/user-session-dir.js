@@ -50,7 +50,7 @@
       template:
       '      <div class="sessionToolbar" ng-controller="UserSessionController as controller">' +
       '        <div class="dropdown" ng-show="userInfo.email !== undefined">' +
-      '          <button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
+      '          <button class="btn btn-sm btn-default dropdown-toggle" id="dropdownMenu1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
       '            <i class="fa fa-user" aria-hidden="true"></i> {{userInfo.email}}' +
       '            <span class="caret"></span>' +
       '          </button>' +

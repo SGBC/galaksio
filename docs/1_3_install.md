@@ -37,44 +37,46 @@ A short description of the parameters would be:
 - A Unix system (could work in Windows but we've not tested it yet).
 - A web server that supports Python execution. A typical installation will include an Apache server + uWSGI plugin for running Python scripts.
 - Python 2.7
-- Python modules: Flask and Requests
+- Python modules: Flask, Requests, Bioblend and FPDF
 - A web browser (we recommend Google Chrome or Firefox).
 
 ### Quick install
-First install all dependencies. As an example, the instructions for a Ubuntu 16.04 server could be:
+First install all dependencies. For example, the instructions for an Ubuntu 16.04 server would be:
 ```bash
 apt-get update
-apt-get install -y python-flask python-requests unzip wget
-```
-Download and extract the latest version of Galaksio from the GitHub repository.
-```bash
-wget https://github.com/fikipollo/galaksio/archive/release/last.zip
-unzip last.zip
+apt-get install -y python-pip unzip wget
+pip install requests bioblend flask fpdf
 ```
 
-Launch the Flask server. Your new fresh Galaksio instance will be listening to port 8081.
+Download and extract the [latest version](https://github.com/fikipollo/galaksio/releases/tag/latest) of Galaksio from the GitHub repository.
 ```bash
-galaksio-release-last/server/run.sh --start
+wget https://github.com/fikipollo/galaksio/archive/latest.zip
+unzip galaksio-latest.zip
+```
+
+Launch the Flask server. Your new Galaksio instance will be listening to port 8081.
+```bash
+galaksio-latest/server/run.sh --start
 ```
 
 Go to section "Configuring Galaksio" to continue with the installation.
 
 ### Complete install
-First install all dependencies. As an example, the instructions for a Ubuntu 16.04 server could be:
+First install all dependencies. As an example, the instructions for an Ubuntu 16.04 server could be:
 ```bash
 apt-get update
-apt-get install -y apache2 libapache2-mod-wsgi python-flask python-requests unzip nano wget
+apt-get install -y apache2 libapache2-mod-wsgi python-pip unzip nano wget
+pip install requests bioblend flask fpdf
 ```
 
-Download and extract the latest version of Galaksio from the GitHub repository. The branch tagged as "release/last" includes all the JavaScript and CSS sources minified, in order to reduce the download times. Use the "master" branch to get the latest stable version with non-minified files. Then copy the sources to your web server directory.
+Download and extract the [latest version](https://github.com/fikipollo/galaksio/releases/tag/latest) of Galaksio from the GitHub repository. Then copy the sources to your web server directory. Please, note that this release includes all the JavaScript and CSS sources minified, in order to reduce the load times. Alternatively you can use the "master" branch to get the latest stable version with non-minified files.
 
 ```bash
-wget -O /tmp/galaksio.zip https://github.com/fikipollo/galaksio/archive/release/last.zip
-unzip /tmp/galaksio.zip -d /tmp/galaksio
-mv /tmp/galaksio/*/* /var/www/html/
+wget -O /tmp/galaksio.zip https://github.com/fikipollo/galaksio/archive/latest.zip
+unzip galaksio.zip -d /tmp/galaksio
+mv /tmp/galaksio/* /var/www/html/
 chown -R www-data:www-data /var/www/html/
-rm -r /tmp/galaksio/
-rm /tmp/galaksio.zip
+rm -r /tmp/galaksio*
 ```
 
 Now, we need to change some options that are enabled by default. First, we disable the auto-launch of the application in the *launch_server.py* file which can be problematic when using a web server. After that, we need to change the default port for Galaksio. For this example we will use the default Apache port 80.
@@ -129,7 +131,6 @@ Finally restart your web server.  Your new fresh Galaksio instance will be liste
 ```bash
 service apache2 restart
 ```
+
 ## First configuration for Galaksio
-By default Galaksio will work with the official [Galaxy](https://usegalaxy.org) instance.
-This and other options can be customized through the web application.
-The first time that you access to your Galaksio instance you will need to configure some of the main settings.
+By default Galaksio is configured to work with the official [Galaxy](https://usegalaxy.org) instance.This and other options can be customized through the web application. The first time that you access to your Galaksio instance you will need to configure some of the main settings.

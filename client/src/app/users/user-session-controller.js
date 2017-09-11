@@ -74,6 +74,7 @@
 		});
 
 		$scope.$on(APP_EVENTS.logoutRequired, function (event, args) {
+			debugger
 			me.signOutButtonHandler();
 		});
 

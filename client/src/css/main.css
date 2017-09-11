@@ -403,7 +403,7 @@ div.sessionToolbar button, div.sessionToolbar li{
 	max-width: 1400px;
 	padding: 10px 0px;
 	margin: auto;
-	margin-top: 15px;
+	margin-top: 10px;
 }
 .workflow-card-container{text-align: center;}
 
@@ -511,7 +511,7 @@ i.tag.pink2 {background-color: #db6070; color: #fff;}
 	display: inline-block;
 }
 p.description {
-	font-size: 17px;
+	font-size: 14px;
 }
 h3.workflow-title{
 	white-space: nowrap;
@@ -522,7 +522,7 @@ h3.workflow-title:hover {
 	text-overflow: inherit;
 	overflow: visible;
 }
-select.ng-invalid, input.ng-invalid {
+.stepBox select.ng-invalid, .stepBox input.ng-invalid {
 	border: 1px solid #E88080;
 	float: left;
 	width: 96%;

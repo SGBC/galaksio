@@ -59,14 +59,17 @@
 		</div>
 	</div>
 	<div class="row workflow-card-container" id="workflowContainer">
-		<div class="workflow-card" style="max-width: 1200px;margin: auto;background: #fff;padding: 10px;">
-		<h3>About workflows</h3>
+		<div class="workflow-card" style="max-width: 1200px;margin: auto;background: #fff;padding: 10px; min-height: 150px;">
+		<h4>About workflows</h4>
 		<p class="description">
-			Workflows are analyses that are intended to be executed (one ore more times) with different user-provided input Datasets. Workflow can be reused over and over, not only reducing tedious work, but enhancing reproducibility by applying the same exact methods to all of your data.<br>
+			Workflows are analyses that are intended to be executed (one ore more times) with different user-provided input datasets. Workflow can be reused over and over, not only reducing tedious work, but enhancing reproducibility by applying the same exact methods to all of your data.<br>
 			From the perspective of Galaksio, workflows must be designed by skilled users (e.g. a bioinformatician) using the Galaxy tools for workflow edition.
 		</p>
-		<a href="https://wiki.galaxyproject.org/Learn/AdvancedWorkflow" target="_blank"><i class="fa fa-question-circle"></i> Learn more about workflows</a>
+		<a href="http://galaksio.readthedocs.io/en/latest/1_2_concepts/#what-is-a-workflow-in-galaxy" target="_blank"><i class="fa fa-question-circle"></i> Learn more about workflows</a>
 	</div>
+	<h3 ng-show="isLoading" class="ng-binding" style="color: #777;text-align:center;">
+		<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflows list...
+	</h3>
 	<workflow-card  ng-repeat="workflow in workflows | filter:filterWorkflows() | orderBy : sortBy | limitTo : visibleWorkflows" after-render="controller.retrieveWorkflowDetails(workflow);"></workflow-card>
 	<div class="row" style="text-align: center;">
 		<button class="btn btn-lg btn-success" type="button" ng-click="controller.showMoreWorkflowsHandler()" ng-show="(filteredWorkflows-visibleWorkflows)>0">

@@ -12,14 +12,15 @@
 Note: Part of this content has been Extracted from the [Galaxy project documentation](https://galaxyproject.org/learn).
 
 ## What is a Workflow in Galaxy?
-A workflow is a series of tools and dataset actions that run in sequence as a batch operation.
-* Workflows can be created from scratch using the workflow editor.
-* Workflows can be annotated, viewed, shared, published, and imported - just like other Galaxy objects.
-* Any workflow that you have permissions to import, you can modify with the workflow editor.
-* Workflow can be reused over and over, not only reducing tedious work, but enhancing reproducibility by applying the same exact methods to all of your data.
+A workflow is a series of tools and dataset actions that run in sequence as a batch operation. Workflows are analyses that are intended to be executed (one ore more times) with different user-provided input datasets. Workflow can be reused over and over, not only reducing tedious work, but enhancing reproducibility by applying the same exact methods to all of your data.
 
-More information [here](https://galaxyproject.org/learn/advanced-workflow/).
+ - Workflows can be created from scratch using the workflow editor.
+ - Workflows can be annotated, viewed, shared, published, and imported - just like other Galaxy objects.
+ - Any workflow that you have permissions to import, you can modify with the workflow editor.
 
+From the perspective of Galaksio, workflows must be designed by skilled users (e.g. a bioinformatician) using the Galaxy tools for workflow edition.
+
+[Learn more about workflows](https://galaxyproject.org/learn/advanced-workflow/).
 
 <div class="imageContainer" style="text-align:center;" >
     <img src="galaxy_workflows.png" title="Galaxy workflows." style="height: 350px !important; margin-bottom: 20px; ">
