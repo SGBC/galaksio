@@ -1,0 +1,99 @@
+<div class="panel panel-container" ng-controller="WorkflowInvocationListController as controller">
+	<h4>Workflow invocations
+		<span ng-show="!isLoading" class="clickable text-info" ng-click="controller.updateInvocationsButtonHandler()" style="font-size: 10px;margin-left: 10px;"><i class="fa fa-refresh fa-fw"></i> Refresh</span>
+		<span ng-show="isLoading" class="text-muted" style="font-size: 10px;margin-left: 10px;"><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</span>
+	</h4>
+	<div style="width: 285px; float: left; margin-right: 15px;">
+		<div class="input-group">
+			<input type="text" class="form-control" placeholder="Search" ng-model="filterInvocationByName" style="height: 33px;">
+			<div class="input-group-btn">
+				<button class="btn btn-default" type="submit">
+					<i class="glyphicon glyphicon-search"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div style=" padding-top: 8px; ">Show:
+		<label class="checkbox-inline"><input type="checkbox" checked ng-click="changeDisplayedInvocationTypes('success')">Done</label>
+		<label class="checkbox-inline"><input type="checkbox" checked ng-click="changeDisplayedInvocationTypes('error')">Failed</label>
+		<label class="checkbox-inline"><input type="checkbox" checked ng-click="changeDisplayedInvocationTypes('other')">Other</label>
+	</div>
+	<table class="table" style="width:100%" ng-init="maxInvocations=5">
+		<tr><th>Workflow name</th><th style="width:90px">Date</th><th style="width:90px">State</th><th style="width:110px;">Tools</th></tr>
+		<tr ng-if="isLoading === true && invocations.length === 0">
+			<td colspan="4" style="text-align:center;">
+				<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading invocations...
+			</td>
+		</tr>
+		<tr ng-if="isLoading === false && invocations.length === 0">
+			<td colspan="4" style="text-align:center;">
+				<h5><i>Whoops! Looks like there are no workflows in the queue.</i></h5>
+				<button class="btn btn-info " ui-sref="workflows()">
+					<i class="fa fa-sign-out fa-fw"></i>Let's run some workflows!
+				</button>
+			</td>
+		</tr>
+		<tr ng-repeat="invocation in invocations | filter:filterInvocations | orderBy:'-update_time' | limitTo:maxInvocations track by $index " >
+			<td><span title="{{invocation.id}}">{{invocation.workflow_title}}</span></td>
+			<td style=" font-size: 10px; ">{{adaptInvocationDate(invocation.update_time)}}</td>
+			<td class="job-status-cat"  ng-if="invocation.state === 'success'">
+				<span class="fa-stack" style="font-size: 12px;">
+					<i class="fa fa-square fa-stack-2x" style="color:#00b353;"></i>
+					<i class="fa fa-check fa-fw fa-stack-1x fa-inverse"></i>
+				</span>
+				<span class="job-status-cat-title">Done</span>
+			</td>
+			<td class="job-status-cat" ng-if="invocation.state === 'sending'">
+				<span class="fa-stack" style="font-size: 12px;">
+					<i class="fa fa-square fa-stack-2x" style="color:#6485ea;"></i>
+					<i class="fa fa-paper-plane fa-fw fa-stack-1x fa-inverse"></i>
+				</span>
+				<span class="job-status-cat-title">Sending</span>
+			</td>
+			<td class="job-status-cat" ng-if="invocation.state === 'working'">
+				<span class="fa-stack" style="font-size: 12px;">
+					<i class="fa fa-square fa-stack-2x" style="color:#b900ff;"></i>
+					<i class="fa fa-refresh fa-spin fa-fw fa-stack-1x fa-inverse"></i>
+				</span>
+				<span class="job-status-cat-title">Running</span>
+			</td>
+			<td class="job-status-cat" ng-if="invocation.state === 'waiting'">
+				<span class="fa-stack" style="font-size: 12px;">
+					<i class="fa fa-square fa-stack-2x" style="color:#666666;"></i>
+					<i class="fa fa-pause fa-fw fa-stack-1x fa-inverse"></i>
+				</span>
+				<span class="job-status-cat-title">Waiting</span>
+			</td>
+			<td  class="job-status-cat" ng-if="invocation.state === 'error'">
+				<span class="fa-stack" style="font-size: 12px;">
+					<i class="fa fa-square fa-stack-2x" style="color:#de2b2b;"></i>
+					<i class="fa fa-times fa-fw fa-stack-1x fa-inverse"></i>
+				</span>
+				<span class="job-status-cat-title">Failed</span>
+			</td>
+			<td  class="job-status-cat" ng-if="['error', 'waiting', 'working', 'sending', 'success'].indexOf(invocation.state) === -1">
+				<span class="fa-stack" style="font-size: 12px;">
+					<i class="fa fa-square fa-stack-2x" style="color:#dedede;"></i>
+					<i class="fa fa-question fa-fw fa-stack-1x fa-inverse"></i>
+				</span>
+				<span class="job-status-cat-title">Unknown</span>
+			</td>
+			<td style="font-size:10px; vertical-align:middle;">
+				<a class="clickable" ng-click="controller.recoverWorkflowInvocationHandler(invocation)">
+					<i class="fa fa-undo" aria-hidden="true"></i> Recover
+				</a>
+				<a class="text-danger clickable" style="margin-left:5px" ng-click="controller.removeWorkflowInvocationHandler(invocation)">
+					<i class="fa fa-eye-slash" aria-hidden="true"></i> Hide
+				</a>
+			</td>
+		</tr>
+	</table>
+	<div style="text-align: center; padding: 10px;" ng-show="invocations.length > 0">
+		<button ng-show="invocations.length > maxInvocations" class="btn btn-default" ng-click="maxInvocations = maxInvocations + 5;">
+			<i class="fa fa-plus fa-fw"></i>Show more invocations
+		</button>
+		<button class="btn btn-info " ui-sref="workflows()">
+			<i class="fa fa-sign-out fa-fw"></i>Let's run more workflows!
+		</button>
+	</div>
+</div>

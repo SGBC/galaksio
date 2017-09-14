@@ -1,5 +1,5 @@
 <div ng-controller="WorkflowInvocationListController as controller" class="invocationListToolbar">
-	<div ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-init="checkInterval=true">
+	<div ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false">
 		<span class="job-status-cat" ng-show="running > 0">
 			<span class="fa-stack" style="font-size: 12px;">
 				<i class="fa fa-square fa-stack-2x" style="color:#b900ff;"></i>
@@ -32,14 +32,22 @@
 			<span class="job-number">{{erroneous}}</span>
 			<span class="job-status-cat-title">Failed</span>
 		</span>
+		<span ng-show="isLoading" class="job-status-cat" >
+			<span class="fa-stack" style="font-size: 12px;">
+				<i class="fa fa-stack-2x"></i>
+				<i class="fa fa-spinner fa-pulse fa-fw fa-stack-1x fa-inverse"></i>
+			</span>
+			<span class="job-status-cat-title">Loading...</span>
+		</span>
 	</div>
 	<div class="panel" ng-mouseenter="showPanel = true" ng-mouseleave="showPanel = false" ng-show="showPanel === true">
 		<table style="width:100%" ng-init="maxInvocations=5">
-			<tr><th>Workflow name</th><th>State</th><th style="width:75px;">Recover</th></tr>
-			<tr ng-show="invocations.length === 0"><td colspan="3">No data</td></tr>
-			<tr ng-repeat="invocation in invocations | orderBy:'-update_time' | limitTo:maxInvocations track by $index " >
+			<tr><th>Workflow name</th><th style="width:90px">Date</th><th style="width:90px">State</th><th style="width:75px;">Tools</th></tr>
+			<tr ng-show="invocations.length === 0"><td colspan="4">No data</td></tr>
+			<tr style="border-top: 1px solid #ddd;"ng-repeat="invocation in invocations | orderBy:'-update_time' | limitTo:maxInvocations track by $index " >
 				<td>{{invocation.workflow_title}}</td>
-				<td class="job-status-cat"  ng-if="invocation.state === 'success'">
+				<td style="font-size: 10px;">{{adaptInvocationDate(invocation.update_time)}}</td>
+				<td class="job-status-cat" ng-if="invocation.state === 'success'">
 					<span class="fa-stack" style="font-size: 12px;">
 						<i class="fa fa-square fa-stack-2x" style="color:#00b353;"></i>
 						<i class="fa fa-check fa-fw fa-stack-1x fa-inverse"></i>
@@ -82,12 +90,15 @@
 					<span style="color: #000;" class="job-status-cat-title">Unknown</span>
 				</td>
 				<td>
-					<a style="font-size:12px; cursor:pointer" ng-click="controller.recoverWorkflowInvocation(invocation)">
+					<a class="clickable" style="font-size:10px; vertical-align:middle;" ng-click="controller.recoverWorkflowInvocationHandler(invocation)">
 						<i class="fa fa-undo" aria-hidden="true"></i> Recover
 					</a>
 				</td>
 			</tr>
-			<tr ng-show="invocations.length > 5"><td colspan="3"  style="padding-top:10px;text-align: center;"><a ui-sref="home()">Show more invocations</a></td></tr>
+			<tr ng-show="invocations.length > 5">
+				<td colspan="4" style="padding-top:10px;text-align: center;">
+					<a class="btn btn-sm btn-primary" ui-sref="home()"><i class="fa fa-plus fa-fw"></i> Show more invocations</a></td>
+			</tr>
 		</table>
 	</div>
 </div>

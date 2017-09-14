@@ -179,32 +179,95 @@
 		<!-- #################### -->
 		<div style="text-align: center; padding: 10px;" class="bg-success" ng-show="invocation.state === 'success'">
 			<h3>Your workflow has finished successfully!!</h3>
-			<a class="btn btn-lg btn-default" ng-click="controller.downloadInvocationReport()">
+			<a class="btn btn-lg btn-default" ng-click="controller.downloadInvocationReportHandler()">
 				<!-- <i class="fa fa-file-pdf-o text-danger"></i> Download report in PDF -->
 				<i class="fa fa-download text-danger"></i> Download current history
 			</a>
-			<div style="display:block; max-width: 800px; margin: auto;">
-				<table ng-if="invocation.hasOutput === true" style="margin: auto;" class="table">
-					<thead>
-						<tr><th>File name</th><th>Extension</th><th></th></tr>
-					</thead>
-					<tbody ng-repeat="step in invocation.steps">
-						<tr ng-repeat="output in step.outputs">
-							<td style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
-							<td><a href="{{controller.getDownloadLink(output.url)}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
 		</div>
 		<!-- #################### -->
 		<!-- ERRONEUS WORKFLOW    -->
 		<!-- #################### -->
 		<div style="text-align: center; padding: 10px;" class="bg-danger" ng-show="invocation.state === 'error'">
 			<h3>Oops! Something went wrong during the execution of your workflow...</h3>
-			<a class="btn btn-danger" ui-sref="workflows()">
-				<i class="fa fa-sign-out fa-fw"></i>Let's take a look to the results!
-			</a>
+		</div>
+		<!-- #################### -->
+		<!-- WORKFLOW STEPS STATE    -->
+		<!-- #################### -->
+		<div class="container" style="margin-top: 15px;" ng-init="displayedStep=[]">
+			<div class="row">
+				<div class="col-sm-6" style="border-right: 1px solid #dedede;">
+					<h3 style=" text-align: center; ">Steps in the workflow</h3>
+					<table class="table">
+						<thead>
+							<tr><th>Step name</th><th>Status</th><th></th></tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="step in params">
+								<td style="text-align: left;">{{'Step ' + (step.id+1) + ". " + step.name}}</td>
+								<td ng-bind-html="controller.getInvocationStepStatus(step)"></td>
+								<td><a ng-click="displayedStep.pop();displayedStep.push(step);" class="clickable"><i class="fa fa-eye"></i> Show details{{displayedStep.name}}</a></td>
+							</tr>
+						</tbody>
+					</table>
+					<h4 ng-if="!params" style="text-align: center; color: #b1b1b1; ">
+						<i class="fa fa-spinner fa-pulse"></i> Loading workflow steps
+					</h4>
+				</div>
+				<!-- #################### -->
+				<!-- WORKFLOW RESULTS    -->
+				<!-- #################### -->
+				<div class="col-sm-6" ng-show="displayedStep.length === 0">
+					<h3 style="text-align: center;">Workflow results</h3>
+					<h4 ng-if="!invocation.hasOutput" style=" text-align: center; color: #b1b1b1; ">This workflow does not have results yet.</h4>
+					<table ng-if="invocation.hasOutput === true" class="table">
+						<thead>
+							<tr><th>File name</th><th>Extension</th><th></th></tr>
+						</thead>
+						<tbody ng-repeat="step in invocation.steps">
+							<tr ng-repeat="output in step.outputs">
+								<td style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
+								<td><a href="{{controller.getDownloadLink(output.url)}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- #################### -->
+				<!-- WORKFLOW STEP DETAILS -->
+				<!-- #################### -->
+				<div class="col-sm-6" ng-show="displayedStep.length > 0">
+					<h3 style=" text-align: center; ">
+						<a ng-click="displayedStep.pop();" class="btn btn-primary btn-sm" style="float:left">
+							<i class="fa fa-arrow-left" aria-hidden="true"></i> Back to results
+						</a>
+						<span style="margin-left: -114px;">Step details</span>
+					</h3>
+					<div>
+						<table class="workflow-summary-step">
+							<thead>
+								<tr><th colspan="2">Step {{displayedStep[0].id + 1}}. {{displayedStep[0].name}}</th></tr>
+								<tr><th>Field name</th><th>Value</th></tr>
+							</thead>
+							<tbody ng-if="(displayedStep[0].inputs && displayedStep[0].inputs.length > 0) || (displayedStep[0].params && displayedStep[0].params.length > 0)">
+								<tr ng-if="displayedStep[0].type === \'data_input\'">
+									<td>Dataset</td>
+									<td>{{findFileName(displayedStep[0].inputs[0].value)}}</td>
+								</tr>
+								<tr ng-if="displayedStep[0].type === \'data_collection_input\'">
+									<td>Dataset collection</td>
+									<td>{{findFileName(displayedStep[0].inputs[0].value)}}</td>
+								</tr>
+								<tr ng-if="displayedStep[0].params" ng-repeat="input in displayedStep[0].params" data="{{input.name}}">
+									<td>{{input.label}}</td>
+									<td>{{adjustValueString(input.type, input.value)}}</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4  ng-if="(displayedStep[0].inputs && displayedStep[0].inputs.length === 0) || (displayedStep[0].params && displayedStep[0].params.length === 0)" style="text-align: center; color: #b1b1b1; ">
+							<i class="fa fa-spinner fa-pulse"></i> Loading step details
+						</h4>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div style="margin-top: 100px; display:block; clear:both;"></div>
@@ -221,7 +284,7 @@
 			</a>
 			<a class="btn btn-md" ui-sref="workflows()" ng-show="invocation.current_step > 1 && invocation.current_step < 6" style="color: #E88080;">or Cancel</a>
 			<a class="btn btn-info btn-md navbar-right"
-			ng-disabled="((invocation.current_step === 3 && workflowRunForm.step1form.$invalid) || (invocation.current_step === 4 && workflowRunForm.step2form.$invalid))"
+			ng-disabled="controller.checkNextStepButtonState();"
 			ng-click="controller.nextStepButtonHandler()"
 			ng-show="invocation.current_step < 5">
 			<i class="fa fa-chevron-right"></i> Next step

@@ -27,7 +27,12 @@
 		sessionTimeout: 'auth-session-timeout',
 		notAuthenticated: 'auth-not-authenticated',
 		notAuthorized: 'auth-not-authorized',
-		historyChanged: 'history-changed'
+		historyChanged: 'history-changed',
+		updateInvocations: 'update-invocations',
+		updatedInvocations: 'updated-invocations',
+		updatingInvocations: 'updating-invocations',
+		invocationStateChanged: 'invocation-state-changed',
+		invocationResultsRequired: 'invocation-results-required'
 	});
 
 	//DEFINE THE ENTRIES FOR THE WEB APP

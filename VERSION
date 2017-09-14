@@ -5,9 +5,14 @@ Galaksio v0.3 September 2017
 ** VERSION 0.3 September 2017 **
   - Adding some error control logic and forcing the reload of the page after sign-out (will cancel automatically all the
     pending requests) to avoid error messages after signing out (Issue #2).
+  - Now the panel showing the current invocation state shows also the state for each step in the workflow. Besides
+    the results for the workflow execution are always shown even if the workflow failed.
+    Additionally, the user can get more details for each step in the workflow and see the used parameters and other useful
+    information (Issue #13 and #28).
   - Added a more developed method for form validation. Now erroneous fields are indicated at the top of the form and at
     the right of each invalid input with a red exclamation symbol. Besides, the application will autofocus the first
     invalid field (Issue #10 and #14).
+  - Added support for "section" data types (Issue #11)
   - Upgraded the version of "AngularJS dialogs" library to support the Report button handler (Issue #12).
   - Added settings to configure a SMTP server in Galaksio and send the error report via email to the developers account.
     Alternatively, if not SMTP settings are provided, the report is forwarded to a main Galaksio server which will send
@@ -18,7 +23,10 @@ Galaksio v0.3 September 2017
   - Added affix support to history list, now the left panel scrolls down following the window (Issue #20).
   - Replaced yes/no checkboxes by 2 state button (Issue #22).
   - Replaced radio buttons by a drop-down menu (Issue #23).
+  - Replaced multi-select fields by list of checkboxes (Issue #24).
   - Fixed to aggressive warning during input data (Issue #25)
-  - Fixed issues with workflow execution state (erroneous "Finished" state after sending) (Issue #27)
+  - Fixed issues with workflow execution state (erroneous "Finished" state after sending) (Issue #26 and #27)
   - Forced to recreate the forms when going back to step 2 during Workflow execution (Issue #31 and #29)
   - Added a "Read more" button in workflow description (workflow card) when description is too long (Issue #30).
+  - Added tools for filtering the list of invocations. Besides, we have improved the performance when retrieving the
+    list of invocations and their state (reduce the number of requests, avoid repeating requests,...).

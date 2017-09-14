@@ -38,7 +38,7 @@
 	/***************************************************************************/
 	/*WORKFLOW CONTROLLER*******************************************************/
 	/***************************************************************************/
-	app.controller('WorkflowRunController', function($state, $rootScope, $scope, $http, $window, $stateParams, $timeout, $dialogs, WorkflowList, WorkflowInvocationList, HistoryList){
+	app.controller('WorkflowRunController', function($state, $rootScope, $scope, $http, $window, $stateParams, $timeout, $dialogs, WorkflowList, WorkflowInvocationList, HistoryList, APP_EVENTS){
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -67,10 +67,16 @@
 					$scope.workflow.steps = Object.values($scope.workflow.steps);
 					if($scope.workflow.name.search(/^imported: /) !== -1){
 						$scope.workflow.name = $scope.workflow.name.replace(/imported: /g, "");
-						work$scope.workflowflow.imported = true;
+						$scope.workflow.imported = true;
 					}
-					$scope.diagram = me.generateWorkflowDiagram($scope.workflow.steps);
-					me.updateWorkflowDiagram();
+
+					if($scope.invocation && $scope.invocation.current_step === 6){
+						$scope.params = me.flattenStepParameters(); //Generate the complete list of params for the request.
+					}else{
+						$scope.diagram = me.generateWorkflowDiagram($scope.workflow.steps);
+						me.updateWorkflowDiagram();
+					}
+
 					//UPDATE VIEW
 					$scope.loadingComplete = true;
 				},
@@ -239,50 +245,6 @@
 			}
 			return "css/invocation_" + state + extension;
 		};
-		//--------------------------------------------------------------------
-		// EVENT HANDLERS
-		//--------------------------------------------------------------------
-		this.cancelButtonHandler = function(){
-			history.back();
-		};
-
-		this.backButtonHandler = function(){
-			$scope.invocation.current_step--;
-		};
-
-		/**
-		*
-		**/
-		this.nextStepButtonHandler = function(){
-			var form;
-			if($scope.invocation.current_step===3){
-				form=$scope.workflowRunForm.step1form;
-			}else if($scope.invocation.current_step===4){
-				form=$scope.workflowRunForm.step2form;
-				//Generate the complete list of params for the request
-				$scope.params = this.flattenStepParameters();
-				debugger
-			}
-
-			var erroneousFields = this.getErroneousFields(form);
-
-			if(erroneousFields.labels.length > 0){
-				$scope.invocation.valid = false;
-				$scope.erroneousFields = erroneousFields.labels;
-
-				try {
-					$('html, body').animate({
-						scrollTop: $(erroneousFields.elements[0]).offset().top  - 60
-					}, 1000);
-				} catch (e) {
-				}
-				return;
-			}
-
-			$scope.invocation.valid = true;
-			$scope.invocation.current_step++;
-			return;
-		};
 
 		/**
 		* This function validates a given form and returns the list
@@ -318,124 +280,11 @@
 			return erroneousFields;
 		};
 
-		this.executeWorkflowHandler = function(event){
-			if($scope.invocation.valid === false){
-				return;
-			}
-
-			$scope.invocation.current_step++;
-			$scope.invocation.state = "sending";
-			$scope.invocation.state_text = "Sending to Galaxy...";
-			$scope.invocation.workflow_title = $scope.workflow.name;
-			$scope.invocation.workflow_id = $scope.workflow.id;
-
-			//TODO: notify change
-			WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
-
-			//SET THE REQUEST DATA (history id, parameters,...)
-			var requestData = {
-				"history": "hist_id=" + Cookies.get("current-history"),
-				"ds_map": {},
-				"parameters": {}
-			};
-
-			for(var i in $scope.params){
-				if($scope.params[i].type === "data_input"){
-					requestData.ds_map[$scope.params[i].id] = {"src" : "hda", "id" : $scope.params[i].inputs[0].value};
-				} else if($scope.params[i].type === "data_collection_input"){
-					requestData.ds_map[$scope.params[i].id] = {"src" : "hdca", "id" : $scope.params[i].inputs[0].value};
-				}else if($scope.params && $scope.params.length > 0){ //the step was uncollapsed
-					var params = requestData.parameters[$scope.params[i].id] = {};
-					var inputs = $scope.params[i].params;
-					for(var j in inputs){
-						params[inputs[j].name] = inputs[j].value;
-					}
-				}
-			}
-
-			debugger
-
-			//SHOW STATE MESSAGE FEW SECONDS BEFORE SEND THE REQUEST
-			$timeout( function(){
-				$http($rootScope.getHttpRequestConfig("POST", "workflow-run", {
-					extra: $scope.workflow.id,
-					headers: {'Content-Type': 'application/json; charset=utf-8'},
-					data: requestData
-				})).then(
-					function successCallback(response){
-						//SUCCESSFULLY SENT TO SERVER
-
-						//Update the values for the invocation
-						delete response.data.state
-						delete response.data.workflow_id
-						for (var attrname in response.data) {
-							$scope.invocation[attrname] = response.data[attrname];
-						}
-
-						WorkflowInvocationList.saveInvocations();
-					},
-					function errorCallback(response){
-						$scope.invocation.state = "error";
-						$scope.invocation.state_text = "Failed.";
-					}
-				);
-			},
-			2000);
-		};
-
-		this.layoutDiagramHandler = function(){
-			this.updateWorkflowDiagram($scope.diagram, true);
-		};
-
-		this.zoomDiagramHandler = function(zoom){
-			zoom = (($scope.sigma.camera.ratio * 100) + (10 * zoom))/100;
-			$scope.sigma.camera.goTo({"ratio": zoom});
-			return;
-		};
-
-		this.downloadInvocationReport = function(format){
-			// if(!format){
-			// 	format="pdf";
-			// }
-			//
-			// $http($rootScope.getHttpRequestConfig("POST","workflow-report", {
-			// 	data: {
-			// 		'format' : format,
-			// 		'workflow' : $scope.workflow,
-			// 		'invocation' : $scope.invocation
-			// 	}
-			// })).then(
-			// 	function successCallback(response){
-			// 		var file_path = response.data.path;
-			// 		$window.open(file_path, "Report");
-			// 	},
-			// 	function errorCallback(response){
-			// 		debugger;
-			// 		var message = "Failed while retrieving the workflow's report.";
-			// 		$dialogs.showErrorDialog(message, {
-			// 			logMessage : message + " at WorkflowRunController:downloadInvocationReport."
-			// 		});
-			// 		console.error(response.data);
-			// 		$scope.loadingComplete = true;
-			// 	}
-			// );
-			$http($rootScope.getHttpRequestConfig("PUT","history-export", {
-				extra : Cookies.get("current-history")
-			})).then(
-				function successCallback(response){
-					var download_url = response.data.download_url + "?key=" + window.atob(Cookies.get("galaksiosession"));
-					$window.open(download_url, "Download");
-				},
-				function errorCallback(response){
-					debugger;
-					var message = "Failed while retrieving the workflow's report.";
-					$dialogs.showErrorDialog(message, {
-						logMessage : message + " at WorkflowRunController:downloadInvocationReport."
-					});
-					console.error(response.data);
-					$scope.loadingComplete = true;
-				}
-			);
+		this.checkNextStepButtonState = function(){
+			//False = enabled, True = disabled button
+			return $scope.loadingComplete === false
+			|| ($scope.invocation.current_step === 3 && $scope.workflowRunForm.step1form.$invalid)
+			|| ($scope.invocation.current_step === 4 && $scope.workflowRunForm.step2form.$invalid);
 		};
 
 		$scope.filterInputSteps = function (item) {
@@ -472,7 +321,7 @@
 			return input.label || input.title || input.test_param.label;
 		};
 
-		this.flattenStepParameters = function(){
+		this.flattenStepParameters = function(invocation_steps){
 			var step_params = [];
 			var step, type, params;
 			for(var i in $scope.workflow.steps){
@@ -595,6 +444,225 @@
 			return options;
 		};
 
+		this.getInvocationStepStatus = function(step){
+			var invocation_steps = $scope.invocation.steps;
+			for(var i in invocation_steps){
+				if(invocation_steps[i].order_index === step.id){
+					var state = invocation_steps[i].state;
+					if(step.type === "data_input" || step.type === "data_collection_input"){
+						state="ok";
+					}
+
+					if(state === "ok"){
+						return "<i class='fa fa-check text-success'></i> Done";
+					} else if(state === "error"){
+						return "<i class='fa fa-times text-danger'></i> Failed";
+					} else if(state === "new"){
+						return "<i class='fa fa-clock-o text-muted'></i> New";
+					} else if(state === "queued"){
+						return "<i class='fa fa-clock-o text-danger'></i> Queued";
+					} else if(state === "running"){
+						return "<i class='fa fa-play text-info'></i> Running";
+					} else if(state === "paused"){
+						return "<i class='fa fa-pause text-muted'></i> Paused";
+					} else if(state !== null){
+						return "<i class='fa fa-question text-muted'></i> " + state[0].toUpperCase() + state.substr(1);
+					}
+				}
+			}
+			return "-";
+		};
+
+		//--------------------------------------------------------------------
+		// EVENT HANDLERS
+		//--------------------------------------------------------------------
+		$scope.$on(APP_EVENTS.invocationStateChanged, function (event, args) {
+			debugger
+			if($scope.invocation && $scope.invocation.id === args.invocation_id){
+				if(args.new_state === "error" || args.new_state === "success"){
+					$rootScope.$broadcast(APP_EVENTS.invocationResultsRequired, args);
+				}
+			}
+		});
+
+		this.cancelButtonHandler = function(){
+			history.back();
+		};
+
+		this.backButtonHandler = function(){
+			$scope.invocation.current_step--;
+		};
+
+		this.nextStepButtonHandler = function(){
+			var form;
+			if($scope.invocation.current_step===3){
+				form=$scope.workflowRunForm.step1form;
+			}else if($scope.invocation.current_step===4){
+				form=$scope.workflowRunForm.step2form;
+				$scope.params = this.flattenStepParameters(); //Generate the complete list of params for the request
+			}
+
+			var erroneousFields = this.getErroneousFields(form);
+
+			if(erroneousFields.labels.length > 0){
+				$scope.invocation.valid = false;
+				$scope.erroneousFields = erroneousFields.labels;
+
+				try {
+					$('html, body').animate({
+						scrollTop: $(erroneousFields.elements[0]).offset().top  - 60
+					}, 1000);
+				} catch (e) {
+				}
+				return;
+			}
+
+			$scope.invocation.valid = true;
+			$scope.invocation.current_step++;
+			return;
+		};
+
+		this.executeWorkflowHandler = function(event){
+			if($scope.invocation.valid === false){
+				return;
+			}
+
+			$scope.invocation.current_step++;
+			$scope.invocation.id = randomIDgenerator(10);
+			$scope.invocation.is_temporal = true;
+			$scope.invocation.state = "sending";
+			$scope.invocation.state_text = "Sending to Galaxy...";
+			$scope.invocation.workflow_title = $scope.workflow.name;
+			$scope.invocation.workflow_id = $scope.workflow.id;
+
+			//SET THE REQUEST DATA (history id, parameters,...)
+			var requestData = {
+				batch: true,
+				history: "hist_id=" + Cookies.get("current-history"),
+				new_history_name : null,
+				parameters: {},
+				parameters_normalized : true,
+				replacement_params : {}
+			};
+
+			for(var i in $scope.params){
+				var params = requestData.parameters[$scope.params[i].id] = {};
+				if($scope.params[i].type === "data_input"){
+					params["input"] = {
+						batch: false,
+						values : [{src : "hda", id : $scope.params[i].inputs[0].value}]
+					}
+				} else if($scope.params[i].type === "data_collection_input"){
+					params["input"] = {
+						batch: false,
+						values : [{src : "hdca", id : $scope.params[i].inputs[0].value}]
+					}
+				}else if($scope.params[i].params && Object.values($scope.params[i].params).length > 0){ //the step was uncollapsed
+					var inputs = $scope.params[i].params;
+					var pattern = /input[0-9]*$/;
+					for(var j in inputs){
+						if(!pattern.test(inputs[j].name)){
+							params[inputs[j].name] = inputs[j].value;
+						}
+					}
+				}
+			}
+			WorkflowInvocationList.addInvocation($scope.invocation);
+			$rootScope.$broadcast(APP_EVENTS.updatedInvocations);
+
+			//SHOW STATE MESSAGE FEW SECONDS BEFORE SEND THE REQUEST
+			$timeout( function(){
+				$http($rootScope.getHttpRequestConfig("POST", "workflow-run", {
+					extra: $scope.workflow.id,
+					headers: {'Content-Type': 'application/json; charset=utf-8'},
+					data: requestData
+				})).then(
+					function successCallback(response){
+						//SUCCESSFULLY SENT TO SERVER
+						// Remove temporal entry
+						console.log("Prev invocation id was " + $scope.invocation.id);
+						WorkflowInvocationList.removeInvocation($scope.invocation);
+						delete $scope.invocation.is_temporal;
+						//Update the values for the invocation
+						delete response.data[0].state
+						delete response.data[0].workflow_id
+						for (var attrname in response.data[0]) {
+							$scope.invocation[attrname] = response.data[0][attrname];
+						}
+						console.log("New invocation id is " + $scope.invocation.id);
+						$rootScope.last_invocation=$scope.invocation.id;
+						//Add new entry
+						WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
+					},
+					function errorCallback(response){
+						$scope.invocation.state = "error";
+						$scope.invocation.state_text = "Failed.";
+					}
+				);
+			},
+			2000);
+		};
+
+		this.layoutDiagramHandler = function(){
+			this.updateWorkflowDiagram($scope.diagram, true);
+		};
+
+		this.zoomDiagramHandler = function(zoom){
+			zoom = (($scope.sigma.camera.ratio * 100) + (10 * zoom))/100;
+			$scope.sigma.camera.goTo({"ratio": zoom});
+			return;
+		};
+
+		this.downloadInvocationReportHandler = function(format){
+			// if(!format){
+			// 	format="pdf";
+			// }
+			//
+			// $http($rootScope.getHttpRequestConfig("POST","workflow-report", {
+			// 	data: {
+			// 		'format' : format,
+			// 		'workflow' : $scope.workflow,
+			// 		'invocation' : $scope.invocation
+			// 	}
+			// })).then(
+			// 	function successCallback(response){
+			// 		var file_path = response.data.path;
+			// 		$window.open(file_path, "Report");
+			// 	},
+			// 	function errorCallback(response){
+			// 		debugger;
+			// 		var message = "Failed while retrieving the workflow's report.";
+			// 		$dialogs.showErrorDialog(message, {
+			// 			logMessage : message + " at WorkflowRunController:downloadInvocationReport."
+			// 		});
+			// 		console.error(response.data);
+			// 		$scope.loadingComplete = true;
+			// 	}
+			// );
+			$http($rootScope.getHttpRequestConfig("PUT","history-export", {
+				extra : Cookies.get("current-history")
+			})).then(
+				function successCallback(response){
+					var download_url = response.data.download_url + "?key=" + window.atob(Cookies.get("galaksiosession"));
+					$window.open(download_url, "Download");
+				},
+				function errorCallback(response){
+					debugger;
+					var message = "Failed while retrieving the workflow's report.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at WorkflowRunController:downloadInvocationReport."
+					});
+					console.error(response.data);
+					$scope.loadingComplete = true;
+				}
+			);
+		};
+
+		this.showInvocationDetailsButtonHandler = function(){
+			debugger
+			$scope;
+		};
+
 		//--------------------------------------------------------------------
 		// INITIALIZATION
 		//--------------------------------------------------------------------
@@ -603,7 +671,6 @@
 		//and update its content after the http response
 		$scope.loadingComplete = false;
 		$scope.workflow = null;
-
 		$scope.viewMode = $stateParams.mode;
 
 		if($stateParams.invocation_id !== null){
@@ -731,69 +798,102 @@
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
+		/**
+		* This function retrieves the complete list of invocations for all the workflows
+		* for current user. First the function retrieves the list of workflows and then
+		* for each workflow retrieves the invocations.
+		**/
 		this.getInvocationsHandler = function(){
 			if(Cookies.get("galaksiosession") === undefined){
 				return;
 			}
 
-			var recoverInvocations = function(i, workflows, _invocations){
-				_invocations = _invocations || [];
-
-				if(i === workflows.length){
-					WorkflowInvocationList.setInvocations(_invocations).saveInvocations();
-					$scope.invocations = WorkflowInvocationList.recoverInvocations().getInvocations();
-					$scope.isLoading = false;
-					return;
-				}
-
-				$http($rootScope.getHttpRequestConfig("GET", "workflow-run",{
-					extra: workflows[i].id
-				})).then(
-					function successCallback(response){
-						for(var k in response.data){
-							response.data[k].workflow_title = workflows[i].name;
-							response.data[k].workflow_id = workflows[i].id;
-							_invocations.push(response.data[k]);
-						}
-						recoverInvocations(i+1, workflows, _invocations);
-					},
-					function errorCallback(response){
-						$scope.isLoading = false;
-
-						if(Cookies.get("galaksiosession") === undefined){
-							return;
-						}
-
-						debugger;
-						var message = "Failed while retrieving the list of workflows invocations.";
-						$dialogs.showErrorDialog(message, {
-							logMessage : message + " at DatasetListController:getInvocationsHandler."
-						});
-						console.error(response.data);
-					}
-				);
-			};
+			console.log("Updating complete list of invocations...");
+			$rootScope.$broadcast(APP_EVENTS.updatingInvocations);
 
 			$scope.isLoading = true;
 			$http($rootScope.getHttpRequestConfig("GET", "workflow-list")).then(
 				function successCallback(response){
 					var workflows = response.data;
-					WorkflowInvocationList.clearInvocations();
-					recoverInvocations(0, workflows);
+					me.recoverInvocationsRec(0, workflows);
 				},
 				function errorCallback(response){
 					$scope.isLoading = false;
 					debugger;
 					var message = "Failed while retrieving the workflows list.";
 					$dialogs.showErrorDialog(message, {
-						logMessage : message + " at DatasetListController:getInvocationsHandler."
+						logMessage : message + " at WorkflowInvocationListController:getInvocationsHandler."
 					});
 					console.error(response.data);
 				}
 			);
 		};
 
-		this.checkInvocationsState = function(){
+		/**
+		* This function retrieves all the invocations for a given workflow.
+		* The function is called recursively for all the workflows in a list
+		* of workflows.
+		**/
+		this.recoverInvocationsRec = function(nCall, workflows, _invocations){
+			_invocations = _invocations || {};
+
+			if(nCall === workflows.length){
+				for(var i in _invocations){
+					var _invocation = WorkflowInvocationList.getInvocation(i);
+					if(!_invocation){
+						WorkflowInvocationList.addInvocation(_invocations[i]);
+					}else if(_invocation.state != "error" && _invocation.state !== "success"){
+						delete _invocations[i].state
+						WorkflowInvocationList.updateInvocation(_invocations[i]);
+					}
+				}
+				WorkflowInvocationList.saveInvocations();
+				$scope.isLoading = false;
+				console.log("Updating complete list of invocations...DONE");
+				$rootScope.$broadcast(APP_EVENTS.updatedInvocations);
+				return;
+			}
+
+			$http($rootScope.getHttpRequestConfig("GET", "workflow-run",{
+				extra: workflows[nCall].id
+			})).then(
+				function successCallback(response){
+					for(var k in response.data){
+						response.data[k].workflow_title = workflows[nCall].name;
+						response.data[k].workflow_id = workflows[nCall].id;
+						_invocations[response.data[k].id] = response.data[k];
+					}
+					me.recoverInvocationsRec(nCall+1, workflows, _invocations);
+				},
+				function errorCallback(response){
+					$scope.isLoading = false;
+
+					if(Cookies.get("galaksiosession") === undefined){
+						return;
+					}
+
+					debugger;
+					var message = "Failed while retrieving the list of workflows invocations.";
+					$dialogs.showErrorDialog(message, {
+						logMessage : message + " at WorkflowInvocationListController:getInvocationsHandler."
+					});
+					console.error(response.data);
+				}
+			);
+		};
+
+		/**
+		* This funciton checks the state for all the invocations.
+		* Additionally, it calls to a secondary function which will
+		* periodically check the status for all the steps in a invocation,
+		* only if the state is not "done" or "failed".
+		**/
+		this.checkAllInvocationsState = function(){
+			if(Cookies.get("galaksiosession") === undefined){
+				return;
+			}
+
+			console.log("Checking state of invocations...");
 			var invocations = WorkflowInvocationList.getInvocations();
 			var running = 0, erroneous = 0, done = 0, waiting=0; unknown = 0;
 			for(var i in invocations){
@@ -822,16 +922,19 @@
 				for(var i in invocations){
 					me.checkInvocationState(invocations[i]);
 				}
-				WorkflowInvocationList.saveInvocations();
 			}
 		};
 
 		this.checkInvocationState = function(invocation){
-			if(invocation.state != "error" && (invocation.state !== "success" || invocation.hasOutput !== true)){
+			if(invocation.id && invocation.state != "error" && invocation.state !== "success" && !(invocation.is_temporal)  && !(invocation.checking)){
+				console.log("Checking state of invocation " + invocation.id + "...");
+				invocation.checking=true;
 				$http($rootScope.getHttpRequestConfig("GET", "invocation-state", {
 					extra: [invocation.workflow_id, invocation.id]
 				})).then(
 					function successCallback(response){
+						delete invocation.checking;
+
 						var unknownStateSteps = 0;
 						var erroneousSteps = 0;
 						var waitingSteps = 0;
@@ -849,7 +952,7 @@
 						var totalSteps = (invocation.steps?invocation.steps.length:0);
 
 						//Valid Galaxy job states include:
-						//TODO: ‘new’, ‘upload’, ‘waiting’, ‘queued’, ‘running’, ‘ok’, ‘error’, ‘paused’, ‘deleted’, ‘deleted_new’
+						//'new’, ‘waiting’, ‘queued’, ‘running’, ‘ok’, ‘error’, ‘paused’, ‘deleted’, ‘deleted_new’
 						for(var i in invocation.steps){
 							if(invocation.steps[i].state === "ok"){
 								doneSteps++;
@@ -866,6 +969,7 @@
 							}else if(invocation.steps[i].state === 'paused'){
 								pausedSteps++;
 							}else{
+								// ‘upload’, ‘deleted’, ‘deleted_new’
 								unknownStateSteps++;
 							}
 						}
@@ -873,7 +977,7 @@
 						if(invocation.steps === undefined || invocation.steps.length === 0 || totalSteps===0){
 							return;
 						}
-
+						var prev_state=invocation.state;
 						if(runningSteps > 0){
 							invocation.state = "working";
 							invocation.state_text = "Running your workflow...";
@@ -881,21 +985,21 @@
 							invocation.state = "waiting";
 							invocation.state_text = "Waiting in queue...";
 						}else if(erroneousSteps > 0){
-							//TODO: show summary of results
 							invocation.state = "error";
 							invocation.state_text = "Error";
-							me.recoverWorkflowResults(invocation);
 						}else if(invocation.steps && totalSteps === doneSteps){
-							invocation.state_text = "Finished";
 							invocation.state = "success";
-							//Generate the summary of results
-							me.recoverWorkflowResults(invocation);
+							invocation.state_text = "Finished";
 						}else {
 							invocation.state = "waiting";
 							invocation.state_text = "Waiting for Galaxy...";
 						}
+						if(prev_state !== invocation.state){
+							$rootScope.$broadcast(APP_EVENTS.invocationStateChanged, {invocation_id:invocation.id, prev_state:prev_state, new_state:invocation.state});
+						}
 					},
 					function errorCallback(response){
+						delete invocation.checking;
 						invocation.state = "error";
 						invocation.state_text = "Failed.";
 					}
@@ -903,23 +1007,8 @@
 			}
 		};
 
-		this.recoverWorkflowInvocation = function(invocation){
-			invocation.current_step=6;
-			$state.go('workflowRun', {
-				'id' : invocation.workflow_id,
-				'invocation_id': invocation.id
-			});
-		};
-
-		this.removeWorkflowInvocation = function(invocation){
-			var pos = $scope.invocations.indexOf(invocation);
-			if(pos !== -1){
-				$scope.invocations.splice(pos,1);
-				WorkflowInvocationList.saveInvocations();
-			}
-		};
-
 		this.recoverWorkflowResults = function(invocation){
+			debugger
 			for(var i in invocation.steps){
 				if(invocation.steps[i].job_id !== null){
 					me.recoverWorkflowResultStepDetails(invocation, invocation.steps[i]);
@@ -951,6 +1040,8 @@
 		};
 
 		this.recoverWorkflowResultStepOutputDetails = function(invocation, step, output){
+			debugger
+
 			$http($rootScope.getHttpRequestConfig("GET", "dataset-details", {
 				extra: [invocation.history_id, output.id]
 			})).then(
@@ -971,10 +1062,21 @@
 		};
 
 		$scope.adaptInvocationDate = function(date){
-			if(!date){
-				return "-";
+			return !date?"-":date.substring(0,10) + " " + date.substring(11,16);
+		};
+
+		$scope.filterInvocations = function(item){
+			return (item.workflow_title.indexOf(($scope.filterInvocationByName||"") ) > -1)&&(!$scope.displayedInvocationTypes || $scope.displayedInvocationTypes.indexOf(item.state) !== -1 || (item.state !== "success" && item.state !== "error" && $scope.displayedInvocationTypes.indexOf("other") !== -1));
+		};
+
+		$scope.changeDisplayedInvocationTypes = function(type){
+			$scope.displayedInvocationTypes= $scope.displayedInvocationTypes || ['success','error','other'];
+			var pos = $scope.displayedInvocationTypes.indexOf(type);
+			if(pos > -1){
+				$scope.displayedInvocationTypes.splice(pos,1);
+			}else{
+				$scope.displayedInvocationTypes.push(type);
 			}
-			return date.substring(0,10) + " " + date.substring(11,16);
 		};
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
@@ -983,10 +1085,60 @@
 			WorkflowInvocationList.clearInvocations();
 		});
 
-		$scope.$on('$destroy', function () {
-			console.log("Removing interval");
-			$interval.cancel(me.checkInvocationInterval);
+		$scope.$on(APP_EVENTS.updateInvocations, function (event, args) {
+			if($scope.checkInterval){
+				me.getInvocationsHandler();
+			}
 		});
+
+		$scope.$on(APP_EVENTS.updatedInvocations, function (event, args) {
+			$scope.invocations = WorkflowInvocationList.getInvocations();
+			$scope.isLoading=false;
+		});
+
+		$scope.$on(APP_EVENTS.updatingInvocations, function (event, args) {
+			$scope.isLoading=true;
+		});
+
+		$scope.$on(APP_EVENTS.invocationResultsRequired, function (event, args) {
+			me.recoverWorkflowResults(WorkflowInvocationList.getInvocation(args.invocation_id));
+		});
+
+		$scope.$on('$destroy', function () {
+			if(me.checkInvocationInterval){
+				console.log("Removing interval checkInvocationInterval");
+				$interval.cancel(me.checkInvocationInterval);
+			}
+			if(me.checkAllInvocationsStateInterval){
+				console.log("Removing interval checkAllInvocationsStateInterval");
+				$interval.cancel(me.checkAllInvocationsStateInterval);
+			}
+		});
+
+		this.recoverWorkflowInvocationHandler = function(invocation){
+			//Ensure that step is 6
+			invocation.current_step=6;
+			//Recover the results for the invocation
+			if(invocation.state === "error" || invocation.state === "success"){
+				me.recoverWorkflowResults(invocation);
+			}
+			$state.go('workflowRun', {
+				'id' : invocation.workflow_id,
+				'invocation_id': invocation.id
+			});
+		};
+
+		this.removeWorkflowInvocationHandler = function(invocation){
+			var pos = $scope.invocations.indexOf(invocation);
+			if(pos !== -1){
+				$scope.invocations.splice(pos,1);
+				WorkflowInvocationList.saveInvocations();
+			}
+		};
+
+		this.updateInvocationsButtonHandler = function(){
+			$rootScope.$broadcast(APP_EVENTS.updateInvocations);
+		};
 
 		//--------------------------------------------------------------------
 		// INITIALIZATION
@@ -996,19 +1148,21 @@
 		//The corresponding view will be watching to this variable
 		//and update its content after the http response
 
-		$scope.invocations = WorkflowInvocationList.recoverInvocations().getInvocations();
-		if($scope.invocations.length === 0){
-			me.getInvocationsHandler();
-		}
+		$scope.invocations = WorkflowInvocationList.loadInvocations().getInvocations();
 		$scope.running = 0;
 		$scope.done = 0;
 		$scope.erroneous = 0;
-		$scope.checkInterval = false;
-		this.checkInvocationInterval = null;
+		$scope.checkInterval = ($scope.checkInterval === true);
 
-		me.checkInvocationsState();
-		//Start the interval that checks the state of the invocation
-		me.checkInvocationInterval = $interval(me.checkInvocationsState, 5000);
+		if($scope.checkInterval){
+			//Start the interval that checks the state of the invocation (only in the toolbar)
+			me.getInvocationsHandler();
+			me.checkInvocationInterval = $interval(me.getInvocationsHandler, 30000);
+		}else{
+			//Force other controller (toolbar) to update the invocations
+			$rootScope.$broadcast(APP_EVENTS.updateInvocations);
+		}
 
+		me.checkAllInvocationsStateInterval = $interval(me.checkAllInvocationsState, 5000);
 	});
 })();

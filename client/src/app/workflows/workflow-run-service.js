@@ -26,11 +26,11 @@
 	var app = angular.module('workflows.services.workflow-run', []);
 
 	app.factory("WorkflowInvocationList", function() {
-		var invocations = [];
+		var invocations = {};
 
 		return {
 			getInvocations: function() {
-				return invocations;
+				return Object.values(invocations);
 			},
 			setInvocations: function(_invocations) {
 				invocations = _invocations;
@@ -40,39 +40,38 @@
 				sessionStorage.workflow_invocations = JSON.stringify(invocations);
 				return this;
 			},
-			recoverInvocations: function() {
+			loadInvocations: function() {
 				try {
 					invocations = JSON.parse(sessionStorage.workflow_invocations);
 				} catch (e) {
-					invocations = [];
+					console.error("Unable to load the stored invocations.");
+					invocations = {};
 				}
-
 				return this;
 			},
 			clearInvocations: function() {
-				invocations = [];
+				invocations = {};
 				return this;
 			},
 			addInvocation: function(_invocation) {
-				invocations.push(_invocation);
+				delete _invocation.checking;
+				invocations[_invocation.id] = _invocation;
+				return this;
+			},
+			removeInvocation: function(_invocation) {
+				delete invocations[_invocation.id];
 				return this;
 			},
 			updateInvocation: function(_invocation) {
-				for(var i in invocations){
-					if(invocations[i].id === _invocation.id){
-						invocations[i] = _invocation;
-						break;
-					}
+				delete invocations[_invocation.id].checking;
+				delete _invocation.checking;
+				for(var attr in _invocation){
+					invocations[_invocation.id][attr] = _invocation[attr];
 				}
 				return this;
 			},
 			getInvocation: function(invocation_id) {
-				for(var i in invocations){
-					if(invocations[i].id === invocation_id){
-						return invocations[i];
-					}
-				}
-				return null;
+				return invocations[invocation_id];
 			},
 			getNewInvocation: function() {
 				return {

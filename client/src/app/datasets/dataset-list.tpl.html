@@ -1,10 +1,10 @@
 <table class="table datasetsTable" ng-controller="DatasetListController as controller">
 	<thead>
 		<tr style="text-align:center;">
-			<th></th>
-			<th>File name</th>
-			<th>Extension</th>
-			<th>Options</th>
+			<th style="width:28px;"></th>
+			<th style="width:200px;">File name</th>
+			<th style="width:120px;">Extension</th>
+			<th style="width:120px;">Options</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -20,10 +20,10 @@
 		ng-class="{'deletedDataset' : dataset.deleted, 'hiddenDataset': !dataset.visible, 'selectedDataset': (dataset.id === selectedDataset[0].id)}"
 		ng-click="controller.setSelectedDatasetHandler(this);">
 		<td style="text-align:center;">{{$index + 1}}</td>
-		<td style="text-align:left; max-width:250px;word-wrap: break-word;">{{dataset.name}}</td>
+		<td style="text-align:left;max-width: 200px;overflow: hidden;">{{dataset.name}}</td>
 		<td>{{dataset.extension}}</td>
 		<td style="vertical-align:middle; text-align:center; font-size:10px;">
-			<a href="{{controller.getDownloadLink(dataset.url) + '?to_ext=' + dataset.extension}}">
+			<a href="{{controller.getDownloadLink(dataset.url) + '?to_ext=' + dataset.extension}}"  ng-show="dataset.deleted === false">
 				<i class="fa fa-download"></i> Download
 			</a>
 			<a class="clickable text-danger" style="margin-left:10px" ng-show="dataset.deleted === false" ng-click="controller.deleteSelectedDatasetHandler(dataset)">

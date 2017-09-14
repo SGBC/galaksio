@@ -105,6 +105,7 @@
 
 		this.deleteSelectedDatasetHandler = function(dataset){
 			$scope.isLoading = true;
+			dataset.deleted=true;
 			$http($rootScope.getHttpRequestConfig("DELETE", "dataset-details", {
 				extra: [$scope.currentHistory.id, dataset.id]})
 			).then(

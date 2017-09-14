@@ -43,6 +43,13 @@
 		};
 	});
 
+	app.directive("workflowInvocationPanel", function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/workflows/workflow-invocation-panel.tpl.html'
+		};
+	});
+
 	app.directive("workflowRunForm", function() {
 		return {
 			restrict: 'E',
