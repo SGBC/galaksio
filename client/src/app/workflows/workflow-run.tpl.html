@@ -193,7 +193,7 @@
 		<!-- #################### -->
 		<!-- WORKFLOW STEPS STATE    -->
 		<!-- #################### -->
-		<div class="container" style="margin-top: 15px;" ng-init="displayedStep=[]">
+		<div style="margin-top: 15px;" ng-init="displayedStep=[]">
 			<div class="row">
 				<div class="col-sm-6" style="border-right: 1px solid #dedede;">
 					<h3 style=" text-align: center; ">Steps in the workflow</h3>
@@ -225,8 +225,9 @@
 						</thead>
 						<tbody ng-repeat="step in invocation.steps">
 							<tr ng-repeat="output in step.outputs">
-								<td style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
-								<td><a href="{{controller.getDownloadLink(output.url)}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i> Download</a></td>
+								<td ng-if="output.name && output.name !==''" style="text-align: left;">{{output.name}}</td><td>{{output.extension}}</td>
+								<td ng-if="!output.name || output.name ===''" style="text-align: left;"><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</td>
+								<td><a title="Download" href="{{controller.getDownloadLink(output.url)}}" target="_blank" download="{{output.name + '.' + output.extension}}"><i class="fa fa-download"></i></a></td>
 							</tr>
 						</tbody>
 					</table>

@@ -3,7 +3,7 @@
 		<span ng-show="!isLoading" class="clickable text-info" ng-click="controller.updateInvocationsButtonHandler()" style="font-size: 10px;margin-left: 10px;"><i class="fa fa-refresh fa-fw"></i> Refresh</span>
 		<span ng-show="isLoading" class="text-muted" style="font-size: 10px;margin-left: 10px;"><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</span>
 	</h4>
-	<div style="width: 285px; float: left; margin-right: 15px;">
+	<div style="width: 49%; float: left">
 		<div class="input-group">
 			<input type="text" class="form-control" placeholder="Search" ng-model="filterInvocationByName" style="height: 33px;">
 			<div class="input-group-btn">
@@ -13,7 +13,7 @@
 			</div>
 		</div>
 	</div>
-	<div style=" padding-top: 8px; ">Show:
+	<div style="width: 50%;padding-top: 8px;float: right;">Show:
 		<label class="checkbox-inline"><input type="checkbox" checked ng-click="changeDisplayedInvocationTypes('success')">Done</label>
 		<label class="checkbox-inline"><input type="checkbox" checked ng-click="changeDisplayedInvocationTypes('error')">Failed</label>
 		<label class="checkbox-inline"><input type="checkbox" checked ng-click="changeDisplayedInvocationTypes('other')">Other</label>
