@@ -1,6 +1,9 @@
-Galaksio v0.3 September 2017
+Galaksio v0.3.1 September 2017
 
 ## Version Log
+
+** VERSION 0.3.1 September 2017 **
+  - Visual improvements.
 
 ** VERSION 0.3 September 2017 **
   - Adding some error control logic and forcing the reload of the page after sign-out (will cancel automatically all the
