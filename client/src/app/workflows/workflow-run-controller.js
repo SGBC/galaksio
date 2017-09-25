@@ -834,7 +834,7 @@
 		* The function is called recursively for all the workflows in a list
 		* of workflows.
 		**/
-		this.recoverInvocationsRec = function(nCall, workflows, _invocations){
+		this.recoverInvocationsRec = function(nCall, workflows, _invocations, errors){
 			_invocations = _invocations || {};
 
 			if(nCall === workflows.length){
@@ -849,6 +849,15 @@
 				}
 				WorkflowInvocationList.saveInvocations();
 				$scope.isLoading = false;
+
+				if(errors !== undefined && Cookies.get("galaksiosession") !== undefined){
+					WorkflowInvocationList.setHasErrors(true);
+					// $dialogs.showErrorDialog(message, {
+					// 	logMessage : message + " at WorkflowInvocationListController:getInvocationsHandler."
+					// });
+					console.error(errors);
+				}
+
 				console.log("Updating complete list of invocations...DONE");
 				$rootScope.$broadcast(APP_EVENTS.updatedInvocations);
 				return;
@@ -872,12 +881,9 @@
 						return;
 					}
 
-					debugger;
-					var message = "Failed while retrieving the list of workflows invocations.";
-					$dialogs.showErrorDialog(message, {
-						logMessage : message + " at WorkflowInvocationListController:getInvocationsHandler."
-					});
-					console.error(response.data);
+					errors = errors || [];
+					errors.push(response.data);
+					me.recoverInvocationsRec(nCall+1, workflows, _invocations, errors);
 				}
 			);
 		};
@@ -1077,6 +1083,10 @@
 			}else{
 				$scope.displayedInvocationTypes.push(type);
 			}
+		};
+
+		$scope.checkInvocationErrors = function(){
+			return WorkflowInvocationList.hasErrors();
 		};
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
