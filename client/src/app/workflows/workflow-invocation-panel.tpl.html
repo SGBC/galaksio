@@ -1,5 +1,6 @@
 <div class="panel panel-container" ng-controller="WorkflowInvocationListController as controller">
 	<h4>Workflow invocations
+		<span ng-show="checkInvocationErrors()" class="text-danger" title="Some invocations were not recovered." style="font-size: 10px;margin-left: 10px;"><i class="fa fa-warning fa-fw"></i></span>
 		<span ng-show="!isLoading" class="clickable text-info" ng-click="controller.updateInvocationsButtonHandler()" style="font-size: 10px;margin-left: 10px;"><i class="fa fa-refresh fa-fw"></i> Refresh</span>
 		<span ng-show="isLoading" class="text-muted" style="font-size: 10px;margin-left: 10px;"><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</span>
 	</h4>

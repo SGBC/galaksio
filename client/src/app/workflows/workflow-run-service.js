@@ -27,7 +27,8 @@
 
 	app.factory("WorkflowInvocationList", function() {
 		var invocations = {};
-
+		var _hasErrors = false;
+		
 		return {
 			getInvocations: function() {
 				return Object.values(invocations);
@@ -81,6 +82,12 @@
 					current_step : 1
 				};
 			},
+			setHasErrors:  function(errors) {
+				_hasErrors = (errors === true);
+			},
+			hasErrors:  function() {
+				return _hasErrors === true;
+			}
 		};
 	});
 })();
