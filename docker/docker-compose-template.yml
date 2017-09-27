@@ -1,0 +1,32 @@
+############################################################
+# Launcher for Galaksio container
+# This is a template, the following values must be replaced:
+#   - $${INSTANCE_NAME}, name for the instance
+#   - $${INSTANCE_PORT_1}, port number for Galaksio instance
+#   - $${GALAXY_SERVER}, internal URL for the Galaxy server used by this Galaksio instance.
+#   - $${GALAXY_SERVER_URL}, external URL for the Galaxy server used by this Galaksio instance (usually be the same that above).
+#   - $${MAX_CONTENT_LENGTH}, max size (in MB) for uploaded files (eg. a value of 300 will be 300MB)
+#   - $${ADMIN_ACCOUNTS}, list of admin email accounts for Galaxy and Galaksio (emails separated by comma)
+############################################################
+
+version: '2'
+services:
+
+    $${INSTANCE_NAME}-galaksio:
+      image: fikipollo/galaksio
+      container_name: $${INSTANCE_NAME}-galaksio
+      environment:
+        - GALAXY_SERVER=$${GALAXY_SERVER}
+        - GALAXY_SERVER_URL=$${GALAXY_SERVER_URL}
+        - MAX_CONTENT_LENGTH=$${MAX_CONTENT_LENGTH}
+        - ADMIN_ACCOUNTS=$${ADMIN_ACCOUNTS}
+      volumes_from:
+        - $${INSTANCE_NAME}-galaksio-data
+      ports:
+        - "$${INSTANCE_PORT_1}:80"
+
+    $${INSTANCE_NAME}-galaksio-data:
+      image: busybox
+      container_name: $${INSTANCE_NAME}-galaksio-data
+      volumes:
+        - /data/$${INSTANCE_NAME}-data/galaksio-data:/usr/local/apache2/htdocs/server/conf/

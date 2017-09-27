@@ -1,0 +1,41 @@
+version: '2'
+services:
+
+    instance1-galaxy:
+      image: bgruening/galaxy-stable
+      container_name: instance1-galaxy
+      environment:
+        - NONUSE=reports
+        - GALAXY_CONFIG_ADMIN_USERS=myadmin@email.com
+        - GALAXY_CONFIG_BRAND="My own Galaxy server"
+      depends_on:
+        - instance1-galaksio-data
+      volumes_from:
+        - instance1-galaksio-data
+      ports:
+        - "8080:80"
+
+    instance1-galaksio:
+      image: fikipollo/galaksio
+      container_name: instance1-galaksio
+      environment:
+        - GALAXY_SERVER=http://galaxy_machine
+        - GALAXY_SERVER_URL=http://localhost:8080
+        - MAX_CONTENT_LENGTH=300
+        - ADMIN_ACCOUNTS=myadmin@email.com
+      links:
+        - instance1-galaxy:galaxy_machine
+      depends_on:
+        - instance1-galaxy
+      volumes_from:
+        - instance1-galaksio-data
+      ports:
+        - "8081:80"
+
+    instance1-galaksio-data:
+      image: busybox
+      container_name: instance1-galaksio-data
+      volumes:
+        - /data/instance1-data/galaksio-data:/usr/local/apache2/htdocs/server/conf/
+        - /data/instance1-data/galaxy-data:/export
+        - /data/instance1-data/galaxy-custom-tools/:/local_tools

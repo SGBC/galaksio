@@ -1,0 +1,52 @@
+############################################################
+# Launcher for Galaxy + Galaksio container
+# This is a template, the following values must be replaced:
+#   - $${INSTANCE_NAME}, name for the instance
+#   - $${INSTANCE_PORT_1}, port number for Galaxy instance
+#   - $${INSTANCE_PORT_2}, port number for Galaksio instance
+#   - $${MAX_CONTENT_LENGTH}, max size (in MB) for uploaded files (eg. a value of 300 will be 300MB)
+#   - $${ADMIN_ACCOUNTS}, list of admin email accounts for Galaxy and Galaksio (emails separated by comma)
+#   - $${GALAXY_INSTANCE_TITLE}, custom title for the Galaxy server (shown in home page)
+############################################################
+
+version: '2'
+services:
+
+    $${INSTANCE_NAME}-galaxy:
+      image: bgruening/galaxy-stable
+      container_name: $${INSTANCE_NAME}-galaxy
+      environment:
+        - NONUSE=reports
+        - GALAXY_CONFIG_ADMIN_USERS=$${ADMIN_ACCOUNTS}
+        - GALAXY_CONFIG_BRAND="$${GALAXY_INSTANCE_TITLE}"
+      depends_on:
+        - $${INSTANCE_NAME}-galaksio-data
+      volumes_from:
+        - $${INSTANCE_NAME}-galaksio-data
+      ports:
+        - "$${INSTANCE_PORT_1}:80"
+
+    $${INSTANCE_NAME}-galaksio:
+      image: fikipollo/galaksio
+      container_name: $${INSTANCE_NAME}-galaksio
+      environment:
+        - GALAXY_SERVER=http://galaxy_machine
+        - GALAXY_SERVER_URL=http://localhost:8080
+        - MAX_CONTENT_LENGTH=$${MAX_CONTENT_LENGTH}
+        - ADMIN_ACCOUNTS=$${ADMIN_ACCOUNTS}
+      links:
+        - $${INSTANCE_NAME}-galaxy:galaxy_machine
+      depends_on:
+        - $${INSTANCE_NAME}-galaxy
+      volumes_from:
+        - $${INSTANCE_NAME}-galaksio-data
+      ports:
+        - "$${INSTANCE_PORT_2}:80"
+
+    $${INSTANCE_NAME}-galaksio-data:
+      image: busybox
+      container_name: $${INSTANCE_NAME}-galaksio-data
+      volumes:
+        - /data/$${INSTANCE_NAME}-data/galaksio-data:/usr/local/apache2/htdocs/server/conf/
+        - /data/$${INSTANCE_NAME}-data/galaxy-data:/export
+        - /data/$${INSTANCE_NAME}-data/galaxy-custom-tools/:/local_tools
