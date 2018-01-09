@@ -728,7 +728,7 @@
 			$scope.displayedHistory = HistoryList.getHistory(Cookies.get("current-history"));
 		});
 		/**
-		* toogleCollapseHandler - this function handles the event fired when the
+		* toggleCollapseHandler - this function handles the event fired when the
 		* user press the button for hide or show the body of a step panel.
 		* If it's the first time that the panel is shown, then we need to create
 		* the body of the panel, which includes a HTTP request to Galaxy API in
@@ -737,13 +737,17 @@
 		* @param  {type} event the click event
 		* @return {type}       description
 		*/
-		this.toogleCollapseHandler = function(event){
+		this.toggleCollapseHandler = function(event){
 			//Toggle collapsed (view will automatically change due to ng-hide directive)
 			$scope.collapsed = !$scope.collapsed;
 			//If the remaining data for the step was not loaded yet, send the request
 			if(!$scope.loadingComplete){
 				//If not an input field
-				if($scope.step.type !== "data_input" && $scope.step.type !== "data_collection_input"){
+
+				// Oskar - adding support for subworkflows
+				if($scope.step.type == "subworkflow"){
+					console.log("Yeah this is a subworkflow, coming soon");
+				}else if($scope.step.type !== "data_input" && $scope.step.type !== "data_collection_input" ){
 					//If the tool is not an input data tool, request the info from server
 					//and store the extra info for the tool at the "extra" field
 					$http($rootScope.getHttpRequestConfig("GET", "tools-info", {
@@ -759,7 +763,7 @@
 							debugger;
 							var message = "Failed while retrieving the details for the tool.";
 							$dialogs.showErrorDialog(message, {
-								logMessage : message + " at WorkflowRunController:toogleCollapseHandler."
+								logMessage : message + " at WorkflowRunController:toggleCollapseHandler."
 							});
 							console.error(response.data);
 						}
@@ -808,7 +812,7 @@
 				return;
 			}
 
-			console.log("Updating complete list of invocations...");
+			//console.log("Updating complete list of invocations...");
 			$rootScope.$broadcast(APP_EVENTS.updatingInvocations);
 
 			$scope.isLoading = true;
@@ -858,7 +862,7 @@
 					console.error(errors);
 				}
 
-				console.log("Updating complete list of invocations...DONE");
+				//console.log("Updating complete list of invocations...DONE");
 				$rootScope.$broadcast(APP_EVENTS.updatedInvocations);
 				return;
 			}
@@ -899,7 +903,7 @@
 				return;
 			}
 
-			console.log("Checking state of invocations...");
+			//console.log("Checking state of invocations...");
 			var invocations = WorkflowInvocationList.getInvocations();
 			var running = 0, erroneous = 0, done = 0, waiting=0; unknown = 0;
 			for(var i in invocations){
@@ -933,7 +937,7 @@
 
 		this.checkInvocationState = function(invocation){
 			if(invocation.id && invocation.state != "error" && invocation.state !== "success" && !(invocation.is_temporal)  && !(invocation.checking)){
-				console.log("Checking state of invocation " + invocation.id + "...");
+				//console.log("Checking state of invocation " + invocation.id + "...");
 				invocation.checking=true;
 				$http($rootScope.getHttpRequestConfig("GET", "invocation-state", {
 					extra: [invocation.workflow_id, invocation.id]

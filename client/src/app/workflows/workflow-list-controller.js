@@ -256,6 +256,8 @@
 		* This function applies the filters when the user clicks on "Search"
 		*/
 		this.applySearchHandler = function() {
+			// Oskar - Added removeAllFilters to reset the search result.
+			$scope.filters = WorkflowList.removeAllFilters().getFilters();
 			var filters = arrayUnique($scope.filters.concat($scope.searchFor.split(" ")));
 			$scope.filters = WorkflowList.setFilters(filters).getFilters();
 		};
