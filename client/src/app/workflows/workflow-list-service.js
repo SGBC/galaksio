@@ -45,7 +45,7 @@
 					    workflow.name = workflow.name.replace(/imported: /g, "");
 						workflow.imported = true;
 					}
-					
+
 					workflows[workflow.id] = workflow;
 				}
 
@@ -125,6 +125,10 @@
 				if(pos !== -1){
 					filters.splice(pos,1);
 				}
+				return this;
+			},
+			removeAllFilters: function(){
+				filters = [];
 				return this;
 			},
 			getOld: function(){

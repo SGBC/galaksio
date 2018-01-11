@@ -32,6 +32,7 @@
 	]);
 
 	app.controller('DatasetListController', function($rootScope, $scope, $http, $dialogs, APP_EVENTS) {
+
 		//--------------------------------------------------------------------
 		// CONTROLLER FUNCTIONS
 		//--------------------------------------------------------------------
@@ -276,6 +277,8 @@
 		$scope.filterDatasets = function (item) {
 			return (item.deleted === false) && (item.type !== "collection");
 		};
+
+
 		//--------------------------------------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------------------------------------
@@ -407,7 +410,6 @@
 			}
 			return data;
 		};
-
 
 		//--------------------------------------------------------------------
 		// INITIALIZATION

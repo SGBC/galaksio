@@ -1,6 +1,7 @@
 <div class="histories-container" ng-controller="HistoryListController as controller" >
 	<div class="col-lg-6"  >
-	<div affix>
+	<!-- Oskar - Removed since affix is not working correctly <div affix>-->
+	<div>
 		<div class="panel panel-container" ng-hide="showHelp===false" >
 			<h3>About histories</h3>
 			<p class="description">
@@ -10,14 +11,19 @@
 		</div>
 		<div class="panel panel-container" >
 			<div>
-				<a class="btn btn-default btn-sm navbar-right pull-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
+				<a class="btn btn-default btn-sm pull-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
 					<i class="fa fa-refresh fa-fw" ></i> Refresh
 				</a>
-				<a class="btn btn-primary btn-sm navbar-right pull-right" style="margin-right:10px;" ng-click="controller.createNewHistory();">
+				<a class="btn btn-primary btn-sm pull-right" style="margin-right:10px;" ng-click="controller.createNewHistory();">
 					<i class="fa fa-plus fa-fw" ></i> New history
 				</a>
 				<p class="text-info" style="line-height: 30px; "><i class="fa fa-info-circle"></i> Click on one history name to get more details.</p>
 			</div>
+			<!-- Oskar - added search -->
+			<div style="width: 100%;margin-bottom: 4px;">
+				<input type="text" class="form-control" placeholder="Search history" ng-model="searchFor">
+			</div>
+
 			<table class="table historyListTable">
 				<thead>
 					<tr style="text-align:center;">
@@ -33,7 +39,7 @@
 							<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading histories...
 						</td>
 					</tr>
-					<tr ng-repeat="history in histories" ng-click="controller.setDisplayedHistory(history)" ng-class="(history === currentHistory)?'current':''">
+					<tr ng-repeat="history in histories | filter:searchFor" ng-click="controller.setDisplayedHistory(history)" ng-class="(history === currentHistory)?'current':''">
 						<td>{{history.name}}</td>
 						<td>
 							<i class="fa fa-spinner fa-pulse fa-fw" ng-if="history.create_time === undefined"></i>
