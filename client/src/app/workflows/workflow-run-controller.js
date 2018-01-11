@@ -899,7 +899,7 @@
 				return;
 			}
 
-			console.log("Checking state of invocations...");
+			//console.log("Checking state of invocations...");
 			var invocations = WorkflowInvocationList.getInvocations();
 			var running = 0, erroneous = 0, done = 0, waiting=0; unknown = 0;
 			for(var i in invocations){
@@ -933,7 +933,7 @@
 
 		this.checkInvocationState = function(invocation){
 			if(invocation.id && invocation.state != "error" && invocation.state !== "success" && !(invocation.is_temporal)  && !(invocation.checking)){
-				console.log("Checking state of invocation " + invocation.id + "...");
+				//console.log("Checking state of invocation " + invocation.id + "...");
 				invocation.checking=true;
 				$http($rootScope.getHttpRequestConfig("GET", "invocation-state", {
 					extra: [invocation.workflow_id, invocation.id]
