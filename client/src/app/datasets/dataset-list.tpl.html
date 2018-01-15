@@ -37,10 +37,9 @@
 	</tr>
 </tbody>
 </table>
-<p ng-hide="isLoading === true || displayedHistory.content === undefined || displayedHistory.content.length == 0 || maxDatasets === undefined" >Showing {{maxDatasets > displayedHistory.content.length ? displayedHistory.content.length :maxDatasets}} of {{displayedHistory.content.length}} datasets</p>
 <div style="text-align: center; padding: 10px;" ng-show="displayedHistory.content.length > maxDatasets">
-	<button class="btn btn-default" ng-click="maxDatasets = maxDatasets + 10;">
-		<i class="fa fa-plus fa-fw"></i> Show more datasets
+	<button class="btn btn-default" ng-click="maxDatasets = displayedHistory.content.length;">
+		<i class="fa fa-plus fa-fw"></i> Show all datasets
 	</button>
 </div>
 </div>

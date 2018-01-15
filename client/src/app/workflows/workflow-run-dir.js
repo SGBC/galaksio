@@ -211,21 +211,31 @@
 					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 					'</div>';
 				}else{
-					// Oskar - test
+					console.log(model);
+					/*
+					 * Oskar -
+					 * Might wan't to clean this up a bit. What it does is check the chosen Step Value and sets input.value to the array in input.options which contains the Step Value
+					 * This is done so that the Select shows the correct default value.
+					 */
 					var nInputValue = false;
 					var tool_state = JSON.parse($scope.step.tool_state);
 					if(tool_state[model.name]){
 						if (typeof tool_state[model.name] === 'string' || tool_state[model.name] instanceof String){
 							nInputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
 							nInputValue = nInputValue === "" ? false : nInputValue;
+							for (option in model.options){
+								if (nInputValue == model.options[option][1]){
+									$scope.input.value = model.options[option];
+								};
+							}
 						}
 					}
-					console.log("inputValue",nInputValue);
+					console.log("input.value",$scope.input.value);
 					template =
 					'<select class="form-control" name="{{input.name}}"' +
 					'        ng-model="input.value"' +
-					'        ng-required="!(input.optional===true)" >'+
-					'   <option ng-repeat="option in input.options" value="{{option[1]}}" class="" ng-selected="{{option[1]===}}'+ nInputValue +'">{{option[0]}}</option>' +
+					'        ng-required="!(input.optional===true)"'+
+					'        ng-options="option[0] for option in input.options track by option[1]">'+
 					"</select>"+
 					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 				}
@@ -305,7 +315,10 @@
 				try{
 					console.log("Model name: " + model.name);
 					console.log("inputValue: " + inputValue);
+<<<<<<< HEAD
 					console.log("emptyInputValue: " + emptyInputValue);
+=======
+>>>>>>> release/v0.3.1
 					console.log(["model",model]);
 					console.log(["step",$scope.step]);
 					//TEXT, NUMBER... INPUTS
@@ -377,6 +390,8 @@
 						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
+						// Hide Conditional
+						/*
 						try {
 							if (typeof inputValue === 'string' || inputValue instanceof String){
 								inputValue = JSON.parse(inputValue);
@@ -407,6 +422,7 @@
 						'<div class="form-subsection" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
 						'	<step-input ng-repeat="input in option.inputs"></step-input>'+
 						'</div>';
+						*/
 					}else if(model.type === "boolean"){
 						model.value = (inputValue === "true");
 						template+=
