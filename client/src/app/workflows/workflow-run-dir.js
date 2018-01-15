@@ -315,10 +315,6 @@
 				try{
 					console.log("Model name: " + model.name);
 					console.log("inputValue: " + inputValue);
-<<<<<<< HEAD
-					console.log("emptyInputValue: " + emptyInputValue);
-=======
->>>>>>> release/v0.3.1
 					console.log(["model",model]);
 					console.log(["step",$scope.step]);
 					//TEXT, NUMBER... INPUTS
