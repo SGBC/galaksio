@@ -223,19 +223,15 @@
 						if (typeof tool_state[model.name] === 'string' || tool_state[model.name] instanceof String){
 							nInputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
 							nInputValue = nInputValue === "" ? false : nInputValue;
-							for (option in model.options){
-								if (nInputValue == model.options[option][1]){
-									$scope.input.value = model.options[option];
-								};
-							}
+							$scope.input.value = nInputValue;
 						}
 					}
 					console.log("input.value",$scope.input.value);
 					template =
 					'<select class="form-control" name="{{input.name}}"' +
 					'        ng-model="input.value"' +
-					'        ng-required="!(input.optional===true)"'+
-					'        ng-options="option[0] for option in input.options track by option[1]">'+
+					'        ng-required="!(input.optional===true)">'+
+					'        <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1] == input.value">{{option[0]}}</option>'+
 					"</select>"+
 					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 				}
