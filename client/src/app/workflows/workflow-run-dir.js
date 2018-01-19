@@ -211,7 +211,6 @@
 					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 					'</div>';
 				}else{
-					console.log(model);
 					/*
 					 * Oskar -
 					 * Might wan't to clean this up a bit. What it does is check the chosen Step Value and sets input.value to the array in input.options which contains the Step Value
@@ -226,7 +225,6 @@
 							$scope.input.value = nInputValue;
 						}
 					}
-					console.log("input.value",$scope.input.value);
 					template =
 					'<select class="form-control" name="{{input.name}}"' +
 					'        ng-model="input.value"' +
