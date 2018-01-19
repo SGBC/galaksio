@@ -569,7 +569,7 @@
 			}
 			WorkflowInvocationList.addInvocation($scope.invocation);
 			$rootScope.$broadcast(APP_EVENTS.updatedInvocations);
-
+			console.log("requestData",requestData);
 			//SHOW STATE MESSAGE FEW SECONDS BEFORE SEND THE REQUEST
 			$timeout( function(){
 				$http($rootScope.getHttpRequestConfig("POST", "workflow-run", {
@@ -744,10 +744,7 @@
 			if(!$scope.loadingComplete){
 				//If not an input field
 
-				// Oskar - adding support for subworkflows
-				if($scope.step.type == "subworkflow"){
-					console.log("Yeah this is a subworkflow, coming soon");
-				}else if($scope.step.type !== "data_input" && $scope.step.type !== "data_collection_input" ){
+				if($scope.step.type !== "data_input" && $scope.step.type !== "data_collection_input" ){
 					//If the tool is not an input data tool, request the info from server
 					//and store the extra info for the tool at the "extra" field
 					$http($rootScope.getHttpRequestConfig("GET", "tools-info", {
