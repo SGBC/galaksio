@@ -541,7 +541,7 @@
 				history: "hist_id=" + Cookies.get("current-history"),
 				new_history_name : null,
 				parameters: {},
-				parameters_normalized : true,1
+				parameters_normalized : true,
 				replacement_params : {}
 			};
 
