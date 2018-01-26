@@ -380,6 +380,7 @@
 						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
+						$scope.input.value = inputValue;
 						// Hide Conditional
 						/*
 						try {

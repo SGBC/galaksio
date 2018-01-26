@@ -541,7 +541,7 @@
 				history: "hist_id=" + Cookies.get("current-history"),
 				new_history_name : null,
 				parameters: {},
-				parameters_normalized : true,
+				parameters_normalized : true,1
 				replacement_params : {}
 			};
 
@@ -561,7 +561,9 @@
 					var inputs = $scope.params[i].params;
 					var pattern = /input[0-9]*$/;
 					for(var j in inputs){
-						if(!pattern.test(inputs[j].name)){
+						if(!pattern.test(inputs[j].name) && inputs[j].type == "conditional"){
+							params[inputs[j].name.split("|")[0]] = inputs[j].value;
+						} else if (!pattern.test(inputs[j].name)) {
 							params[inputs[j].name] = inputs[j].value;
 						}
 					}
@@ -569,6 +571,7 @@
 			}
 			WorkflowInvocationList.addInvocation($scope.invocation);
 			$rootScope.$broadcast(APP_EVENTS.updatedInvocations);
+			console.log("scope.params",$scope.params)
 			console.log("requestData",requestData);
 			//SHOW STATE MESSAGE FEW SECONDS BEFORE SEND THE REQUEST
 			$timeout( function(){
@@ -595,6 +598,7 @@
 						WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
 					},
 					function errorCallback(response){
+						console.log(response);
 						$scope.invocation.state = "error";
 						$scope.invocation.state_text = "Failed.";
 					}
