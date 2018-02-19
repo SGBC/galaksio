@@ -11,16 +11,16 @@
 						<button class="btn btn-default" type="button" ng-click="controller.applySearchHandler()">
 							<span class="glyphicon glyphicon-search"></span>
 						</button>
+						<a ng-click="controller.removeAllFiltersHandler();" style="margin-left:20px; font-size: 14px; cursor: pointer;"><i class="fa fa-undo" style="margin-right:5px"></i>Reset search</a>
 					</span>
 				</div><!-- /input-group -->
-				<!--
 				<div class="currentSearchTagContainer">
-					<i class="tag" ng-repeat="item in filters">
+					<i class="tag" ng-repeat="item in selectedTags">
 						<span class="tag-name ">
 							<i class="fa fa-times" ng-click="controller.removeFilterHandler(item);"></i>{{item}}
 						</span>
 					</i>
-				</div> -->
+				</div>
 			</div>
 			<div class="col-sm-4" style="padding-top: 8px;">
 				Popular tags:
