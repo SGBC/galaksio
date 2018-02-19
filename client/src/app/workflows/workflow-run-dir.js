@@ -391,7 +391,7 @@
 						} catch (e) {
 							model.value = inputValue;
 						}
-
+						/*
 						//TODO: REMOVE THE NAME PROPERTY? VALUES ARE BEING REMOVED WHEN EXPANDING TOOLS
 						template=
 						'<label>{{input.test_param.label || input.title}}</label>' +
