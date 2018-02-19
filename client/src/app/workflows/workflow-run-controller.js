@@ -227,7 +227,6 @@
 
 		this.getDownloadLink = function(dataset_url){
 			if(dataset_url === undefined){
-				debugger
 				return "";
 			}
 			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
@@ -536,7 +535,9 @@
 			$scope.invocation.workflow_id = $scope.workflow.id;
 
 			//SET THE REQUEST DATA (history id, parameters,...)
+			// Oskar - added workflow_id - Let's see if that changes anything.
 			var requestData = {
+				workflow_id: $scope.workflow.id,
 				batch: true,
 				history: "hist_id=" + Cookies.get("current-history"),
 				new_history_name : null,
@@ -617,32 +618,33 @@
 			return;
 		};
 
+		// Download report button - Work in progress
 		this.downloadInvocationReportHandler = function(format){
-			// if(!format){
-			// 	format="pdf";
-			// }
-			//
-			// $http($rootScope.getHttpRequestConfig("POST","workflow-report", {
-			// 	data: {
-			// 		'format' : format,
-			// 		'workflow' : $scope.workflow,
-			// 		'invocation' : $scope.invocation
-			// 	}
-			// })).then(
-			// 	function successCallback(response){
-			// 		var file_path = response.data.path;
-			// 		$window.open(file_path, "Report");
-			// 	},
-			// 	function errorCallback(response){
-			// 		debugger;
-			// 		var message = "Failed while retrieving the workflow's report.";
-			// 		$dialogs.showErrorDialog(message, {
-			// 			logMessage : message + " at WorkflowRunController:downloadInvocationReport."
-			// 		});
-			// 		console.error(response.data);
-			// 		$scope.loadingComplete = true;
-			// 	}
-			// );
+/*			 if(!format){
+			 	format="pdf";
+			 }
+
+			 $http($rootScope.getHttpRequestConfig("POST","workflow-report", {
+			 	data: {
+			 		'format' : format,
+			 		'workflow' : $scope.workflow,
+			 		'invocation' : $scope.invocation
+			 	}
+			 })).then(
+			 	function successCallback(response){
+			 		var file_path = response.data.path;
+			 		$window.open(file_path, "Report");
+			 	},
+			 	function errorCallback(response){
+			 		debugger;
+			 		var message = "Failed while retrieving the workflow's report.";
+			 		$dialogs.showErrorDialog(message, {
+			 			logMessage : message + " at WorkflowRunController:downloadInvocationReport."
+			 		});
+			 		console.error(response.data);
+			 		$scope.loadingComplete = true;
+			 	}
+			 );
 			$http($rootScope.getHttpRequestConfig("PUT","history-export", {
 				extra : Cookies.get("current-history")
 			})).then(
@@ -659,7 +661,7 @@
 					console.error(response.data);
 					$scope.loadingComplete = true;
 				}
-			);
+			); */
 		};
 
 		this.showInvocationDetailsButtonHandler = function(){
