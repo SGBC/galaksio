@@ -599,9 +599,9 @@
 						WorkflowInvocationList.addInvocation($scope.invocation).saveInvocations();
 					},
 					function errorCallback(response){
-						console.log(response);
 						$scope.invocation.state = "error";
 						$scope.invocation.state_text = "Failed.";
+						$scope.invocation.error_message = "Error " + response.status + " : " + response.statusText + ". " + Object.keys(response.data.err_msg) + " : " + Object.values(response.data.err_msg);
 					}
 				);
 			},
