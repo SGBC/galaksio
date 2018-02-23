@@ -256,10 +256,14 @@
 		* This function applies the filters when the user clicks on "Search"
 		*/
 		this.applySearchHandler = function() {
-			// Oskar - Added removeAllFilters to reset the search result.
 			$scope.filters = WorkflowList.removeAllFilters().getFilters().concat($scope.selectedTags);
 			var filters = arrayUnique($scope.filters.concat($scope.searchFor.split(" ")));
 			$scope.filters = WorkflowList.setFilters(filters).getFilters();
+		};
+
+		this.displaySearchWords = function(){
+			var searchWords = $scope.filters.filter(function(x){ return $scope.selectedTags.indexOf(x) < 0} );
+			return searchWords.join(" ");
 		};
 
 		this.filterByTag = function(tag){
@@ -277,8 +281,10 @@
 				$scope.filters = WorkflowList.removeFilter(tag).getFilters();
 				//var filters = $scope.filters.splice($scope.filters.indexOf(tag),1);
 			}
-			console.log("SelectedTags", $scope.selectedTags);
-			console.log("Current Filters", $scope.filters);
+		}
+
+		this.tagSearch = function(value){
+			return value.name.toLowerCase().indexOf($scope.tagKey.toLowerCase()) >= 0;
 		}
 
 		/**
@@ -320,6 +326,10 @@
 		$scope.selectedTags = WorkflowList.getSelectedTags();
 		$scope.filters =  WorkflowList.getFilters();
 		$scope.filteredWorkflows = $scope.workflows.length;
+		$scope.displaySearchWords = this.displaySearchWords();
+		$scope.tagKey='';
+		$scope.tagFilterBegin = 0;
+		$scope.tagFilterLimit = 5; // The amount of tags displayed at tag search
 
 		//Display the workflows in batches
 		if(window.innerWidth > 1500){
