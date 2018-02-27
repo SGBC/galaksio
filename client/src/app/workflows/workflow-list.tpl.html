@@ -30,6 +30,9 @@
 					<div ng-show="showTags" class="tag-select-panel">
 						<input type="text" placeholder="Search.." ng-model="tagKey">
 						<div class="tag-select-list">
+							<i ng-show="isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
+								<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading tags...
+							</i>
 							<div ng-repeat="item in tags | orderBy:'-times' | limitTo: tagFilterLimit : tagFilterBegin | filter:controller.tagSearch" ng-click="controller.filterByTag(item.name);">
 								<i class="tag {{item.color}}">{{item.times}}</i><i> {{item.name}} </i>
 							</div>
@@ -37,7 +40,7 @@
 						<span ng-click="tagFilterBegin = tagFilterBegin - tagFilterLimit" ng-show="tagFilterBegin > 0"><< Previous</span>
 						<span ng-click="tagFilterBegin = tagFilterBegin + tagFilterLimit" ng-hide="tagFilterLimit > tags.length || tags.length <= tagFilterBegin + tagFilterLimit" style="float:right;">Next >></span>
 					</div>
-			</div> 
+			</div>
 		</div>
 	</div>
 	<div class="navbar-form">
