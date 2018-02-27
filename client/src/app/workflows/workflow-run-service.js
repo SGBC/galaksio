@@ -28,7 +28,7 @@
 	app.factory("WorkflowInvocationList", function() {
 		var invocations = {};
 		var _hasErrors = false;
-		
+
 		return {
 			getInvocations: function() {
 				return Object.values(invocations);

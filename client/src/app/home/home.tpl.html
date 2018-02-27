@@ -1,11 +1,11 @@
 <div >
 	<nav class="navbar navbar-default navbar-top title-bar">
-		<h1>Dashboard <small></small></h1>
+		<h1>Dashboard<small></small></h1>
 	</nav>
 	<div class="home-container">
 		<div class="col-md-12">
 			<div class="panel panel-container" style="height: 135px;background-image: url('css/home_back_science.png');">
-				<h1>Welcome to Galaksio</h1>
+				<h1>Welcome to Galaksio!</h1>
 				<h4 style=" color: #6194bf; ">A simple but effective way to use Galaxy.</h4>
 			</div>
 		</div>
@@ -32,12 +32,12 @@
 			</div>
 		</div>
 		<div class="col-md-6" ng-init="checkInterval=false;">
-			<workflow-invocation-panel></workflow-invocation-panel>			
+			<workflow-invocation-panel></workflow-invocation-panel>
 		</div>
 		<div class="col-md-6" ng-controller="HistoryListController as controller">
 			<div class="panel panel-container">
 				<a class="btn btn-default btn-sm navbar-right" ui-sref="histories()">
-					<i class="fa fa-history fa-fw" ></i> Change history
+					<i class="fa fa-history fa-fw" ></i> Go to history
 				</a>
 				<h4>Current history</h4>
 				<p><b>History name: </b>{{displayedHistory.name}}</p>

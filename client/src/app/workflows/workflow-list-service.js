@@ -28,6 +28,7 @@
 	app.factory("WorkflowList", ['$rootScope', function($rootScope) {
 		var workflows = {};
 		var tags = [];
+		var selectedTags = [];
 		var filters = [];
 		var tagColors = ['yellow', 'green', 'red', 'blue', 'purple', 'pink', 'yellow2', 'green2', 'red2', 'blue2', 'purple2', 'pink2']
 		var old = new Date(0);
@@ -45,7 +46,7 @@
 					    workflow.name = workflow.name.replace(/imported: /g, "");
 						workflow.imported = true;
 					}
-					
+
 					workflows[workflow.id] = workflow;
 				}
 
@@ -113,6 +114,24 @@
 
 				return this;
 			},
+			selectTag: function(tag){
+				selectedTags.push(tag);
+				return this;
+			},
+			deselectTag: function(tag){
+				var pos = selectedTags.indexOf(tag);
+				if(pos !== -1){
+					selectedTags.splice(pos,1);
+				}
+				return this;
+			},
+			getSelectedTags: function(){
+				return selectedTags;
+			},
+			removeAllSelectedTags(){
+				selectedTags = [];
+				return this;
+			},
 			getFilters: function() {
 				return filters;
 			},
@@ -125,6 +144,10 @@
 				if(pos !== -1){
 					filters.splice(pos,1);
 				}
+				return this;
+			},
+			removeAllFilters: function(){
+				filters = [];
 				return this;
 			},
 			getOld: function(){
