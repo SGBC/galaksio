@@ -189,6 +189,8 @@
 		<!-- #################### -->
 		<div style="text-align: center; padding: 10px;" class="bg-danger" ng-show="invocation.state === 'error'">
 			<h3>Oops! Something went wrong during the execution of your workflow...</h3>
+			<p ng-hide="err" ng-click="err=true" style="cursor:pointer">Learn more</p>
+			<p ng-show="err">{{invocation.error_message}}</p>
 		</div>
 		<!-- #################### -->
 		<!-- WORKFLOW STEPS STATE    -->

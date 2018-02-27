@@ -11,22 +11,35 @@
 						<button class="btn btn-default" type="button" ng-click="controller.applySearchHandler()">
 							<span class="glyphicon glyphicon-search"></span>
 						</button>
+						<a ng-click="controller.removeAllFiltersHandler();" style="margin-left:20px; font-size: 14px; cursor: pointer;"><i class="fa fa-undo" style="margin-right:5px"></i>Reset search</a>
 					</span>
 				</div><!-- /input-group -->
-				<!--
+
 				<div class="currentSearchTagContainer">
-					<i class="tag" ng-repeat="item in filters">
+					<i style="font-size:10px">Tags:</i>
+					<i class="tag" ng-repeat="item in selectedTags">
 						<span class="tag-name ">
 							<i class="fa fa-times" ng-click="controller.removeFilterHandler(item);"></i>{{item}}
 						</span>
 					</i>
-				</div> -->
+				</div>
 			</div>
-			<div class="col-sm-4" style="padding-top: 8px;">
-				Popular tags:
-				<span ng-repeat="item in tags | orderBy:'-times' | limitTo: 4" style="font-size:10px;cursor:pointer;" ng-click="controller.filterByTag(item.name);">
-					<i class="tag {{item.color}}">{{item.times}}</i><i> {{item.name}} </i>
-				</span>
+			<div class="tag-select-container col-sm-4" ng-mouseover="showTags=true" ng-mouseleave="showTags=false">
+					<div class="tag-select-button">
+						<i class="fa fa-tags" style="padding-right:5px;"></i>| Add a tag</div>
+					<div ng-show="showTags" class="tag-select-panel">
+						<input type="text" placeholder="Search.." ng-model="tagKey">
+						<div class="tag-select-list">
+							<i ng-show="isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
+								<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading tags...
+							</i>
+							<div ng-repeat="item in tags | orderBy:'-times' | limitTo: tagFilterLimit : tagFilterBegin | filter:controller.tagSearch" ng-click="controller.filterByTag(item.name);">
+								<i class="tag {{item.color}}">{{item.times}}</i><i> {{item.name}} </i>
+							</div>
+						</div>
+						<span ng-click="tagFilterBegin = tagFilterBegin - tagFilterLimit" ng-show="tagFilterBegin > 0"><< Previous</span>
+						<span ng-click="tagFilterBegin = tagFilterBegin + tagFilterLimit" ng-hide="tagFilterLimit > tags.length || tags.length <= tagFilterBegin + tagFilterLimit" style="float:right;">Next >></span>
+					</div>
 			</div>
 		</div>
 	</div>
@@ -52,6 +65,9 @@
 			</ul>
 			<i ng-show="isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
 				<i class="fa fa-spinner fa-pulse fa-fw"></i> Loading workflows...
+			</i>
+			<i ng-show="!isLoading && filters==['subworkflow']">
+				Showing results for {{ displaySearchWords }}
 			</i>
 			<i ng-show="!isLoading" class="ng-binding" style="line-height: 30px;font-size: 15px;color: #777;margin-left: 15px;">
 				Found {{filteredWorkflows}} workflows

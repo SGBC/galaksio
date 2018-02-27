@@ -28,6 +28,7 @@
 	app.factory("WorkflowList", ['$rootScope', function($rootScope) {
 		var workflows = {};
 		var tags = [];
+		var selectedTags = [];
 		var filters = [];
 		var tagColors = ['yellow', 'green', 'red', 'blue', 'purple', 'pink', 'yellow2', 'green2', 'red2', 'blue2', 'purple2', 'pink2']
 		var old = new Date(0);
@@ -111,6 +112,24 @@
 
 				tags.push({name: "All", times: _workflows.length})
 
+				return this;
+			},
+			selectTag: function(tag){
+				selectedTags.push(tag);
+				return this;
+			},
+			deselectTag: function(tag){
+				var pos = selectedTags.indexOf(tag);
+				if(pos !== -1){
+					selectedTags.splice(pos,1);
+				}
+				return this;
+			},
+			getSelectedTags: function(){
+				return selectedTags;
+			},
+			removeAllSelectedTags(){
+				selectedTags = [];
 				return this;
 			},
 			getFilters: function() {

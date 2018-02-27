@@ -380,6 +380,7 @@
 						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
+						$scope.input.value = inputValue;
 						// Hide Conditional
 						/*
 						try {
@@ -390,7 +391,7 @@
 						} catch (e) {
 							model.value = inputValue;
 						}
-
+						/*
 						//TODO: REMOVE THE NAME PROPERTY? VALUES ARE BEING REMOVED WHEN EXPANDING TOOLS
 						template=
 						'<label>{{input.test_param.label || input.title}}</label>' +

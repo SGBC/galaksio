@@ -227,7 +227,6 @@
 
 		this.getDownloadLink = function(dataset_url){
 			if(dataset_url === undefined){
-				debugger
 				return "";
 			}
 			var fullpath = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
@@ -536,7 +535,9 @@
 			$scope.invocation.workflow_id = $scope.workflow.id;
 
 			//SET THE REQUEST DATA (history id, parameters,...)
+			// Oskar - added workflow_id - Let's see if that changes anything.
 			var requestData = {
+				workflow_id: $scope.workflow.id,
 				batch: true,
 				history: "hist_id=" + Cookies.get("current-history"),
 				new_history_name : null,
@@ -561,7 +562,9 @@
 					var inputs = $scope.params[i].params;
 					var pattern = /input[0-9]*$/;
 					for(var j in inputs){
-						if(!pattern.test(inputs[j].name)){
+						if(!pattern.test(inputs[j].name) && inputs[j].type == "conditional"){
+							params[inputs[j].name.split("|")[0]] = inputs[j].value;
+						} else if (!pattern.test(inputs[j].name)) {
 							params[inputs[j].name] = inputs[j].value;
 						}
 					}
@@ -569,6 +572,7 @@
 			}
 			WorkflowInvocationList.addInvocation($scope.invocation);
 			$rootScope.$broadcast(APP_EVENTS.updatedInvocations);
+			console.log("scope.params",$scope.params)
 			console.log("requestData",requestData);
 			//SHOW STATE MESSAGE FEW SECONDS BEFORE SEND THE REQUEST
 			$timeout( function(){
@@ -597,6 +601,7 @@
 					function errorCallback(response){
 						$scope.invocation.state = "error";
 						$scope.invocation.state_text = "Failed.";
+						$scope.invocation.error_message = "Error " + response.status + " : " + response.statusText + ". " + Object.keys(response.data.err_msg) + " : " + Object.values(response.data.err_msg);
 					}
 				);
 			},
@@ -613,32 +618,33 @@
 			return;
 		};
 
+		// Download report button - Work in progress
 		this.downloadInvocationReportHandler = function(format){
-			// if(!format){
-			// 	format="pdf";
-			// }
-			//
-			// $http($rootScope.getHttpRequestConfig("POST","workflow-report", {
-			// 	data: {
-			// 		'format' : format,
-			// 		'workflow' : $scope.workflow,
-			// 		'invocation' : $scope.invocation
-			// 	}
-			// })).then(
-			// 	function successCallback(response){
-			// 		var file_path = response.data.path;
-			// 		$window.open(file_path, "Report");
-			// 	},
-			// 	function errorCallback(response){
-			// 		debugger;
-			// 		var message = "Failed while retrieving the workflow's report.";
-			// 		$dialogs.showErrorDialog(message, {
-			// 			logMessage : message + " at WorkflowRunController:downloadInvocationReport."
-			// 		});
-			// 		console.error(response.data);
-			// 		$scope.loadingComplete = true;
-			// 	}
-			// );
+/*			 if(!format){
+			 	format="pdf";
+			 }
+
+			 $http($rootScope.getHttpRequestConfig("POST","workflow-report", {
+			 	data: {
+			 		'format' : format,
+			 		'workflow' : $scope.workflow,
+			 		'invocation' : $scope.invocation
+			 	}
+			 })).then(
+			 	function successCallback(response){
+			 		var file_path = response.data.path;
+			 		$window.open(file_path, "Report");
+			 	},
+			 	function errorCallback(response){
+			 		debugger;
+			 		var message = "Failed while retrieving the workflow's report.";
+			 		$dialogs.showErrorDialog(message, {
+			 			logMessage : message + " at WorkflowRunController:downloadInvocationReport."
+			 		});
+			 		console.error(response.data);
+			 		$scope.loadingComplete = true;
+			 	}
+			 );
 			$http($rootScope.getHttpRequestConfig("PUT","history-export", {
 				extra : Cookies.get("current-history")
 			})).then(
@@ -655,7 +661,7 @@
 					console.error(response.data);
 					$scope.loadingComplete = true;
 				}
-			);
+			); */
 		};
 
 		this.showInvocationDetailsButtonHandler = function(){

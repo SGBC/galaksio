@@ -256,24 +256,48 @@
 		* This function applies the filters when the user clicks on "Search"
 		*/
 		this.applySearchHandler = function() {
-			// Oskar - Added removeAllFilters to reset the search result.
-			$scope.filters = WorkflowList.removeAllFilters().getFilters();
+			$scope.filters = WorkflowList.removeAllFilters().getFilters().concat($scope.selectedTags);
 			var filters = arrayUnique($scope.filters.concat($scope.searchFor.split(" ")));
 			$scope.filters = WorkflowList.setFilters(filters).getFilters();
 		};
 
+		this.displaySearchWords = function(){
+			var searchWords = $scope.filters.filter(function(x){ return $scope.selectedTags.indexOf(x) < 0} );
+			return searchWords.join(" ");
+		};
+
 		this.filterByTag = function(tag){
-			if(tag !== "All"){
+			if(tag !== "All" && !$scope.filters.includes(tag)){
+				$scope.selectedTags = WorkflowList.selectTag(tag).getSelectedTags();
 				var filters = arrayUnique($scope.filters.concat(tag));
 				$scope.filters = WorkflowList.setFilters(filters).getFilters();
+			} else if(tag == "All"){
+				for (i in $scope.selectedTags){
+						$scope.filters = WorkflowList.removeFilter($scope.selectedTags[i]).getFilters();
+				}
+				$scope.selectedTags = WorkflowList.removeAllSelectedTags().getSelectedTags();
+			} else if ( $scope.filters.includes(tag) ){
+				$scope.selectedTags = WorkflowList.deselectTag(tag).getSelectedTags();
+				$scope.filters = WorkflowList.removeFilter(tag).getFilters();
+				//var filters = $scope.filters.splice($scope.filters.indexOf(tag),1);
 			}
+		}
+
+		this.tagSearch = function(value){
+			return value.name.toLowerCase().indexOf($scope.tagKey.toLowerCase()) >= 0;
 		}
 
 		/**
 		* This function remove a given filter when the user clicks at the "x" button
 		*/
 		this.removeFilterHandler = function(filter){
+			$scope.selectedTags = WorkflowList.deselectTag(filter).getSelectedTags();
 			$scope.filters = WorkflowList.removeFilter(filter).getFilters();
+		};
+
+		this.removeAllFiltersHandler = function(){
+				$scope.filters = WorkflowList.removeAllFilters().getFilters();
+				$scope.selectedTags = WorkflowList.removeAllSelectedTags().getSelectedTags();
 		};
 
 		this.showMoreWorkflowsHandler = function(){
@@ -299,8 +323,13 @@
 		//request the data everytime that the workflow list panel is displayed (data persistance).
 		$scope.workflows = WorkflowList.getWorkflows();
 		$scope.tags =  WorkflowList.getTags();
+		$scope.selectedTags = WorkflowList.getSelectedTags();
 		$scope.filters =  WorkflowList.getFilters();
 		$scope.filteredWorkflows = $scope.workflows.length;
+		$scope.displaySearchWords = this.displaySearchWords();
+		$scope.tagKey='';
+		$scope.tagFilterBegin = 0;
+		$scope.tagFilterLimit = 5; // The amount of tags displayed at tag search
 
 		//Display the workflows in batches
 		if(window.innerWidth > 1500){

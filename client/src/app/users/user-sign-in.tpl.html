@@ -8,7 +8,6 @@
 				<a href="{{GALAXY_SERVER_URL}}">{{GALAXY_SERVER_URL}}</a>
 			</code>
 			<p>Start a new session using your Galaxy user and password as usual, or create a new account.</p>
-			<p>You can find more information about user accounts <a href="http://galaksio.readthedocs.io/en/feature-doc/2_1_users">here</a></p>
 		</div>
 		<input name="email" type="email" class="form-control" ng-model="userInfo.email" placeholder="Email" required="" autofocus="" />
 		<span>
@@ -46,7 +45,13 @@
 			<span class="text-danger" ng-show="signForm.passconfirm.$error.pwmatch">Passwords are different.</span>
 		</span>
 		<div style="margin-top: 30px;">
-			<a href="javascript:void(0);" class="text-info" ng-show="isLogin" ng-click="isLogin=false">Create an account</a>
+
+			<!-- Oskar - Change Create new account to Galaxy link <a href="javascript:void(0);" class="text-info" ng-show="isLogin" ng-click="isLogin=false">Create an account</a> -->
+			<div style="margin-bottom: 20px">
+				<span>Don't have an account? No worries, register an account </span>
+				<a href="{{GALAXY_SERVER_URL}}" target="_blank" class="text-info" ng-show="isLogin">here</a>
+				<span>and come back here when you're done!</span>
+			</div>
 			<a href="javascript:void(0);" class="text-danger" ng-show="!isLogin" ng-click="isLogin=true">Cancel</a>
 			<button type="submit" class="btn btn-success btn-lg navbar-right" ng-disabled="signForm.$invalid">
 				<i class="fa fa-bolt fa-fw" ></i> Sign {{(isLogin)?"in":"up"}}
