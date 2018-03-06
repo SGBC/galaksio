@@ -601,7 +601,14 @@
 					function errorCallback(response){
 						$scope.invocation.state = "error";
 						$scope.invocation.state_text = "Failed.";
-						$scope.invocation.error_message = "Error " + response.status + " : " + response.statusText + ". " + Object.keys(response.data.err_msg) + " : " + Object.values(response.data.err_msg);
+						// Check if the error is caused by an old workflow
+						var err_msg = Object.values(response.data.err_msg);
+						var res = err_msg[0].match("No value found for .*\. Using default:");
+						$scope.invocation.value_missing = res? true :false;
+						$scope.invocation.workflow_url = $rootScope.GALAXY_SERVER_URL+"/workflow/display_by_id?id="+ $scope.workflow.id;
+						console.log($scope.invocation.value_missing, $scope.invocation.workflow_url);
+						var extra_msg = res? "The galaxy server report that a value is missing when running the tool. Please edit the workflow in Galaxy." : "";
+						$scope.invocation.error_message = extra_msg != "" ? extra_msg :  "Error " + response.status + " : " + response.statusText + ". " + Object.keys(response.data.err_msg) + " : " + Object.values(response.data.err_msg) + extra_msg;
 					}
 				);
 			},

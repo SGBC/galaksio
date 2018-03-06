@@ -191,6 +191,7 @@
 			<h3>Oops! Something went wrong during the execution of your workflow...</h3>
 			<p ng-hide="err" ng-click="err=true" style="cursor:pointer">Learn more</p>
 			<p ng-show="err">{{invocation.error_message}}</p>
+			<a ng-show="err && invocation.value_missing == true" ng-href="{{invocation.workflow_url}}" target="_blank">Go to the Galaxy Workflow</a>
 		</div>
 		<!-- #################### -->
 		<!-- WORKFLOW STEPS STATE    -->
