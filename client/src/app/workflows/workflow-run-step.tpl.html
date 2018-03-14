@@ -3,7 +3,7 @@
 <div class="panel panel-default stepBox" ng-controller="WorkflowRunStepController as controller">
   <div class="panel-heading">
     <b>Step {{step.id}} :</b> {{step.name}}
-    <a class="collapseStepTool" ng-click="controller.toogleCollapseHandler($event)">
+    <a class="collapseStepTool" ng-click="controller.toggleCollapseHandler($event)">
 			<i ng-show="collapsed" class="fa fa-plus-square-o" aria-hidden="true"></i>
 			<i ng-show="!collapsed" class="fa fa-minus-square-o" aria-hidden="true"></i>
 		</a>

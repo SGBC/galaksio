@@ -64,7 +64,7 @@
 			template:
 			'<div class="panel panel-default stepBox" ng-controller="WorkflowRunStepController as controller">' +
 			'  <div class="panel-heading">'+
-			'    <a class="clickable collapseStepTool" ng-click="controller.toogleCollapseHandler($event)"><i class="fa" ng-class="(collapsed !== false)?\'fa-plus-square-o\':\'fa-minus-square-o\'" aria-hidden="true"></i></a>' +
+			'    <a class="clickable collapseStepTool" ng-click="controller.toggleCollapseHandler($event)"><i class="fa" ng-class="(collapsed !== false)?\'fa-plus-square-o\':\'fa-minus-square-o\'" aria-hidden="true"></i></a>' +
 			'    <b>Step {{step.id + 1}} :</b> {{step.name}} {{step.description}}' +
 			'    <i style="color: #e61669;">Expand for details</i>' +
 			'  </div>' +
@@ -199,6 +199,7 @@
 					}
 				}
 
+
 				var template;
 				if(model.multiple){
 					template =
@@ -210,11 +211,25 @@
 					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>' +
 					'</div>';
 				}else{
+					/*
+					 * Oskar -
+					 * Might wan't to clean this up a bit. What it does is check the chosen Step Value and sets input.value to the array in input.options which contains the Step Value
+					 * This is done so that the Select shows the correct default value.
+					 */
+					var nInputValue = false;
+					var tool_state = JSON.parse($scope.step.tool_state);
+					if(tool_state[model.name]){
+						if (typeof tool_state[model.name] === 'string' || tool_state[model.name] instanceof String){
+							nInputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
+							nInputValue = nInputValue === "" ? false : nInputValue;
+							$scope.input.value = nInputValue;
+						}
+					}
 					template =
 					'<select class="form-control" name="{{input.name}}"' +
 					'        ng-model="input.value"' +
-					'        ng-required="!(input.optional===true)" >'+
-					'   <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1]=== input.value">{{option[0]}}</option>' +
+					'        ng-required="!(input.optional===true)">'+
+					'        <option ng-repeat="option in input.options" value="{{option[1]}}" ng-selected="option[1] == input.value">{{option[0]}}</option>'+
 					"</select>"+
 					'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 				}
@@ -231,11 +246,14 @@
 				var model = $scope.input;
 				var template = "";
 				var inputValue = "";
+				var emptyInputValue = false;
+
 				try{
 					var tool_state = JSON.parse($scope.step.tool_state);
 					if(tool_state[model.name]){
 						if (typeof tool_state[model.name] === 'string' || tool_state[model.name] instanceof String){
 							inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
+							emptyInputValue = inputValue === "" ? true : false;
 						}else{
 							inputValue = tool_state[model.name];
 						}
@@ -247,16 +265,19 @@
 						}
 					}else{
 						var errorMessage = "No values for '" + model.name + "' in 'step.tool_state' at stepInput directive.";
-						if(model.value !== undefined){
+						if(model.value !== undefined && model.value !== null ){
 							errorMessage += " Using default value: " + model.value;
 							inputValue = model.value;
-						} else if(model.default !== undefined){
+						} else if(model.default !== undefined && model.default !== null ){
 							errorMessage += " Using default value: " + model.default;
 							inputValue = model.default;
-						} else if(model.default_value !== undefined){
+						} else if(model.default_value !== undefined && model.default_value !== null){
 							errorMessage += " Using default value: " + model.default_value;
 							inputValue = model.default_value;
-						}else{
+						} else if (model.type == "conditional" && model.test_param.value !== undefined && model.test_param.value !== null){
+							errorMessage += " Using default value: " + model.default_value;
+							inputValue = model.test_param.value;
+						} else {
 							errorMessage += " No default value was found.";
 						}
 						console.error(errorMessage);
@@ -286,15 +307,18 @@
 				//  + repeat
 				//  + conditional
 				try{
+					console.log("Model name: " + model.name);
+					console.log("inputValue: " + inputValue);
+					console.log(["model",model]);
+					console.log(["step",$scope.step]);
 					//TEXT, NUMBER... INPUTS
 					if(model.type === "text"){
-						model.value = inputValue;
 						template+=
 						'<label>{{input.label || input.title}}</label>' +
 						((model.help)?'<i class="fa fa-question-circle-o" uib-tooltip="{{input.help}}"></i>':'') +
 						'<input type="text" name="{{input.name}}" ' +
 						'       ng-model="input.value"' +
-						'       ng-required="!(input.optional)" >' +
+						'       ng-required="' + emptyInputValue + '? false : !(input.optional)" >' +
 						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 					}else if(model.type === "integer"){
 						model.value = Number.parseInt(inputValue);
@@ -356,6 +380,9 @@
 						'<i class="fa fa-exclamation-circle text-danger invalid-value-icon" uib-tooltip="Invalid value"></i>';
 						//CHECKBOX AND RADIOBUTTONS
 					}else if(model.type === "conditional"){
+						$scope.input.value = inputValue;
+						// Hide Conditional
+						/*
 						try {
 							if (typeof inputValue === 'string' || inputValue instanceof String){
 								inputValue = JSON.parse(inputValue);
@@ -364,7 +391,7 @@
 						} catch (e) {
 							model.value = inputValue;
 						}
-
+						/*
 						//TODO: REMOVE THE NAME PROPERTY? VALUES ARE BEING REMOVED WHEN EXPANDING TOOLS
 						template=
 						'<label>{{input.test_param.label || input.title}}</label>' +
@@ -386,6 +413,7 @@
 						'<div class="form-subsection" ng-repeat="option in input.cases" ng-if="input.value === option.value">' +
 						'	<step-input ng-repeat="input in option.inputs"></step-input>'+
 						'</div>';
+						*/
 					}else if(model.type === "boolean"){
 						model.value = (inputValue === "true");
 						template+=
@@ -399,7 +427,7 @@
 						'<input type="checkbox" style="display:none;" name="{{input.name}}" ng-model="input.value">';
 						//DISPLAY
 					}else if(model.type === "data"){
-						if(inputValue=== null || inputValue=== undefined ){
+						if(inputValue === null || inputValue=== undefined ){
 							throw 'Unknown value for data type "' + inputValue + '" : ' + JSON.stringify(model);
 						}else if(inputValue.value !== undefined ){
 							debugger
