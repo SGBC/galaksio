@@ -7,8 +7,8 @@
 FROM httpd
 
 # File Author / Maintainer
-Author Rafael Hernandez <https://github.com/fikipollo>
-Maintainer Tomas Klingström
+MAINTAINER Rafael Hernandez <https://github.com/fikipollo>
+
 
 ################## BEGIN INSTALLATION ######################
 #INSTALL THE DEPENDENCIES
