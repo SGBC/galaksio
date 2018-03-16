@@ -66,7 +66,7 @@
 			</p>
 			<div class="well invalidFormMessage" ng-if="invocation.current_step === 3 && !invocation.valid">
 				<b>Some of the required fields are not valid or are empty. Please check your form and try again.</b>
-				<p>Unvalid fields:</p>
+				<p>Invalid fields:</p>
 				<ul>
 					<li ng-repeat="field in erroneousFields">{{field}}</li>
 				</ul>
@@ -191,6 +191,7 @@
 			<h3>Oops! Something went wrong during the execution of your workflow...</h3>
 			<p ng-hide="err" ng-click="err=true" style="cursor:pointer">Learn more</p>
 			<p ng-show="err">{{invocation.error_message}}</p>
+			<a ng-show="err && invocation.value_missing == true" href="{{invocation.workflow_url}}" target="_blank">Go to the Galaxy Workflow</a>
 		</div>
 		<!-- #################### -->
 		<!-- WORKFLOW STEPS STATE    -->
