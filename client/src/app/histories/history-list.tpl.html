@@ -2,29 +2,36 @@
 	<div class="col-lg-6"  >
 	<!-- Oskar - Removed since affix is not working correctly <div affix>-->
 	<div>
-		<div class="panel panel-container" ng-hide="showHelp===false" >
+		<div class="panel panel-container" ng-hide="showHelp===false">
 			<h3>About histories</h3>
 			<p class="description">
 				When data is uploaded from your computer or analysis is done on existing data using Galaxy, each output from those steps generates a dataset. These datasets (and the output datasets from later analysis on them) are stored by Galaxy in <b>Histories</b>.
 			</p>
 			<a href="https://wiki.galaxyproject.org/Histories" target="_blank"><i class="fa fa-question-circle"></i> Learn more about histories</a>
 		</div>
-		<div class="panel panel-container" >
+		<div class="panel panel-container">
 			<div>
-				<a class="btn btn-default btn-sm pull-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
-					<i class="fa fa-refresh fa-fw" ></i> Refresh
-				</a>
-				<a class="btn btn-primary btn-sm pull-right" style="margin-right:10px;" ng-click="controller.createNewHistory();">
-					<i class="fa fa-plus fa-fw" ></i> New history
-				</a>
-				<p class="text-info" style="line-height: 30px; "><i class="fa fa-info-circle"></i> Click on one history name to get more details.</p>
+					<a class="btn btn-default btn-sm pull-right" ng-click="controller.retrieveAllHistoriesList(true, false, controller.retrieveCurrentHistoryData);">
+						<i class="fa fa-refresh fa-fw" ></i> Refresh
+					</a>
+					<a class="btn btn-primary btn-sm pull-right" style="margin-right:10px;" ng-click="controller.createNewHistory();">
+						<i class="fa fa-plus fa-fw" ></i> New history
+					</a>
+				<a class="btn btn-success btn-sm pull-right" style="margin-right:10px;" ng-hide="displayedHistory === currentHistory" ng-click="controller.setCurrentHistory(displayedHistory)">
+						<i class="fa fa-exchange fa-fw" ></i> Switch to this history
+					</a>
+
+					<p class="text-info" style="line-height: 30px; "><i class="fa fa-info-circle"></i> Click on one history name to get more details.</p>
+
+
 			</div>
+
 			<!-- Oskar - added search -->
 			<div style="width: 100%;margin-bottom: 4px;">
 				<input type="text" class="form-control" placeholder="Search history" ng-model="searchFor">
 			</div>
-
-			<table class="table historyListTable">
+			<div style="overflow-y:scroll; max-height:600px">
+				<table class="table historyListTable">
 				<thead>
 					<tr style="text-align:center;">
 						<th>History name</th>
@@ -55,15 +62,13 @@
 					</tr>
 				</tbody>
 			</table>
+			</div>
 		</div>
 		</div>
 	</div>
 	<div class="col-lg-6" ng-show="displayedHistory !== undefined">
 		<div class="panel panel-container">
-			<a class="btn btn-success btn-sm navbar-right" ng-hide="displayedHistory === currentHistory" ng-click="controller.setCurrentHistory(displayedHistory)">
-				<i class="fa fa-exchange fa-fw" ></i> Switch to this history
-			</a>
-			<a class="btn btn-primary btn-sm navbar-right" ng-hide="displayedHistory !== currentHistory || active !== 0" ng-click="controller.showUploadDatasetsDialog();">
+		<a class="btn btn-primary btn-sm navbar-right" ng-hide="displayedHistory !== currentHistory || active !== 0" ng-click="controller.showUploadDatasetsDialog();">
 				<i class="fa fa-upload fa-fw" ></i> Upload new files
 			</a>
 			<a class="btn btn-primary btn-sm navbar-right" ng-hide="displayedHistory !== currentHistory || active !== 1" ng-click="controller.showUploadDatasetsDialog(3);">
