@@ -253,7 +253,7 @@
 					if(tool_state[model.name]){
 						if (typeof tool_state[model.name] === 'string' || tool_state[model.name] instanceof String){
 							inputValue = tool_state[model.name].replace(/(^\"|\"$)/g,"");
-							emptyInputValue = inputValue === "" ? true : false;
+							emptyInputValue = inputValue === "" || (typeof model.default_value !== "undefined" && model.default_value == "") ? true : false;
 						}else{
 							inputValue = tool_state[model.name];
 						}

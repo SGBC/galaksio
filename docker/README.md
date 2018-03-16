@@ -1,6 +1,6 @@
 Galaksio Docker Image
 ===================
-The [Galaksio](https://github.com/fikipollo/galaksio) [Docker](http://www.docker.io) Image is an easy distributable full-fledged Galaksio installation.
+The [Galaksio](https://github.com/tklingstrom/galaksio) [Docker](http://www.docker.io) Image is an easy distributable full-fledged Galaksio installation.
 
 Galaksio is a web application that simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.org/).
 Galaksio has been developed as part of the [B3Africa Project](http://www.b3africa.org/), which has received funding from the European Union’s Horizon 2020 research and innovation programme.
@@ -10,7 +10,7 @@ Galaksio has been developed as part of the [B3Africa Project](http://www.b3afric
 
 
 # Build the image
-The docker image for Galaksio can be found in the [docker hub](https://hub.docker.com/r/fikipollo/galaksio/). However, you can rebuild is manually by running **docker build**.
+The docker image for Galaksio can be found in the [docker hub](https://hub.docker.com/r/tklingstrom/galaksio/). However, you can rebuild is manually by running **docker build**.
 
 ```sh
 sudo docker build -t galaksio .
@@ -24,7 +24,7 @@ The recommended way for running your Galaksio docker is using the provided **doc
 This procedure starts Galaksio in a standard virtualised environment.
 
 - Install [docker](https://docs.docker.com/engine/installation/) for your system if not previously done.
-- `docker run -it -p 8081:80 fikipollo/galaksio`
+- `docker run -it -p 8081:80 tklingstrom/galaksio`
 - Galaksio will be available at [http://localhost:8081/](http://localhost:8081/)
 
 ## Using the docker-compose file
@@ -42,8 +42,10 @@ In case you do not have the Container stored locally, docker will download it fo
 You can run manually your containers using the following commands:
 
 ```sh
-sudo docker run --name galaksio -v /your/data/location/galaksio-data:/usr/local/apache2/htdocs/server/conf/ -e ADMIN_ACCOUNTS=youradminuser -e GALAXY_SERVER=https://usegalaxy.org -e GALAXY_SERVER_URL=https://usegalaxy.org -p 8081:80 -d fikipollo/galaksio
+sudo docker run --name galaksio -v /your/data/location/galaksio-data:/usr/local/apache2/htdocs/server/conf/ -e ADMIN_ACCOUNTS=youradminuser -e GALAXY_SERVER=https://usegalaxy.org -e GALAXY_SERVER_URL=https://usegalaxy.org -p 8081:80 -d tklingstrom/galaksio
 ```
+
+Please note that the name is likely to change as we move to an organizatio repo at Dockerhub hosted by SLU Global Bioinformatics Centre
 
 In case you do not have the Container stored locally, docker will download it for you.
 
@@ -53,7 +55,7 @@ A short description of the parameters would be:
 - `-p 8081:80` will make the port 80 (inside of the container) available on port 8081 on your host.
     Inside the container an Apache webserver is running on port 80 and that port can be bound to a local port on your host computer.
 
-- `fikipollo/galaksio` is the Image name, which can be found in the [docker hub](https://hub.docker.com/r/fikipollo/galaksio/).
+- `tklingstrom/galaksio` is the Image name, which can be found in the [docker hub](https://hub.docker.com/r/tklingstrom/galaksio/). Please note that the name is likely to change as we move to an organizatio repo at Dockerhub hosted by SLU Global Bioinformatics Centre.
 
 - `-d` will start the docker container in daemon mode.
 
