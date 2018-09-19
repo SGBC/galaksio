@@ -19,7 +19,7 @@ pip install requests bioblend flask fpdf
 
 Download and extract the [latest version](https://github.com/fikipollo/galaksio.git) of Galaksio from the GitHub repository.
 ```bash
-wget https://github.com/fikipollo/galaksio/archive/master.zip
+wget https://github.com/sgbc/galaksio/archive/master.zip
 unzip galaksio-latest.zip
 ```
 
