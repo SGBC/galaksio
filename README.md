@@ -17,9 +17,9 @@ apt-get install -y python-pip unzip wget
 pip install requests bioblend flask fpdf
 ```
 
-Download and extract the [latest version](https://github.com/OskarSLU/galaksio) of Galaksio from the GitHub repository.
+Download and extract the [latest version](https://github.com/fikipollo/galaksio.git) of Galaksio from the GitHub repository.
 ```bash
-wget https://github.com/OskarSLU/galaksio/archive/master.zip
+wget https://github.com/fikipollo/galaksio/archive/master.zip
 unzip galaksio-latest.zip
 ```
 
@@ -39,7 +39,7 @@ The docker image for Galaksio can be found in the [docker hub](https://hub.docke
 
 ## About
 Galaksio has been developed by the [SLU Global Bioinformatics Centre](http://sgbc.slu.se/) at the Sveriges lantbruksuniversitet (Swedish University of Agricultural Sciences).
-This project is part of the B3Africa Project [http://www.b3africa.org/](http://www.b3africa.org/), which has received funding from the European Union’s Horizon 2020 research and innovation programme.
+This project is part of the B3Africa Project [http://www.b3africa.org/](http://www.b3africa.org/), which has received funding under grant agreement nr 654404 from the European Union’s Horizon 2020 research and innovation programme.
 **Galaksio** application is distributed under **GNU General Public License, Version 3.**.
 
 <img style="display:block; margin:auto;" src="https://user-images.githubusercontent.com/11427394/30154858-76cd4d9a-93bb-11e7-8834-c2d3dbf95ba3.png" title="Logos"/>
