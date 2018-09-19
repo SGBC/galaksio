@@ -7,7 +7,7 @@
 FROM httpd
 
 # File Author / Maintainer
-MAINTAINER Rafael Hernandez <https://github.com/fikipollo>
+MAINTAINER Tomas Klingström <https://github.com/tklingstrom>
 
 
 ################## BEGIN INSTALLATION ######################
@@ -19,7 +19,7 @@ RUN apt-get update  \
     && pip install fpdf
 
 #DOWNLOAD AND INSTALL THE APP CODE
-RUN wget -O /tmp/galaksio.zip https://github.com/fikipollo/galaksio/archive/master.zip \
+RUN wget -O /tmp/galaksio.zip https://github.com/sgbc/galaksio/archive/master.zip \
 #RUN wget -O /tmp/galaksio.zip https://github.com/OskarSLU/galaksio/archive/v0.3.zip \
     && unzip /tmp/galaksio.zip -d /tmp/galaksio \
     && mv /tmp/galaksio/*/* /usr/local/apache2/htdocs/ \
