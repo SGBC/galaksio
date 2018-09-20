@@ -148,7 +148,7 @@
 				case "workflow-report":
 				return myAppConfig.GALAKSIO_SERVER + "other/workflows/report/";
 				case "invocation-state":
-				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1];
+				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1] +"?legacy_job_state=true";
 				case "invocation-result":
 				return myAppConfig.GALAKSIO_SERVER + "api/workflows/"+ extra[0] + "/invocations/" + extra[1] + "/steps/" + extra[2];
 				case "tools-info":
