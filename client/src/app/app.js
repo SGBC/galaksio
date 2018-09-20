@@ -14,7 +14,7 @@
 	]);
 
 	app.constant('myAppConfig', {
-		VERSION: '0.34',
+		VERSION: '0.36',
 		GALAKSIO_SERVER : "/"  + getPathname()
 	});
 
