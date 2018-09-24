@@ -15,7 +15,7 @@ MAINTAINER Tomas Klingström <https://github.com/tklingstrom>
 RUN apt-get update  \
     && apt-get install --no-install-recommends -y wget libapache2-mod-wsgi python-flask python-requests unzip python-pip \
     && apt-get clean \
-    && pip install bioblend \
+    && pip install bioblend==0.10.0 \
     && pip install fpdf
 
 #DOWNLOAD AND INSTALL THE APP CODE
