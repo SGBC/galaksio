@@ -9,6 +9,8 @@ Galaksio provides a simple but complete UI for using Galaxy for biologists that 
 Using the application, users can run any workflow implemented in the associated Galaxy instance in just few *clicks*.
 Besides, the rich user interface allows customizing the execution, uploading the necessary files, downloading the results, and executing several workflows simultaneously in the background.
 
+![](./docs/1_1_galaxy/galaksio_screenshot.png)
+
 ### Quick start
 First install all dependencies. For example, the instructions for an Ubuntu 16.04 server would be:
 ```bash
