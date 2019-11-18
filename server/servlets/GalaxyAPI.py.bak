@@ -60,7 +60,7 @@ def generateWorkflowReport(request, settings):
     html_code+= addTag("h2", "Steps details", "font-size: 30px; color:red")
     html_code+= openNewSection("div", "font-size: 16px;", to_close_tags)
 
-    for step in sorted(list(workflow_steps.values()), key=lambda k: k['id']):
+    for step in sorted(workflow_steps.values(), key=lambda k: k['id']):
         html_code += openNewSection("div", "font-size: 14px;", to_close_tags)
         html_code += addTag("h3", "Step" + str(step.get("id")) + ". " + step.get("name"), "font-size: 30px; color:red")
         html_code += addTag("b", "Inputs")

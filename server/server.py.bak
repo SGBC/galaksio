@@ -26,8 +26,8 @@ import logging
 from bioblend.galaxy import GalaxyInstance
 from os import remove as removeFile, path as osPath
 
-from . import servlets.AdminFunctions as AdminFunctions
-from . import servlets.GalaxyAPI as GalaxyAPI
+import servlets.AdminFunctions as AdminFunctions
+import servlets.GalaxyAPI as GalaxyAPI
 
 from flask import Flask, request, send_from_directory, request, jsonify, json
 from flask import Response as flask_response
@@ -155,7 +155,7 @@ class Application(object):
                     method=method,
                     url=self.settings.GALAXY_SERVER + service,
                     params= dict(request.args),
-                    headers={'content-type': 'application/x-www-form-urlencoded'},
+                    headers={u'content-type': u'application/x-www-form-urlencoded'},
                     data=data,
                     auth=auth,
                     cookies=request.cookies,
@@ -177,7 +177,7 @@ class Application(object):
 
             headers = []
             excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
-            headers = [(name, value) for (name, value) in list(resp.raw.headers.items()) if name.lower() not in excluded_headers]
+            headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
 
             self.log("Done! Returning response...")
 
@@ -252,7 +252,7 @@ class Application(object):
             return AdminFunctions.sendErrorReport(request, Response()).getResponse()
 
     def iterform(self, multidict):
-        for key in list(multidict.keys()):
+        for key in multidict.keys():
             for value in multidict.getlist(key):
                 yield (key.encode("utf8"), value.encode("utf8"))
 

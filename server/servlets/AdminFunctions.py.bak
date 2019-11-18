@@ -42,9 +42,9 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     #STEP 2. READ NEW SETTINGS
     newValues = json.loads(request.data)
 
-    import configparser
+    import ConfigParser
     import base64
-    config = configparser.RawConfigParser()
+    config = ConfigParser.RawConfigParser()
 
     prev_settings = readConfigurationFile()
 
@@ -84,14 +84,14 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     return response
 
 def readConfigurationFile(isFirstLaunch=False, isDocker=False):
-    import configparser
+    import ConfigParser
     import os
 
     class Settings(object):
         pass
     settings= Settings()
 
-    config = configparser.RawConfigParser()
+    config = ConfigParser.RawConfigParser()
     config.read(os.path.dirname(os.path.realpath(__file__)) + "/../conf/server.cfg")
 
     settings.SERVER_HOST_NAME = config.get('server_settings', 'SERVER_HOST_NAME')
@@ -180,7 +180,7 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
 
 def storeTmpFiles(files, tmp_dir):
     tmp_files = []
-    for file_id in list(files.keys()):
+    for file_id in files.keys():
         file = files[file_id]
         tmp_path = os.path.join(tmp_dir, file.filename)
         file.save(tmp_path)
