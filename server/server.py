@@ -20,17 +20,23 @@
 #
 """
 
-import requests
-import re
 import logging
+import re
+from os import remove as removeFile
+
+import requests
 from bioblend.galaxy import GalaxyInstance
-from os import remove as removeFile, path as osPath
+from flask import (
+    Flask,
+    json,
+    jsonify,
+    request,
+    Response as flask_response,
+    send_from_directory,
+)
 
-from . import servlets.AdminFunctions as AdminFunctions
-from . import servlets.GalaxyAPI as GalaxyAPI
-
-from flask import Flask, request, send_from_directory, request, jsonify, json
-from flask import Response as flask_response
+from .servlets import AdminFunctions
+from .servlets import GalaxyAPI
 
 HTML_REGEX = re.compile(r'((?:src|action|href)=["\'])/')
 JQUERY_REGEX = re.compile(r'(\$\.(?:get|post)\(["\'])/')
@@ -39,14 +45,15 @@ CSS_REGEX = re.compile(r'(url\(["\']?)/')
 
 REGEXES = [HTML_REGEX, JQUERY_REGEX, JS_LOCATION_REGEX, CSS_REGEX]
 
+
 class Application(object):
-    #******************************************************************************************************************
+    # ******************************************************************************************************************
     # CONSTRUCTORS
-    #******************************************************************************************************************
+    # ******************************************************************************************************************
     def __init__(self):
-        #*******************************************************************************************
-        #* SERVLET DEFINITION
-        #*******************************************************************************************
+        # *******************************************************************************************
+        # SERVLET DEFINITION
+        # *******************************************************************************************
         self.app = Flask(__name__)
         self.isFirstLaunch = False
         self.isDocker = False
@@ -55,7 +62,7 @@ class Application(object):
 
         self.log("Starting application...")
 
-        #******************************************************************************************
+        # ******************************************************************************************
         #     ______ _____ _      ______  _____
         #   |  ____|_   _| |    |  ____|/ ____|
         #   | |__    | | | |    | |__  | (___
@@ -64,7 +71,7 @@ class Application(object):
         #   |_|    |_____|______|______|_____/
         #
         #  COMMON STEPS HANDLERS
-        #*******************************************************************************************
+        # *******************************************************************************************
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/')
         def main():
             if self.isFirstLaunch:
@@ -72,9 +79,9 @@ class Application(object):
                 return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', 'install.html')
             else:
                 return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', 'index.html')
-        ##*******************************************************************************************
-        ##* GET FILE
-        ##*******************************************************************************************
+        # *******************************************************************************************
+        #  GET FILE
+        # *******************************************************************************************
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/<path:filename>')
         def get_static(filename):
             return send_from_directory(self.settings.ROOT_DIRECTORY + 'client/src/', filename)
@@ -83,8 +90,7 @@ class Application(object):
         def get_tmp_static(filename):
             return send_from_directory(self.settings.TMP_DIRECTORY, filename)
 
-
-        #******************************************************************************************
+        # ******************************************************************************************
         #     _____          _               __   ____     __           _____ _____
         #    / ____|   /\   | |        /\    \ \ / /\ \   / /     /\   |  __ \_   _|
         #   | |  __   /  \  | |       /  \    \ V /  \ \_/ /     /  \  | |__) || |
@@ -92,9 +98,9 @@ class Application(object):
         #   | |__| |/ ____ \| |____ / ____ \  / . \    | |     / ____ \| |    _| |_
         #    \_____/_/    \_\______/_/    \_\/_/ \_\   |_|    /_/    \_\_|   |_____|
         #
-        #******************************************************************************************
+        # ******************************************************************************************
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/api/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE', 'PUT'])
-        def forward_request(service, method = None):
+        def forward_request(service, method=None):
             # STEP 1. Read requests auth params
             auth = None
             if request.authorization is not None and len(request.authorization) > 0:
@@ -102,7 +108,7 @@ class Application(object):
                 for i in request.authorization:
                     auth = auth + (request.authorization[i],)
 
-            if method == None:
+            if method is None:
                 method = request.method
 
             if service == "upload/":
@@ -154,7 +160,7 @@ class Application(object):
                 resp = requests.request(
                     method=method,
                     url=self.settings.GALAXY_SERVER + service,
-                    params= dict(request.args),
+                    params=dict(request.args),
                     headers={'content-type': 'application/x-www-form-urlencoded'},
                     data=data,
                     auth=auth,
@@ -167,9 +173,9 @@ class Application(object):
 
                 # STEP 2. Generate the new requests
                 resp = requests.request(
-                    method= method,
-                    url= self.settings.GALAXY_SERVER + service,
-                    params= dict(request.args),
+                    method=method,
+                    url=self.settings.GALAXY_SERVER + service,
+                    params=dict(request.args),
                     data=request.get_data(),
                     auth=auth,
                     cookies=request.cookies,
@@ -185,13 +191,13 @@ class Application(object):
             return response
 
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/other/<path:service>', methods=['OPTIONS', 'POST', 'GET', 'DELETE', 'PUT'])
-        def other_request(service, method = None):
+        def other_request(service, method=None):
             # STEP 1. Read requests auth params
             if service == 'workflows/report/':
                 file_path = GalaxyAPI.generateWorkflowReport(request, self.settings)
                 return jsonify({'success': True, 'path': file_path})
             return ""
-        #******************************************************************************************
+        # ******************************************************************************************
         #             _____  __  __ _____ _   _
         #       /\   |  __ \|  \/  |_   _| \ | |
         #      /  \  | |  | | \  / | | | |  \| |
@@ -199,7 +205,7 @@ class Application(object):
         #    / ____ \| |__| | |  | |_| |_| |\  |
         #   /_/    \_\_____/|_|  |_|_____|_| \_|
         #
-        #******************************************************************************************
+        # ******************************************************************************************
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/local-galaxy-url', methods=['OPTIONS', 'GET'])
         def get_local_galaxy_url():
             if self.settings.GALAXY_SERVER_URL == "":
@@ -209,7 +215,7 @@ class Application(object):
 
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/is-admin', methods=['OPTIONS', 'GET'])
         def is_admin():
-            #1. First check if the session is valid
+            # 1. First check if the session is valid
             response = forward_request("users/current", "GET")
             if response.status_code == 200:
                 account_email = json.loads(response.data).get("email")
@@ -219,28 +225,28 @@ class Application(object):
 
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/list-settings', methods=['OPTIONS', 'GET'])
         def list_settings():
-            #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
+            # FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
             if not self.isFirstLaunch:
                 isAdmin = is_admin()
                 isAdmin = json.loads(isAdmin[0].data).get("success")
             else:
-                isAdmin=True
+                isAdmin = True
             if isAdmin:
                 return AdminFunctions.getSettingsList(request, Response(), self.settings.ROOT_DIRECTORY, self.isFirstLaunch, self.isDocker).getResponse()
             return Response().setContent({"success": False}).setStatus(401).getResponse()
 
         @self.app.route(self.settings.SERVER_SUBDOMAIN + '/admin/update-settings', methods=['OPTIONS', 'POST'])
         def update_settings():
-            #FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
+            # FIRST CHECK IF THE SESSION IS VALID AND IS AN ADMIN ACCOUNT
             if not self.isFirstLaunch:
                 isAdmin = is_admin()
                 isAdmin = json.loads(isAdmin[0].data).get("success")
             else:
-                isAdmin=True
+                isAdmin = True
 
             if isAdmin:
                 response = AdminFunctions.updateSettings(request, Response(), self.settings.ROOT_DIRECTORY, self.isFirstLaunch).getResponse()
-                #Read again settings
+                # Read again settings
                 self.isFirstLaunch = False
                 self.settings = AdminFunctions.readConfigurationFile()
                 self.app.config['MAX_CONTENT_LENGTH'] = self.settings.MAX_CONTENT_LENGTH * pow(1024, 2)
@@ -257,13 +263,13 @@ class Application(object):
                 yield (key.encode("utf8"), value.encode("utf8"))
 
     def launch(self):
-        ##*******************************************************************************************
-        ##* LAUNCH APPLICATION
-        ##*******************************************************************************************
-        self.app.run(host=self.settings.SERVER_HOST_NAME, port=self.settings.SERVER_PORT_NUMBER,  debug=False, threaded=True)
+        # *******************************************************************************************
+        # LAUNCH APPLICATION
+        # *******************************************************************************************
+        self.app.run(host=self.settings.SERVER_HOST_NAME, port=self.settings.SERVER_PORT_NUMBER, debug=False, threaded=True)
 
     def log(self, message, type="info"):
-        if self.settings.SERVER_ALLOW_DEBUG == True:
+        if self.settings.SERVER_ALLOW_DEBUG is True:
             if type == "warn":
                 logging.warning(message)
             elif type == "err":
@@ -271,37 +277,41 @@ class Application(object):
             else:
                 logging.info(message)
 
+
 class Response(object):
     """This class is used to specify the custom response object"""
 
-    #****************************************************************
+    # ****************************************************************
     # CONSTRUCTORS
-    #****************************************************************
+    # ****************************************************************
     def __init__(self):
-        self.content=""
-        self.status= 200
-        #TODO: ENABLE THIS CODE??
+        self.content = ""
+        self.status = 200
+        # TODO: ENABLE THIS CODE??
         self.JSON_CONTENT_TYPE = {'Content-Type': 'application/json; charset=utf-8'}
         self.content_type = self.JSON_CONTENT_TYPE
 
-    #****************************************************************
+    # ****************************************************************
     # GETTERS AND SETTER
-    #****************************************************************
+    # ****************************************************************
     def setContent(self, content):
-        self.content=content
+        self.content = content
         return self
+
     def getContent(self):
         return self.content
 
     def setStatus(self, status):
-        self.status=status
+        self.status = status
         return self
+
     def getStatus(self):
         return self.status
 
     def setContentType(self, content_type):
-        self.content_type=content_type
+        self.content_type = content_type
         return self
+
     def getContentType(self):
         return self.content_type
 
