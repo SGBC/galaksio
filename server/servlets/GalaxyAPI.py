@@ -19,21 +19,19 @@
 #     and others.
 #
 """
-from bioblend.galaxy import GalaxyInstance
 from os import path as osPath
+
+from bioblend.galaxy import GalaxyInstance
 
 
 def generateWorkflowReport(request, settings):
-    #Get the invocation and workflow data
-    format = request.json.get("format")
+    # Get the invocation and workflow data
     invocation = request.json.get("invocation")
-    workflow= request.json.get("workflow")
+    workflow = request.json.get("workflow")
 
-    #Open a new connection with bioblend
+    # Open a new connection with bioblend
     galaxy_key = request.values.get("key")
     gi = GalaxyInstance(settings.GALAXY_SERVER, galaxy_key)
-
-
 
     workflow_steps = {}
     for step in workflow.get("steps"):
@@ -45,20 +43,20 @@ def generateWorkflowReport(request, settings):
         workflow_step["job_id"] = step.get("job_id")
         workflow_step["job"] = gi.jobs.show_job(step.get("job_id"))
 
-    #GENERATE THE HTML
-    html_code=""
+    # GENERATE THE HTML
+    html_code = ""
     to_close_tags = []
 
-    html_code+= addTag("h2", "Workflow details", "font-size: 30px; color:red")
-    html_code+= getEntryLine("Workflow name", workflow.get("name"), "font-size: 30px; color:red")
-    html_code+= openNewSection("div", "font-size: 20px;", to_close_tags)
-    html_code+= getEntryLine("Workflow name", workflow.get("name"), "font-size: 30px; color:red")
-    html_code+= getEntryLine("Owner", workflow.get("owner"))
-    html_code+= getEntryLine("Run date", invocation.get("update_time"))
-    html_code+= closeSection(to_close_tags)
+    html_code += addTag("h2", "Workflow details", "font-size: 30px; color:red")
+    html_code += getEntryLine("Workflow name", workflow.get("name"), "font-size: 30px; color:red")
+    html_code += openNewSection("div", "font-size: 20px;", to_close_tags)
+    html_code += getEntryLine("Workflow name", workflow.get("name"), "font-size: 30px; color:red")
+    html_code += getEntryLine("Owner", workflow.get("owner"))
+    html_code += getEntryLine("Run date", invocation.get("update_time"))
+    html_code += closeSection(to_close_tags)
 
-    html_code+= addTag("h2", "Steps details", "font-size: 30px; color:red")
-    html_code+= openNewSection("div", "font-size: 16px;", to_close_tags)
+    html_code += addTag("h2", "Steps details", "font-size: 30px; color:red")
+    html_code += openNewSection("div", "font-size: 16px;", to_close_tags)
 
     for step in sorted(list(workflow_steps.values()), key=lambda k: k['id']):
         html_code += openNewSection("div", "font-size: 14px;", to_close_tags)
@@ -70,20 +68,21 @@ def generateWorkflowReport(request, settings):
         else:
             try:
                 html_code += getEntryLine("Inputs", str(step.get("inputs")))
-            except:
+            except Exception:
                 pass
 
             html_code += addTag("b", "Params")
             try:
                 html_code += getEntryLine("Inputs", str(step.get("job")))
-            except:
+            except Exception:
                 pass
 
-        html_code+= closeSection(to_close_tags)
+        html_code += closeSection(to_close_tags)
 
-    html_code+= closeSection(to_close_tags)
+    html_code += closeSection(to_close_tags)
 
     from fpdf import FPDF, HTMLMixin
+
     class MyFPDF(FPDF, HTMLMixin):
         pass
 
@@ -96,18 +95,20 @@ def generateWorkflowReport(request, settings):
 
     return tmp_path
 
+
 def getEntryLine(label, value, style=""):
-    return "<p style='" + style + "'><b>" + label + ": </b>" +  value + "</p>"
+    return "<p style='" + style + "'><b>" + label + ": </b>" + value + "</p>"
 
 
 def addTag(type, text, style=""):
     return "<" + type + " style='" + style + "'>" + text + "</" + type + ">"
 
+
 def openNewSection(type, style, to_close_tags):
     to_close_tags.append(type)
     return "<" + type + " style='" + style + "'>"
 
+
 def closeSection(to_close_tags):
     tag = to_close_tags.pop()
     return "</" + tag + ">"
-

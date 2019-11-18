@@ -19,10 +19,13 @@
 #     and others.
 #
 """
-from flask import json, jsonify
-import requests
-from logging import config as loggingConfig
 import os
+from logging import config as loggingConfig
+from shutil import copyfile
+
+import requests
+from flask import json
+
 
 def isAdminAccount(request, response, ROOT_DIRECTORY):
     settings = readConfigurationFile()
@@ -30,16 +33,17 @@ def isAdminAccount(request, response, ROOT_DIRECTORY):
     response.setContent({"success": (request.cookies.get("galaxyuser") in accounts)})
     return response
 
+
 def getSettingsList(request, response, ROOT_DIRECTORY, isFirstLaunch=False, isDocker=False):
     response.setContent({"success": True, "settings": readConfigurationFile(isFirstLaunch, isDocker).__dict__})
     return response
 
-def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
-    #STEP 1. BACKUP SETTINGS
-    from shutil import copyfile
+
+def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch=False):
+    # STEP 1. BACKUP SETTINGS
     copyfile(ROOT_DIRECTORY + "server/conf/server.cfg", ROOT_DIRECTORY + "server/conf/server.cfg_back")
 
-    #STEP 2. READ NEW SETTINGS
+    # STEP 2. READ NEW SETTINGS
     newValues = json.loads(request.data)
 
     import configparser
@@ -53,7 +57,7 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     config.set('server_settings', 'SERVER_SUBDOMAIN', newValues.get("SERVER_SUBDOMAIN"))
     config.set('server_settings', 'SERVER_PORT_NUMBER', str(newValues.get("SERVER_PORT_NUMBER")))
     config.set('server_settings', 'SERVER_ALLOW_DEBUG', str(newValues.get("SERVER_ALLOW_DEBUG")))
-    config.set('server_settings', 'SAFE_UPLOAD', str(newValues.get("SAFE_UPLOAD") == True))
+    config.set('server_settings', 'SAFE_UPLOAD', str(newValues.get("SAFE_UPLOAD") is True))
     config.set('server_settings', 'MAX_CONTENT_LENGTH', str(newValues.get("MAX_CONTENT_LENGTH")))
     config.set('server_settings', 'ROOT_DIRECTORY ', newValues.get("ROOT_DIRECTORY"))
     config.set('server_settings', 'TMP_DIRECTORY ', newValues.get("TMP_DIRECTORY"))
@@ -75,13 +79,14 @@ def updateSettings(request, response, ROOT_DIRECTORY, isFirstLaunch = False):
     config.set('other_settings', 'main_galaksio_server', "http://galaksio.thinksoftware.es/")
     config.set('other_settings', 'developers_email', "ebiokit@gmail.com")
 
-    #STEP 3 Writing our configuration file to 'server.cfg'
+    # STEP 3 Writing our configuration file to 'server.cfg'
     with open(ROOT_DIRECTORY + "server/conf/server.cfg", 'wb') as configfile:
         config.write(configfile)
     configfile.close()
 
-    response.setContent({"success": True, "isFirstLaunch" : isFirstLaunch})
+    response.setContent({"success": True, "isFirstLaunch": isFirstLaunch})
     return response
+
 
 def readConfigurationFile(isFirstLaunch=False, isDocker=False):
     import configparser
@@ -89,7 +94,7 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
 
     class Settings(object):
         pass
-    settings= Settings()
+    settings = Settings()
 
     config = configparser.RawConfigParser()
     config.read(os.path.dirname(os.path.realpath(__file__)) + "/../conf/server.cfg")
@@ -100,17 +105,16 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
     settings.SERVER_ALLOW_DEBUG = config.getboolean('server_settings', 'SERVER_ALLOW_DEBUG')
     try:
         settings.SAFE_UPLOAD = config.getboolean('server_settings', 'SAFE_UPLOAD')
-    except:
+    except Exception:
         settings.SAFE_UPLOAD = True
 
     try:
         settings.TMP_DIRECTORY = config.getboolean('server_settings', 'TMP_DIRECTORY')
-    except:
+    except Exception:
         settings.TMP_DIRECTORY = "/tmp"
 
     settings.MAX_CONTENT_LENGTH = config.getint('server_settings', 'MAX_CONTENT_LENGTH')
     settings.ROOT_DIRECTORY = config.get('server_settings', 'ROOT_DIRECTORY')
-    import os
     if settings.ROOT_DIRECTORY == "":
         settings.ROOT_DIRECTORY = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + "/../../") + "/"
     else:
@@ -125,7 +129,7 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
         settings.SMTP_PASS = config.get('smtp_settings', 'SMTP_PASS')
         settings.SMTP_SERVER = config.get('smtp_settings', 'SMTP_SERVER')
         settings.SMTP_PORT = config.getint('smtp_settings', 'SMTP_PORT')
-    except:
+    except Exception:
         settings.SMTP_ACCOUNT = ""
         settings.SMTP_PASS = ""
         settings.SMTP_SERVER = ""
@@ -134,12 +138,12 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
     try:
         settings.GALAKSIO_MAIN_SERVER = config.get('other_settings', 'main_galaksio_server')
         settings.DEVELOPERS_EMAIL = config.get('other_settings', 'developers_email')
-    except:
+    except Exception:
         settings.GALAKSIO_MAIN_SERVER = "http://galaksio.thinksoftware.es/"
         settings.DEVELOPERS_EMAIL = "ebiokit@gmail.com"
 
-        # PREPARE LOGGING
-    loggingConfig.fileConfig(settings.ROOT_DIRECTORY + 'server/conf/logging.cfg')
+    # PREPARE LOGGING
+    loggingConfig.fileConfig(os.path.join(settings.ROOT_DIRECTORY, 'server/conf/logging.cfg'))
 
     settings.IS_DOCKER = isDocker
 
@@ -151,25 +155,25 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
         try:
             settings.GALAXY_SERVER = os.environ["GALAXY_SERVER"]
             settings.IS_DOCKER = True
-        except Exception as ex:
+        except Exception:
             failed = failed + 1
 
         try:
             settings.GALAXY_SERVER_URL = os.environ["GALAXY_SERVER_URL"]
             settings.IS_DOCKER = True
-        except Exception as ex:
+        except Exception:
             failed = failed + 1
 
         try:
             settings.MAX_CONTENT_LENGTH = os.environ["MAX_CONTENT_LENGTH"]
             settings.IS_DOCKER = True
-        except Exception as ex:
+        except Exception:
             failed = failed + 1
 
         try:
             settings.ADMIN_ACCOUNTS = os.environ["ADMIN_ACCOUNTS"]
             settings.IS_DOCKER = True
-        except Exception as ex:
+        except Exception:
             failed = failed + 1
 
         if failed > 0:
@@ -177,6 +181,7 @@ def readConfigurationFile(isFirstLaunch=False, isDocker=False):
             settings.AUTO_INSTALL = False
 
     return settings
+
 
 def storeTmpFiles(files, tmp_dir):
     tmp_files = []
@@ -208,11 +213,11 @@ def sendErrorReport(request, response):
             msg['Subject'] = "Galaksio error reporting."
 
             body = "Error type: " + str(newValues.get("error")) + "\n"
-            body += "Galaksio server: " + str(settings.SERVER_HOST_NAME)+ "\n"
-            body += "Galaksio subdomain: " + str(settings.SERVER_SUBDOMAIN)+ "\n"
+            body += "Galaksio server: " + str(settings.SERVER_HOST_NAME) + "\n"
+            body += "Galaksio subdomain: " + str(settings.SERVER_SUBDOMAIN) + "\n"
             msg.attach(MIMEText(body, 'plain'))
 
-            if newValues.get("tool") != None:
+            if newValues.get("tool") is not None:
                 fd, filename = tempfile.mkstemp()
                 try:
                     with open(filename, 'w') as fd:
@@ -227,7 +232,7 @@ def sendErrorReport(request, response):
                 finally:
                     os.remove(filename)
 
-            if newValues.get("input") != None:
+            if newValues.get("input") is not None:
                 fd, filename = tempfile.mkstemp()
                 try:
                     with open(filename, 'w') as fd:
@@ -250,11 +255,11 @@ def sendErrorReport(request, response):
             server.quit()
 
             response.setContent({"success": True})
-        except Exception as ex:
+        except Exception:
             response.setStatus(401)
             response.setContent({"success": False, "developers_email": settings.DEVELOPERS_EMAIL})
     else:
-        #ALTERNATIVE METHOD, FORWARD ERROR REPORT TO MAIN SERVER
+        # ALTERNATIVE METHOD, FORWARD ERROR REPORT TO MAIN SERVER
         # STEP 1. Generate the new requests
         resp = requests.request(
             method=request.method,

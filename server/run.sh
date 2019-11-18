@@ -8,8 +8,10 @@ function printHelp {
 }
 
 function start_service {
+  cd $DIR/..
   PYTHON=$(which python);
-  $PYTHON $DIR/launch_server.py &
+  $PYTHON -m server.launch_server &
+  cd -
   disown %1; sleep 2
   pid=`ps -Af | grep 'launch_server.py' | grep -v "grep" | awk '{ print $2 }'`
   echo $pid > $DIR/launch_server.pid
