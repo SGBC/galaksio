@@ -4,7 +4,7 @@
 
 > An easy to use GUI for running Galaxy workflows.
 
-Galaksio is a web application that simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.org/).
+Galaksio is a web application that simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.eu/).
 Galaksio provides a simple but complete UI for using Galaxy for biologists that require bioinformatics workflows to complete their research.
 Using the application, users can run any workflow implemented in the associated Galaxy instance in just few *clicks*.
 Besides, the rich user interface allows customizing the execution, uploading the necessary files, downloading the results, and executing several workflows simultaneously in the background.
@@ -30,7 +30,7 @@ Launch the Flask server. Your new Galaksio instance will be listening to port 80
 galaksio-latest/server/run.sh --start
 ```
 
-By default Galaksio is configured to work with the official [Galaxy](https://usegalaxy.org) instance.This and other options can be customized through the web application. The first time that you access to your Galaksio instance you will need to configure some of the main settings.
+By default Galaksio is configured to work with the official [Galaxy](https://usegalaxy.eu) instance.This and other options can be customized through the web application. The first time that you access to your Galaksio instance you will need to configure some of the main settings.
 
 ## Documentation
 Documentation for the project, including installation instructions, can be found at the ReadTheDocs platform: [http://galaksio.readthedocs.io/en/latest/](http://galaksio.readthedocs.io/en/latest/).
