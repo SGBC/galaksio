@@ -5,8 +5,8 @@ services:
       image: fikipollo/galaksio
       container_name: instance1-galaksio
       environment:
-        - GALAXY_SERVER=https://usegalaxy.org
-        - GALAXY_SERVER_URL=https://usegalaxy.org
+        - GALAXY_SERVER=https://usegalaxy.eu
+        - GALAXY_SERVER_URL=https://usegalaxy.eu
         - MAX_CONTENT_LENGTH=300
         - ADMIN_ACCOUNTS=myadmin@email.com
       volumes_from:
