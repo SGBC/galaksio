@@ -2,7 +2,7 @@ Galaksio Docker Image
 ===================
 The [Galaksio](https://github.com/tklingstrom/galaksio) [Docker](http://www.docker.io) Image is an easy distributable full-fledged Galaksio installation.
 
-Galaksio is a web application that simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.org/).
+Galaksio is a web application that simplifies the usage of the Galaxy bioinformatics platform (https://usegalaxy.eu/).
 Galaksio has been developed as part of the [B3Africa Project](http://www.b3africa.org/), which has received funding from the European Union’s Horizon 2020 research and innovation programme.
 
 - Citation:
@@ -42,7 +42,7 @@ In case you do not have the Container stored locally, docker will download it fo
 You can run manually your containers using the following commands:
 
 ```sh
-sudo docker run --name galaksio -v /your/data/location/galaksio-data:/usr/local/apache2/htdocs/server/conf/ -e ADMIN_ACCOUNTS=youradminuser -e GALAXY_SERVER=https://usegalaxy.org -e GALAXY_SERVER_URL=https://usegalaxy.org -p 8081:80 -d tklingstrom/galaksio
+sudo docker run --name galaksio -v /your/data/location/galaksio-data:/usr/local/apache2/htdocs/server/conf/ -e ADMIN_ACCOUNTS=youradminuser -e GALAXY_SERVER=https://usegalaxy.eu -e GALAXY_SERVER_URL=https://usegalaxy.eu -p 8081:80 -d tklingstrom/galaksio
 ```
 
 Please note that the name is likely to change as we move to an organizatio repo at Dockerhub hosted by SLU Global Bioinformatics Centre
